@@ -13,10 +13,10 @@ import getopt, sys
 import traceback
 
 # ------------------------------------------------------------
-# Logging & Timer 
+# Logging & Timer
 # ------------------------------------------------------------
 
-logging_level = 0; 
+logging_level = 0;
 
 # 0 = no_logging
 # 1 = few details
@@ -34,13 +34,13 @@ timer_last =  tm.time()
 
 def timer_start(s):
 	global timer_last;
-	if __name__=="__main__" and timer == 1:   
+	if __name__=="__main__" and timer == 1:
 		log(3, ["Timer start:" + s]);
 	timer_last = tm.time();
 
 def timer_stop():
 	global timer_last;
-	if __name__=="__main__" and timer == 1:   
+	if __name__=="__main__" and timer == 1:
 		log(3, ["Timer stop :" + str(tm.time() - timer_last)]);
 
 # ------------------------------------------------------------
@@ -55,7 +55,7 @@ def invertIndex(nx,ny,nz):
 		a2, b2 = a1 / nz, a1 % nz
 		return b0,b1,b2
 	return invertIndex0
-	
+
 def computeBordo3(FV,CV,inputFile='bordo3.json'):
 	log(1, ["bordo3 = Starting"])
 	bordo3 = larBoundary(FV,CV)
@@ -66,10 +66,11 @@ def computeBordo3(FV,CV,inputFile='bordo3.json'):
 	COLCOUNT = bordo3.shape[1]
 	ROW = bordo3.indptr.tolist()
 	COL = bordo3.indices.tolist()
-	DATA = bordo3.data.tolist()
+	# DATA = bordo3.data.tolist()
 
 	with open(inputFile, "w") as file:
-		json.dump({"ROWCOUNT":ROWCOUNT, "COLCOUNT":COLCOUNT, "ROW":ROW, "COL":COL, "DATA":DATA }, file, separators=(',',':'))
+		json.dump({"ROWCOUNT":ROWCOUNT, "COLCOUNT":COLCOUNT, "ROW":ROW, "COL":COL, "DATA":1}, file, separators=(',',':'))
+		# json.dump({"ROWCOUNT":ROWCOUNT, "COLCOUNT":COLCOUNT, "ROW":ROW, "COL":COL, "DATA":DATA }, file, separators=(',',':'))
 		file.flush();
 
 def main(argv):
@@ -80,11 +81,11 @@ def main(argv):
 	except getopt.GetoptError:
 		print ARGS_STRING
 		sys.exit(2)
-	
+
 	mandatory = 2
 	#Files
 	DIR_OUT = ''
-	
+
 	for opt, arg in opts:
 		if opt == '-x':
 			nx = ny = nz = int(arg)
@@ -96,21 +97,21 @@ def main(argv):
 		elif opt == '-o':
 			DIR_OUT = arg
 			mandatory = mandatory - 1
-			
+
 	if mandatory != 0:
 		print 'Not all arguments where given'
 		print ARGS_STRING
 		sys.exit(2)
-		
+
 	log(1, ["nx, ny, nz = " + str(nx) + "," + str(ny) + "," + str(nz)]);
-	
+
 	def ind(x,y,z): return x + (nx+1) * (y + (ny+1) * (z))
-		
+
 	def the3Dcell(coords):
 		x,y,z = coords
 		return [ind(x,y,z),ind(x+1,y,z),ind(x,y+1,z),ind(x,y,z+1),ind(x+1,y+1,z),
-				ind(x+1,y,z+1),ind(x,y+1,z+1),ind(x+1,y+1,z+1)]	
-	
+				ind(x+1,y,z+1),ind(x,y+1,z+1),ind(x+1,y+1,z+1)]
+
 	# Construction of vertex coordinates (nx * ny * nz)
 	# ------------------------------------------------------------
 
@@ -139,9 +140,9 @@ def main(argv):
 		if (y < ny) and (z < nz): FV.append([h,ind(x,y+1,z),ind(x,y,z+1),ind(x,y+1,z+1)])
 
 	log(3, ["FV = " + str(FV)]);
-	
+
 	fileName = DIR_OUT+'/bordo3_'+str(nx)+'-'+str(ny)+'-'+str(nz)+'.json'
-	
+
 	try:
 		computeBordo3(FV,CV,fileName)
 	except:

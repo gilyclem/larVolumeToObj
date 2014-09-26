@@ -124,7 +124,14 @@ def computeChainsThread(
                     COLCOUNT = bordo3_json['COLCOUNT']
                     ROW = np.asarray(bordo3_json['ROW'], dtype=np.int32)
                     COL = np.asarray(bordo3_json['COL'], dtype=np.int32)
-                    DATA = np.asarray(bordo3_json['DATA'], dtype=np.int8)
+                    if np.isscalar(bordo3_json['DATA']):
+                        # in special case, when all numbers are same
+                        DATA = np.ones(COL.shape, dtype=np.int8) * np.int8(bordo3_json['DATA'])
+                    else:
+                        # this is general form
+                        DATA = np.asarray(bordo3_json['DATA'], dtype=np.int8)
+                    print "border m ",  ROW.shape, COL.shape, DATA.shape
+                    print  "55555555555555555555555555555555555555"
                     bordo3 = csr_matrix((DATA,COL,ROW),shape=(ROWCOUNT,COLCOUNT));
 
     xEnd, yEnd = 0,0
@@ -166,6 +173,7 @@ def computeChainsThread(
             print 'unique', np.unique(theImage)
             print 'centrCol ', centroidsCalc
             print 'saveTheColors ', saveTheColors, colorIdx
+            print 'calculateout ', calculateout
             # import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
             # theColors = theColors.reshape(1,colorNumber)
             # if (sorted(theColors[0]) != saveTheColors):
@@ -292,7 +300,7 @@ def segmentation_from_data3d(datap):
     print "automatic segmentation"
 
     datap['segmentation'] = (datap['data3d'] > 6000).astype(np.uint8) * 2
-    datap['segmentation'][:30,:30,:30] = 1
+    # datap['segmentation'][:30,:30,:30] = 1
 
 
     return datap
@@ -306,9 +314,15 @@ def runComputation(imageDx,imageDy,imageDz, coloridx,calculateout,
         if 'segmentation' not in datap.keys():
             datap = segmentation_from_data3d(datap)
         print '###################################'
-        segmentation = datap['segmentation'][::20,::20,::20]
+        segmentation = datap['segmentation'].astype(np.uint8)
+
+        #segmentation = datap['segmentation'][::5,::5,::5]
+        #segmentation = datap['segmentation'][300:330,300:350,300:350]
         # datap['segmentation'] = (segmentation ==  1).astype(np.uint8)
         # import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
+        # hack kvuli barvam
+        segmentation[0,0,0] = 0
+        segmentation[0,0,1] = 1
         datap['segmentation'] = segmentation
         print np.unique(datap['segmentation'])
         print datap.keys()

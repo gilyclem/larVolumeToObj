@@ -62,17 +62,17 @@ shift $((OPTIND-1)) # Shift off the options and optional --.
 
 echo "** Checking Basic Prerequisites **"
 
-sh ./sh/prerequites-python.sh
-if [ $? -ne 0 ]; then
-	echo "Missing prerequisites, install them (check output)."
-	exit 1
-fi
-
-sh ./sh/prerequites-imagick.sh
-if [ $? -ne 0 ]; then
-	echo "Missing prerequisites, install them (check output)."
-	exit 1
-fi
+# sh ./sh/prerequites-python.sh
+# if [ $? -ne 0 ]; then
+# 	echo "Missing prerequisites, install them (check output)."
+# 	exit 1
+# fi
+# 
+# sh ./sh/prerequites-imagick.sh
+# if [ $? -ne 0 ]; then
+# 	echo "Missing prerequisites, install them (check output)."
+# 	exit 1
+# fi
 
 echo "==================="
 echo "** Input data **"
@@ -90,7 +90,9 @@ echo "** Input data **"
     OPENCL=0
     DIRINPUT="/home/mjirik/data/medical/orig/sponge/0004_-_SLICES_-_50x50+240+115"
     DIRINPUT="/home/mjirik/projects/lar-running-demo/data3.pklz"
-    DIRINPUT="/home/mjirik/data/medical/orig/jatra_mikro_data/Nejlepsi_rozliseni_nevycistene"
+    DIRINPUT="/home/cvdlab/data/medical/orig/jatra_mikro_data/Nejlepsi_rozliseni_nevycistene"
+    DIRINPUT="/home/cvdlab/lisa_data/org-biodur_sample-.pklz"
+    DIRINPUT="/home/cvdlab/lisa_data/nrn1.pklz"
     BESTIMAGE="460.png"
     
     COLORS="3"
