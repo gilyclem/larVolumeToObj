@@ -83,7 +83,7 @@ def writeOffsetToFile(file, offsetCurr):
 def read_pkl_by_block(datap, startImage, endImage, centroidsCalc):
     # dr = datareader.DataReader()
     # datap = dr.Get3DData(imageDirPkl, qt_app=None, dataplus_format=True, gui=False)
-    print type(startImage)
+    # print "start im ", startImage, ' ', endImage
     wanted_label = 1
     segmentation = datap['segmentation'][startImage:endImage:, :, :]
     # print np.unique(segmentation)
@@ -166,8 +166,8 @@ def computeChainsThread(
                     startImage, endImage,
                     centroidsCalc)
             # colorIdx = 2
+            print "orig shape ", datap['segmentation'].shape
             print "png stack"
-            print theImage.shape
             print 'startim ', startImage
             print 'endim', endImage
             print 'unique', np.unique(theImage)
@@ -189,6 +189,7 @@ def computeChainsThread(
                     xEnd, yEnd = xStart+imageDx, yStart+imageDy
 
                     image = theImage[:, xStart:xEnd, yStart:yEnd]
+                    print "xy start end %i, %i, %i, %i" % (xStart, xEnd, yStart, yEnd)
                     #print "image ", image
                     nz,nx,ny = image.shape
 
@@ -206,7 +207,8 @@ def computeChainsThread(
                     if (calculateout == True):
                         chains3D_old = cch.setList(nx,ny,nz, colorIdx, image,saveTheColors)
                     else:
-                        hasSomeOne,chains3D = cch.setListNP(nx,ny,nz, colorIdx, image,saveTheColors)
+                        hasSomeOne,chains3D = cch.setListNP(nx,ny,nz, colorIdx,
+                                                            image,saveTheColors)
 
                     # print "Working task: " +str(startImage) + "-" + str(endImage) + " [hasSomeOne: " + str(hasSomeOne) +"]"
 
