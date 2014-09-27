@@ -28,6 +28,14 @@ def removeFromOneAxis():
     pass
 
 
+def writeFile(filename, vertexes, faces):
+    with open(filename, "w") as f:
+        for vertex in vertexes:
+            f.write("v %i %i %i\n" % (vertex[0], vertex[1], vertex[2]))
+
+        for face in faces:
+            f.write("f %i %i %i\n" % (face[0], face[1], face[2]))
+
 def readFile(filename):
     vertexes = []
     faces = []
@@ -78,6 +86,7 @@ def findBoundaryVertexesForAxis(vertexes, step, axis, isOnBoundary=None):
 
 
 def facesHaveAllPointsInList(faces, isOnBoundaryInds):
+    faces = np.array(faces)
 # Face has 3 points
     isInVoxelList = np.zeros(faces.shape, dtype=np.bool)
     for vertexInd in isOnBoundaryInds:
@@ -94,18 +103,22 @@ def findBoundaryFaces(vertexes, faces, step):
     """
 
     faces = np.array(faces)
-    # isOnBoundary = np.ones(len(vertexes), dtype=np.bool)
-    for axis in [0]:  # range(0, 3):
+    print 'start ', faces.shape
+    facesOnBoundary = np.zeros(len(faces), dtype=np.bool)
+    for axis in range(0, 3):
         isOnBoundary = findBoundaryVertexesForAxis(
             vertexes, step, axis)
 
         isOnBoundaryInds = np.nonzero(isOnBoundary)[0]
-        facesOnBoundary = facesHaveAllPointsInList(faces, isOnBoundaryInds)
+        facesOnBoundary += facesHaveAllPointsInList(faces, isOnBoundaryInds)
 
         print 'bound sum ', np.sum(facesOnBoundary)
 
-    ind = np.nonzero(isOnBoundary)[0]
-    return ind
+    # reduced faces set
+    faces_new = faces[- facesOnBoundary]
+    import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
+    print ' faces ', faces_new.shape
+    return vertexes, faces_new.tolist()
 
 
 def main(argv):
@@ -138,7 +151,8 @@ def main(argv):
     args = parser.parse_args()
     v, f = readFile(args.inputfile)
     #findBoxVertexesForAxis(v, 2, 0)
-    findBoundaryFaces(v,f , 2)
+    v, f = findBoundaryFaces(v,f , 2)
+    writeFile('out.obj', v, f)
     print len(v)
     print len(f)
 
