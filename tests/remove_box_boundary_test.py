@@ -16,11 +16,12 @@ import numpy as np
 class HistologyTest(unittest.TestCase):
     interactiveTests = False
 
-    #  @unittest.skipIf(not interactiveTests, "skipping while developing lar functions")
+    #  @unittest.skipIf(not interactiveTests, "skipping ")
     def test_remove_double_faces(self):
         faces = [
             [1, 3, 6],
             [3, 2, 1],
+            [4, 3, 1],
             [2, 1, 4],
             [1, 3, 2],
             [1, 3, 6]]
@@ -29,14 +30,12 @@ class HistologyTest(unittest.TestCase):
         for face in faces:
             face = face.sort()
 
-        print faces
         faces_new = rmbox.removeDoubleFaces(faces)
-        print faces_new
+        faces_new = np.array(faces_new)
         expected_faces = np.array([
-            [1, 2, 4]])
+            [1, 2, 4], [1, 3, 4]])
 
-        self.assertItemsEqual(faces_new, expected_faces)
-
+        self.assertAlmostEqual(0, np.sum(faces_new - expected_faces))
 
 
 if __name__ == "__main__":

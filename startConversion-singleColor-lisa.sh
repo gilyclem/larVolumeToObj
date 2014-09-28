@@ -93,6 +93,7 @@ echo "** Input data **"
     DIRINPUT="/home/cvdlab/data/medical/orig/jatra_mikro_data/Nejlepsi_rozliseni_nevycistene"
     DIRINPUT="/home/cvdlab/lisa_data/org-biodur_sample-.pklz"
     DIRINPUT="/home/cvdlab/lisa_data/nrn1.pklz"
+    DIRINPUT="/home/mjirik/lisa_data/nrnsmall.pklz"
     BESTIMAGE="460.png"
     
     COLORS="3"
