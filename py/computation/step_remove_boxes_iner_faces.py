@@ -84,6 +84,15 @@ def findBoundaryVertexesForAxis(vertexes, step, axis, isOnBoundary=None):
 
     return isOnBoundary
 
+def removeDoubleFaces(faces):
+    faces = np.array(faces)
+
+
+    b = np.ascontiguousarray(faces).view(np.dtype((np.void, faces.dtype.itemsize * faces.shape[1])))
+    _, idx = np.unique(b, return_index=True)
+
+    unique_faces = faces[idx]
+    return unique_faces
 
 def facesHaveAllPointsInList(faces, isOnBoundaryInds):
     faces = np.array(faces)
