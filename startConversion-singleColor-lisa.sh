@@ -89,11 +89,11 @@ echo "** Input data **"
 	# read -n 1 OPENCL
     OPENCL=0
     DIRINPUT="/home/mjirik/data/medical/orig/sponge/0004_-_SLICES_-_50x50+240+115"
-    DIRINPUT="/home/mjirik/projects/lar-running-demo/data3.pklz"
     DIRINPUT="/home/cvdlab/data/medical/orig/jatra_mikro_data/Nejlepsi_rozliseni_nevycistene"
     DIRINPUT="/home/cvdlab/lisa_data/org-biodur_sample-.pklz"
     DIRINPUT="/home/cvdlab/lisa_data/nrn1.pklz"
     DIRINPUT="/home/mjirik/lisa_data/nrnsmall.pklz"
+    DIRINPUT="/home/mjirik/projects/lar-running-demo/data3.pklz"
     BESTIMAGE="460.png"
     
     COLORS="3"

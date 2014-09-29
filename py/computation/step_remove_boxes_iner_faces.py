@@ -76,6 +76,35 @@ def findBoundaryVertexesForAxis(vertexes, step, axis, isOnBoundary=None):
 
     return isOnBoundary
 
+
+def reindexVertexesInFaces(faces, new_indexes):
+    for face in faces:
+        try:
+            f2 = face[2]
+            face[0] = new_indexes[face[0]-1] + 1
+            face[1] = new_indexes[face[1]-1] + 1
+            face[2] = new_indexes[f2-1] + 1
+        except:
+            import traceback
+            traceback.print_exc()
+            print 'fc ', face
+            print len(new_indexes)
+
+    return faces
+
+
+def removeDoubleVertexesAndFaces(vertexes, faces):
+    """
+    Main function of module. Return object description cleand from double
+    vertexes and faces.
+    """
+
+    new_vertexes, inv_vertexes = removeDoubleVertexes(vertexes)
+    new_faces = reindexVertexesInFaces(faces, inv_vertexes)
+    new_faces = removeDoubleFaces(new_faces)
+    return new_vertexes, new_faces
+
+
 def removeDoubleVertexes(vertexes):
     """
     Return array of faces with remowed rows of both duplicates
@@ -85,13 +114,10 @@ def removeDoubleVertexes(vertexes):
     b = np.ascontiguousarray(vertexes).view(
         np.dtype((np.void, vertexes.dtype.itemsize * vertexes.shape[1])))
     _, idx, inv = np.unique(b, return_index=True, return_inverse=True)
-# now idx describes unique indexes
-# but we want remove all duplicated indexes. Not only duplicates
-    duplication_number = [np.sum(inv == i) for i in range(0, len(idx))]
-    reduced_idx = idx[np.array(duplication_number) == 1]
 
     unique_vertexes = vertexes[idx]
-    return unique_vertexes.tolist()
+    return unique_vertexes.tolist(), inv
+
 
 def removeDoubleFaces(faces):
     """
@@ -183,9 +209,8 @@ def main(argv):
     print "Number of vertexes: %i    Number of faces %i" % (len(v), len(f))
     # findBoxVertexesForAxis(v, 2, 0)
     # v, f = findBoundaryFaces(v, f, 2)
-    f = removeDoubleFaces(f)
+    v, f = removeDoubleVertexesAndFaces(v, f)
     writeFile('out.obj', v, f)
-    v = removeDoubleVertexes(v)
     print "After"
     print "Number of vertexes: %i    Number of faces %i" % (len(v), len(f))
 

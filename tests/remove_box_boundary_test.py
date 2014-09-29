@@ -37,6 +37,28 @@ class HistologyTest(unittest.TestCase):
 
         self.assertAlmostEqual(0, np.sum(faces_new - expected_faces))
 
+    def test_remove_vertexes(self):
+        vertexes = [
+            [1, 3, 6],
+            [3, 2, 1],
+            [3, 2, 1],
+            [2, 1, 4],
+            [1, 3, 5]]
+
+        faces = [
+            [0, 1, 3],
+            [3, 2, 1],
+            [4, 3, 1],
+            [2, 0, 4],
+            [1, 3, 2],
+            [1, 3, 0]]
+
+        expected_faces = np.array([
+            [0, 1, 3], [0, 2, 3]])
+        new_vertexes, inv_vertexes = rmbox.removeDoubleVertexes(vertexes)
+        new_faces = rmbox.reindexVertexesInFaces(faces, inv_vertexes)
+        faces_new = rmbox.removeDoubleFaces(new_faces)
+        self.assertAlmostEqual(0, np.sum(faces_new - expected_faces))
 
 if __name__ == "__main__":
     unittest.main()
