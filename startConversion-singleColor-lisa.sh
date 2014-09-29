@@ -137,6 +137,8 @@ echo ""
 
 # Generate tmp dir name
 TMPDIRECTORY=$WORKINDIR/$TMPNAME/$(date | md5sum | head -c${1:-32})
+# use always same name
+TMPDIRECTORY=$WORKINDIR/$TMPNAME/"output"
 echo "Using tmp directory $TMPDIRECTORY"
 
 # Create clean dir
@@ -338,7 +340,8 @@ else
         echo -n " poutput $pOutput"
 		colorId=$(basename $pOutput | cut -d'.' -f1 | cut -d'-' -f3)
 		cat $pOutput >> $COMPUTATION_DIR_BIN/output-$colorId.bin
-		rm -f $pOutput >> $LOGFILE 2>&1
+        # uncoment for clean build directory
+		# rm -f $pOutput >> $LOGFILE 2>&1
 	done
 	echo -n "done!"
 	echo ""

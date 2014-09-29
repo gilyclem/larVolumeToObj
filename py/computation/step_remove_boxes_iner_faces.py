@@ -8,19 +8,10 @@ Generator of histology report
 import logging
 logger = logging.getLogger(__name__)
 import argparse
-from lar import *
-
-from scipy import *
-import json
-import scipy
-import numpy as np
-import time as tm
-import gc
-import struct
-import getopt
 import sys
-import os
-import traceback
+
+import numpy as np
+# import traceback
 import logging
 
 
@@ -35,6 +26,7 @@ def writeFile(filename, vertexes, faces):
 
         for face in faces:
             f.write("f %i %i %i\n" % (face[0], face[1], face[2]))
+
 
 def readFile(filename):
     vertexes = []
@@ -84,15 +76,42 @@ def findBoundaryVertexesForAxis(vertexes, step, axis, isOnBoundary=None):
 
     return isOnBoundary
 
+def removeDoubleVertexes(vertexes):
+    """
+    Return array of faces with remowed rows of both duplicates
+    """
+    vertexes = np.array(vertexes)
+
+    b = np.ascontiguousarray(vertexes).view(
+        np.dtype((np.void, vertexes.dtype.itemsize * vertexes.shape[1])))
+    _, idx, inv = np.unique(b, return_index=True, return_inverse=True)
+# now idx describes unique indexes
+# but we want remove all duplicated indexes. Not only duplicates
+    duplication_number = [np.sum(inv == i) for i in range(0, len(idx))]
+    reduced_idx = idx[np.array(duplication_number) == 1]
+
+    unique_vertexes = vertexes[idx]
+    return unique_vertexes.tolist()
+
 def removeDoubleFaces(faces):
+    """
+    Return array of faces with remowed rows of both duplicates
+    """
+    for face in faces:
+        face = face.sort()
     faces = np.array(faces)
 
+    b = np.ascontiguousarray(faces).view(
+        np.dtype((np.void, faces.dtype.itemsize * faces.shape[1])))
+    _, idx, inv = np.unique(b, return_index=True, return_inverse=True)
+# now idx describes unique indexes
+# but we want remove all duplicated indexes. Not only duplicates
+    duplication_number = [np.sum(inv == i) for i in range(0, len(idx))]
+    reduced_idx = idx[np.array(duplication_number) == 1]
 
-    b = np.ascontiguousarray(faces).view(np.dtype((np.void, faces.dtype.itemsize * faces.shape[1])))
-    _, idx = np.unique(b, return_index=True)
+    unique_faces = faces[reduced_idx]
+    return unique_faces.tolist()
 
-    unique_faces = faces[idx]
-    return unique_faces
 
 def facesHaveAllPointsInList(faces, isOnBoundaryInds):
     faces = np.array(faces)
@@ -125,7 +144,8 @@ def findBoundaryFaces(vertexes, faces, step):
 
     # reduced faces set
     faces_new = faces[- facesOnBoundary]
-    import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
+    import ipdb
+    ipdb.set_trace()  # noqa BREAKPOINT
     print ' faces ', faces_new.shape
     return vertexes, faces_new.tolist()
 
@@ -159,11 +179,15 @@ def main(argv):
     )
     args = parser.parse_args()
     v, f = readFile(args.inputfile)
-    #findBoxVertexesForAxis(v, 2, 0)
-    v, f = findBoundaryFaces(v,f , 2)
+    print "Before"
+    print "Number of vertexes: %i    Number of faces %i" % (len(v), len(f))
+    # findBoxVertexesForAxis(v, 2, 0)
+    # v, f = findBoundaryFaces(v, f, 2)
+    f = removeDoubleFaces(f)
     writeFile('out.obj', v, f)
-    print len(v)
-    print len(f)
+    v = removeDoubleVertexes(v)
+    print "After"
+    print "Number of vertexes: %i    Number of faces %i" % (len(v), len(f))
 
 if __name__ == "__main__":
     main(sys.argv[1:])
