@@ -12,7 +12,7 @@ import sys
 
 import numpy as np
 # import traceback
-import logging
+import copy
 
 
 def removeFromOneAxis():
@@ -25,7 +25,14 @@ def writeFile(filename, vertexes, faces):
             f.write("v %i %i %i\n" % (vertex[0], vertex[1], vertex[2]))
 
         for face in faces:
-            f.write("f %i %i %i\n" % (face[0], face[1], face[2]))
+            fstr = "f "
+            for i in range(0, len(face)):
+                fstr += "%i " % (face[i])
+
+            fstr += "\n"
+
+            f.write(fstr)
+            # f.write("f %i %i %i\n" % (face[0], face[1], face[2]))
 
 
 def readFile(filename):
@@ -39,15 +46,13 @@ def readFile(filename):
                     int(lnarr[1]),
                     int(lnarr[2]),
                     int(lnarr[3])
-                ]
-                )
+                ])
             if lnarr[0] == 'f':
-                faces.append([
-                    int(lnarr[1]),
-                    int(lnarr[2]),
-                    int(lnarr[3])
-                ]
-                )
+                face = [0] * (len(lnarr) - 1)
+                for i in range(1, len(lnarr)):
+                    face[i - 1] = int(lnarr[i])
+                faces.append(face)
+
     return vertexes, faces
 
 
@@ -80,10 +85,11 @@ def findBoundaryVertexesForAxis(vertexes, step, axis, isOnBoundary=None):
 def reindexVertexesInFaces(faces, new_indexes):
     for face in faces:
         try:
-            f2 = face[2]
-            face[0] = new_indexes[face[0]-1] + 1
-            face[1] = new_indexes[face[1]-1] + 1
-            face[2] = new_indexes[f2-1] + 1
+            for i in range(0, len(face)):
+                face[i] = new_indexes[face[i]-1] + 1
+            # face[0] = new_indexes[face[0]-1] + 1
+            # face[1] = new_indexes[face[1]-1] + 1
+            # face[2] = new_indexes[face[2]-1] + 1
         except:
             import traceback
             traceback.print_exc()
@@ -100,7 +106,10 @@ def removeDoubleVertexesAndFaces(vertexes, faces):
     """
 
     new_vertexes, inv_vertexes = removeDoubleVertexes(vertexes)
+    logger.info("Doubled vertex removed")
+    logger.info("Number of vertexes: %i " % (len(new_vertexes)))
     new_faces = reindexVertexesInFaces(faces, inv_vertexes)
+    logger.info("Faces reindexed")
     new_faces = removeDoubleFaces(new_faces)
     return new_vertexes, new_faces
 
@@ -123,6 +132,7 @@ def removeDoubleFaces(faces):
     """
     Return array of faces with remowed rows of both duplicates
     """
+    faces_orig = copy.copy(np.array(faces))
     for face in faces:
         face = face.sort()
     faces = np.array(faces)
@@ -135,7 +145,7 @@ def removeDoubleFaces(faces):
     duplication_number = [np.sum(inv == i) for i in range(0, len(idx))]
     reduced_idx = idx[np.array(duplication_number) == 1]
 
-    unique_faces = faces[reduced_idx]
+    unique_faces = faces_orig[reduced_idx]
     return unique_faces.tolist()
 
 
@@ -148,7 +158,7 @@ def facesHaveAllPointsInList(faces, isOnBoundaryInds):
 
     suma = np.sum(isInVoxelList, 1)
     print 'sum ', np.max(suma)
-    return suma == 3
+    return suma >= 3
 
 
 def findBoundaryFaces(vertexes, faces, step):
@@ -203,7 +213,12 @@ def main(argv):
         nargs='+',
         help='Size of box'
     )
+    parser.add_argument(
+        '-d', '--debug', action='store_true',
+        help='Debug mode')
     args = parser.parse_args()
+    if args.debug:
+        logger.setLevel(logging.DEBUG)
     v, f = readFile(args.inputfile)
     print "Before"
     print "Number of vertexes: %i    Number of faces %i" % (len(v), len(f))
@@ -215,4 +230,4 @@ def main(argv):
     print "Number of vertexes: %i    Number of faces %i" % (len(v), len(f))
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main(sys.argv)
