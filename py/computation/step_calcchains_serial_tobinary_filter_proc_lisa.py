@@ -189,7 +189,7 @@ def computeChainsThread(
                     xEnd, yEnd = xStart+imageDx, yStart+imageDy
 
                     image = theImage[:, xStart:xEnd, yStart:yEnd]
-                    print "xy start end %i, %i, %i, %i" % (xStart, xEnd, yStart, yEnd)
+                    # print "xy start end %i, %i, %i, %i" % (xStart, xEnd, yStart, yEnd)
                     #print "image ", image
                     nz,nx,ny = image.shape
 
