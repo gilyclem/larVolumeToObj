@@ -87,6 +87,7 @@ echo "** Input data **"
     #  read COLOR_SEL
 	# echo -n "Use OpenCL (y/n): "
 	# read -n 1 OPENCL
+    OPENCL="y"
     OPENCL=0
     DIRINPUT="/home/mjirik/data/medical/orig/sponge/0004_-_SLICES_-_50x50+240+115"
     DIRINPUT="/home/cvdlab/data/medical/orig/jatra_mikro_data/Nejlepsi_rozliseni_nevycistene"
@@ -94,6 +95,8 @@ echo "** Input data **"
     DIRINPUT="/home/cvdlab/lisa_data/nrn1.pklz"
     DIRINPUT="/home/mjirik/lisa_data/nrnsmall.pklz"
     DIRINPUT="/home/mjirik/projects/lar-running-demo/data3.pklz"
+    DIRINPUT="/home/cvdlab/projects/lar-running-demo/nrn1.pklz"
+    DIRINPUT="/home/cvdlab/projects/lar-running-demo/nrn100.pklz"
     BESTIMAGE="460.png"
     
     COLORS="3"
@@ -139,6 +142,7 @@ echo ""
 TMPDIRECTORY=$WORKINDIR/$TMPNAME/$(date | md5sum | head -c${1:-32})
 # use always same name
 TMPDIRECTORY=$WORKINDIR/$TMPNAME/"output"
+rm -rf $TMPDIRECTORY
 echo "Using tmp directory $TMPDIRECTORY"
 
 # Create clean dir
@@ -293,33 +297,33 @@ mkdir -p $COMPUTATION_DIR_BIN >> $LOGFILE 2>&1
 
 if [ $OPENCL -eq 1 ]; then
    echo -n "Computing input binary chains.................... "
-   # CHAINCURR=$COLOR_SEL
-   # $PYBIN ./py/computation/step_calcchains_serial_tobinary_filter_proc.py -b $BORDER_DIR/$BORDER_FILE -x $BORDER_X -y $BORDER_Y -z $BORDER_Z -i $TMPIMGDIRECTORY -c $COLORS -d $CHAINCURR -q $BESTFILE -o $COMPUTATION_DIR >> $LOGFILE 1>&1
-   # if [ $? -ne 0 ]; then
-   # 	echo "Error while computing output chains"
-   # 	exit 1
-   # fi
-   # # Merge selectors
-   # for pSelettore in $COMPUTATION_DIR_BIN/pselettori*.bin; do
-   # 	colorId=$(basename $pOutput | cut -d'.' -f1 | cut -d'-' -f3)
-   # 	cat $pOutput >> $COMPUTATION_DIR_BIN/selettori-$colorId.bin
-   # 	rm -f $pOutput >> $LOGFILE 2>&1
-   # done
-   # echo -n "done!"
-   # echo ""
-   # # Call OpenCL JAR
-   # # here use updated jar that outputs directly in binary in $COMPUTATION_DIR_BIN
-   # echo -n "Computing output binary chains... "
-   # for selettoreFile in $COMPUTATION_DIR/selettori-*.bin; do
-   # 	selettoreId=$(basename $selettoreFile | cut -d'.' -f1 | cut -d'-' -f2)
-   # 	LD_PRELOAD=$JAVA_HOME/jre/lib/amd64/libjsig.so $JAVABIN -d64 -Xcheck:jni -Xmx16G -XX:MaxPermSize=4G -XX:PermSize=512M -jar ./java/$JARNAME -b $BORDER_DIR/$BORDER_FILE -v $selettoreFile -y -o $COMPUTATION_DIR_BIN/output-$selettoreId.bin
-   # 	if [ $? -ne 0 ]; then
-   # 		echo "Error while computing output binary chains"
-   # 		exit 1
-   # 	fi
-   # done
-   # echo -n "done!"
-   # echo ""
+   CHAINCURR=$COLOR_SEL
+   $PYBIN ./py/computation/step_calcchains_serial_tobinary_filter_proc.py -b $BORDER_DIR/$BORDER_FILE -x $BORDER_X -y $BORDER_Y -z $BORDER_Z -i $TMPIMGDIRECTORY -c $COLORS -d $CHAINCURR -q $BESTFILE -o $COMPUTATION_DIR >> $LOGFILE 1>&1
+   if [ $? -ne 0 ]; then
+   	echo "Error while computing output chains"
+   	exit 1
+   fi
+   # Merge selectors
+   for pSelettore in $COMPUTATION_DIR_BIN/pselettori*.bin; do
+   	colorId=$(basename $pOutput | cut -d'.' -f1 | cut -d'-' -f3)
+   	cat $pOutput >> $COMPUTATION_DIR_BIN/selettori-$colorId.bin
+   	rm -f $pOutput >> $LOGFILE 2>&1
+   done
+   echo -n "done!"
+   echo ""
+   # Call OpenCL JAR
+   # here use updated jar that outputs directly in binary in $COMPUTATION_DIR_BIN
+   echo -n "Computing output binary chains... "
+   for selettoreFile in $COMPUTATION_DIR/selettori-*.bin; do
+   	selettoreId=$(basename $selettoreFile | cut -d'.' -f1 | cut -d'-' -f2)
+   	LD_PRELOAD=$JAVA_HOME/jre/lib/amd64/libjsig.so $JAVABIN -d64 -Xcheck:jni -Xmx16G -XX:MaxPermSize=4G -XX:PermSize=512M -jar ./java/$JARNAME -b $BORDER_DIR/$BORDER_FILE -v $selettoreFile -y -o $COMPUTATION_DIR_BIN/output-$selettoreId.bin
+   	if [ $? -ne 0 ]; then
+   		echo "Error while computing output binary chains"
+   		exit 1
+   	fi
+   done
+   echo -n "done!"
+   echo ""
 else
 	echo -n "Computing output binary chains... "
 	CHAINCURR=$COLOR_SEL
@@ -353,7 +357,7 @@ mkdir -p $STL_DIR >> $LOGFILE 2>&1
 
 echo "Converting to wavefront model ... "
 for binOut in $COMPUTATION_DIR_BIN/output-*.bin; do
-	$PYBIN ./py/computation/step_triangularmesh.py -x $BORDER_X -y $BORDER_Y -z $BORDER_Z -i $binOut -o $STL_DIR >> $LOGFILE 2>&1
+	$PYBIN ./py/computation/step_squaremesh.py -x $BORDER_X -y $BORDER_Y -z $BORDER_Z -i $binOut -o $STL_DIR >> $LOGFILE 2>&1
 	if [ $? -ne 0 ]; then
 		echo "Error while converting output to binary: $binOut"
 		exit 1
