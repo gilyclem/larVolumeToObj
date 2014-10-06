@@ -77,8 +77,16 @@ echo "** Checking Basic Prerequisites **"
 echo "==================="
 echo "** Input data **"
 
-    #  echo -n "Enter directory path [ENTER]: "
-    #  read DIRINPUT
+    DIRINPUT="/home/mjirik/data/medical/orig/sponge/0004_-_SLICES_-_50x50+240+115"
+    DIRINPUT="/home/cvdlab/data/medical/orig/jatra_mikro_data/Nejlepsi_rozliseni_nevycistene"
+    DIRINPUT="/home/cvdlab/lisa_data/org-biodur_sample-.pklz"
+    DIRINPUT="/home/cvdlab/lisa_data/nrn1.pklz"
+    DIRINPUT="/home/mjirik/lisa_data/nrnsmall.pklz"
+    DIRINPUT="/home/mjirik/projects/lar-running-demo/data3.pklz"
+    DIRINPUT="/home/cvdlab/projects/lar-running-demo/nrn1.pklz"
+    DIRINPUT="/home/cvdlab/projects/lar-running-demo/nrn100.pklz"
+    echo -n "Enter directory path [ENTER]: "
+    read DIRINPUT
     #  echo -n "Enter best image file in the previous directory [ENTER]: "
     #  read BESTIMAGE
     #  echo -n "Number of colors to quantize (min 2) [ENTER]: "
@@ -89,14 +97,6 @@ echo "** Input data **"
 	# read -n 1 OPENCL
     OPENCL="y"
     OPENCL=0
-    DIRINPUT="/home/mjirik/data/medical/orig/sponge/0004_-_SLICES_-_50x50+240+115"
-    DIRINPUT="/home/cvdlab/data/medical/orig/jatra_mikro_data/Nejlepsi_rozliseni_nevycistene"
-    DIRINPUT="/home/cvdlab/lisa_data/org-biodur_sample-.pklz"
-    DIRINPUT="/home/cvdlab/lisa_data/nrn1.pklz"
-    DIRINPUT="/home/mjirik/lisa_data/nrnsmall.pklz"
-    DIRINPUT="/home/mjirik/projects/lar-running-demo/data3.pklz"
-    DIRINPUT="/home/cvdlab/projects/lar-running-demo/nrn1.pklz"
-    DIRINPUT="/home/cvdlab/projects/lar-running-demo/nrn100.pklz"
     BESTIMAGE="460.png"
     
     COLORS="3"
