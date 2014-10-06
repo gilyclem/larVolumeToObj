@@ -237,8 +237,6 @@ def findBoundaryFaces(vertexes, faces, step):
 
     # reduced faces set
     faces_new = faces[- facesOnBoundary]
-    import ipdb
-    ipdb.set_trace()  # noqa BREAKPOINT
     print ' faces ', faces_new.shape
     return vertexes, faces_new.tolist()
 
