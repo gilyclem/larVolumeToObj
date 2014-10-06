@@ -92,9 +92,19 @@ class HistologyTest(unittest.TestCase):
         self.assertItemsEqual(off, [1, 2])
 
     def test_real_data(self):
-        v, f = rmbox.readFile("smallbb2.obj")
-        vn, fn = rmbox.findBoundaryFaces(v, f, 2)
-        # import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
+        vertexes, faces = rmbox.readFile("smallbb2.obj")
+        new_vertexes, inv_vertexes = rmbox.removeDoubleVertexes(vertexes)
+        new_faces = rmbox.reindexVertexesInFaces(faces, inv_vertexes)
+        # new_faces = rmbox.removeDoubleFaces(new_faces)
+        on, off = rmbox.findBoundaryFaces(new_vertexes, new_faces, 2)
+
+        # on = range(1, 100)
+
+        off_boundary_faces = np.array(new_faces)[off]
+        on_boundary_faces = np.array(new_faces)[on]
+        new_boundary_faces = rmbox.removeDoubleFaces(on_boundary_faces)
+        rmbox.writeFile('sm.obj', new_vertexes, selected_faces)
+        import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
 
 
 
