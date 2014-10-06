@@ -77,8 +77,6 @@ def findBoundaryVertexesForAxis(vertexes, step, axis, isOnBoundary=None):
     if isOnBoundary is None:
         isOnBoundary = np.zeros(vertexes_axis.shape, dtype=np.bool)
 
-    print isOnBoundary.shape
-    print vertexes_axis.shape
     for coor in box_coordinates:
         isOnBoundary = isOnBoundary + (vertexes_axis == coor)
 
@@ -208,9 +206,7 @@ def facesHaveAllPointsInList(faces, isOnBoundaryInds):
     for vertexInd in isOnBoundaryInds:
         isInVoxelList = isInVoxelList + (faces == vertexInd)
 
-    print 'is in ',isInVoxelList
     suma = np.sum(isInVoxelList, 1)
-    print 'sum ', suma
     return suma >= faces.shape[1]
 
 
@@ -220,7 +216,7 @@ def findBoundaryFaces(vertexes, faces, step):
     """
 
     # faces = np.array(faces)
-    print 'start ', faces.shape
+    # print 'start ', faces.shape
     facesOnBoundary = np.zeros(len(faces), dtype=np.bool)
     for axis in range(0, 3):
         isOnBoundary = findBoundaryVertexesForAxis(
@@ -228,9 +224,7 @@ def findBoundaryFaces(vertexes, faces, step):
 # faces.shape[1]
         isOnBoundaryInds = (np.nonzero(isOnBoundary)[0] + 1).tolist()
         facesOnBoundary += facesHaveAllPointsInList(faces, isOnBoundaryInds)
-        import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
 
-        print 'bound sum ', np.sum(facesOnBoundary)
 
     # reduced faces set
     on_boundary = np.nonzero(facesOnBoundary)[0]

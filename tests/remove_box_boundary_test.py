@@ -83,11 +83,13 @@ class HistologyTest(unittest.TestCase):
         ]
         f = [
             [4, 1, 2, 3],
-            [2, 4, 1, 6]
+            [2, 4, 1, 6],
+            [1, 4, 2, 5]
         ]
 
         on, off = rmbox.findBoundaryFaces(v, f, 10)
-        import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
+        self.assertItemsEqual(on, [0])
+        self.assertItemsEqual(off, [1, 2])
 
     def test_real_data(self):
         v, f = rmbox.readFile("smallbb2.obj")
