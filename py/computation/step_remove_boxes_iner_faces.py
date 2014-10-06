@@ -5,14 +5,17 @@
 Generator of histology report
 
 """
+
 import logging
 logger = logging.getLogger(__name__)
+
 import argparse
-import sys
+# import sys
 
 import numpy as np
 # import traceback
 import copy
+import time
 
 
 def removeFromOneAxis():
@@ -105,12 +108,17 @@ def removeDoubleVertexesAndFaces(vertexes, faces):
     vertexes and faces.
     """
 
+    t0 = time.time()
     new_vertexes, inv_vertexes = removeDoubleVertexes(vertexes)
-    logger.info("Doubled vertex removed")
+    t1 = time.time()
+    logger.info("Doubled vertex removed          " + str(t1 - t0))
     logger.info("Number of vertexes: %i " % (len(new_vertexes)))
     new_faces = reindexVertexesInFaces(faces, inv_vertexes)
-    logger.info("Faces reindexed")
+    t2 = time.time()
+    logger.info("Vertexes in faces reindexed     " + str(t2 - t1))
     new_faces = removeDoubleFaces(new_faces)
+    t3 = time.time()
+    logger.info("Double faces removed            " + str(t3 - t2))
     return new_vertexes, new_faces
 
 
@@ -186,12 +194,11 @@ def findBoundaryFaces(vertexes, faces, step):
     return vertexes, faces_new.tolist()
 
 
-def main(argv):
+def main():
     logger = logging.getLogger()
-
     logger.setLevel(logging.WARNING)
-    # ch = logging.StreamHandler()
-    # logger.addHandler(ch)
+    ch = logging.StreamHandler()
+    logger.addHandler(ch)
 
     # logger.debug('input params')
 
@@ -230,4 +237,4 @@ def main(argv):
     print "Number of vertexes: %i    Number of faces %i" % (len(v), len(f))
 
 if __name__ == "__main__":
-    main(sys.argv)
+    main()
