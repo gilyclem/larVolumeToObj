@@ -134,6 +134,26 @@ def removeDoubleVertexes(vertexes):
     return unique_vertexes.tolist(), inv
 
 
+def removeDoubleFacesOnlyOnBoundaryBoxes(vertexes, faces, bbsize):
+    """
+    Faster sister of removeDoubleFaces.
+
+    It works only on box boundary
+    """
+
+    on, off = findBoundaryFaces(vertexes, faces, bbsize)
+
+    # on = range(1, 100)
+
+    off_boundary_faces = np.array(faces)[off]
+    on_boundary_faces = np.array(faces)[on]
+    new_on_boundary_faces = removeDoubleFaces(on_boundary_faces)
+    new_faces = np.concatenate(
+        (off_boundary_faces, np.array(new_on_boundary_faces)),
+        0)
+    return new_faces.tolist()
+
+
 def removeDoubleFaces(faces):
     """
     Return array of faces with remowed rows of both duplicates

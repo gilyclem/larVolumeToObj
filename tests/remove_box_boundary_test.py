@@ -96,15 +96,9 @@ class HistologyTest(unittest.TestCase):
         new_vertexes, inv_vertexes = rmbox.removeDoubleVertexes(vertexes)
         new_faces = rmbox.reindexVertexesInFaces(faces, inv_vertexes)
         # new_faces = rmbox.removeDoubleFaces(new_faces)
-        on, off = rmbox.findBoundaryFaces(new_vertexes, new_faces, 2)
-
-        # on = range(1, 100)
-
-        off_boundary_faces = np.array(new_faces)[off]
-        on_boundary_faces = np.array(new_faces)[on]
-        new_boundary_faces = rmbox.removeDoubleFaces(on_boundary_faces)
-        rmbox.writeFile('sm.obj', new_vertexes, selected_faces)
-        import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
+        new_faces = rmbox.removeDoubleFacesOnlyOnBoundaryBoxes(
+            new_vertexes, new_faces, 2)
+        rmbox.writeFile('test_smallbb2_cleaned.obj', new_vertexes, new_faces)
 
 
 
