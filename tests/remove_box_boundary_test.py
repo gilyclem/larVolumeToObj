@@ -46,15 +46,15 @@ class HistologyTest(unittest.TestCase):
             [1, 3, 5]]
 
         faces = [
-            [0, 1, 3],
-            [3, 2, 1],
-            [4, 3, 1],
-            [2, 0, 4],
-            [1, 3, 2],
-            [1, 3, 0]]
+            [1, 2, 4],
+            [4, 3, 2],
+            [5, 4, 2],
+            [3, 1, 5],
+            [2, 4, 3],
+            [2, 4, 1]]
 
         expected_faces = np.array([
-            [0, 1, 3], [0, 2, 3]])
+            [1, 2, 4], [1, 3, 4]])
         new_vertexes, inv_vertexes = rmbox.removeDoubleVertexes(vertexes)
         new_faces = rmbox.reindexVertexesInFaces(faces, inv_vertexes)
         faces_new = rmbox.removeDoubleFaces(new_faces)
