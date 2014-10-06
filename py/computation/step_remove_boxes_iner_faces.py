@@ -145,6 +145,18 @@ def removeDoubleFaces(faces):
         face = face.sort()
     faces = np.array(faces)
 
+    reduced_idx = getIndexesOfSingleFaces(faces)
+    # reduced_idx2 = getIndexesOfSingleFacesBlocks(faces)
+    # kimport ipdb; ipdb.set_trace() #  noqa BREAKPOINT
+
+    unique_faces = faces_orig[reduced_idx]
+    return unique_faces.tolist()
+
+
+def getIndexesOfSingleFaces(faces):
+    """
+    Return indexes of not doubled faces.
+    """
     b = np.ascontiguousarray(faces).view(
         np.dtype((np.void, faces.dtype.itemsize * faces.shape[1])))
     _, idx, inv = np.unique(b, return_index=True, return_inverse=True)
@@ -152,9 +164,46 @@ def removeDoubleFaces(faces):
 # but we want remove all duplicated indexes. Not only duplicates
     duplication_number = [np.sum(inv == i) for i in range(0, len(idx))]
     reduced_idx = idx[np.array(duplication_number) == 1]
+    return reduced_idx
 
-    unique_faces = faces_orig[reduced_idx]
-    return unique_faces.tolist()
+
+def getIndexesOfSingleFacesBlocks(faces):
+    """
+    Return indexes of not doubled faces.
+
+    Function is sister of getIndexesOfSingleFaces. Difference is that
+    computataion is performed by blocks
+    """
+    reduced_bool = np.zeros(faces.shape[0], dtype=np.bool)
+
+    # working with whole list of faces is time consuming
+    # this is why we do this in blocks
+    block_size = 20
+    # import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
+    for i in range(0, faces.shape[0]):
+        # select faces with first
+        selected = (faces[:, 0] >= i) * (faces[:, 0] < i + block_size)
+        faces_subset = faces[selected]
+
+        b = np.ascontiguousarray(faces_subset).view(
+            np.dtype((np.void, faces.dtype.itemsize * faces_subset.shape[1])))
+        _, idx, inv = np.unique(b, return_index=True, return_inverse=True)
+# now idx describes unique indexes
+# but we want remove all duplicated indexes. Not only duplicates
+        duplication_number = [np.sum(inv == i) for i in range(0, len(idx))]
+        subset_reduced_idx = idx[np.array(duplication_number) == 1]
+
+        selected_idx_nz = np.nonzero(selected)
+        selected_idx = selected_idx_nz[0]
+
+
+        # arrange subset to original data
+        reduced_bool[selected_idx[subset_reduced_idx]] = True
+        # import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
+        # reduced_idx[selected] = subset_reduced_idx
+    #import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
+        reduced_idx = np.nonzero(reduced_bool)[0]
+    return reduced_idx
 
 
 def facesHaveAllPointsInList(faces, isOnBoundaryInds):
