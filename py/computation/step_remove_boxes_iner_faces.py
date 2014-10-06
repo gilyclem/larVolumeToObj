@@ -100,7 +100,7 @@ def reindexVertexesInFaces(faces, new_indexes):
     return faces
 
 
-def removeDoubleVertexesAndFaces(vertexes, faces):
+def removeDoubleVertexesAndFaces(vertexes, faces, boxsize=None):
     """
     Main function of module. Return object description cleand from double
     vertexes and faces.
@@ -114,7 +114,12 @@ def removeDoubleVertexesAndFaces(vertexes, faces):
     new_faces = reindexVertexesInFaces(faces, inv_vertexes)
     t2 = time.time()
     logger.info("Vertexes in faces reindexed     " + str(t2 - t1))
-    new_faces = removeDoubleFaces(new_faces)
+    if boxsize is None:
+        new_faces = removeDoubleFaces(new_faces)
+    else:
+        new_faces = removeDoubleFacesOnlyOnBoundaryBoxes(
+            new_vertexes, new_faces, boxsize[0])
+# @TODO add other axis
     t3 = time.time()
     logger.info("Double faces removed            " + str(t3 - t2))
     return new_vertexes, new_faces
@@ -275,7 +280,7 @@ def main():
     )
     parser.add_argument(
         '-b', '--boxsize',
-        default=[2, 2, 2],
+        default=None,
         type=int,
         metavar='N',
         nargs='+',
@@ -292,7 +297,7 @@ def main():
     print "Number of vertexes: %i    Number of faces %i" % (len(v), len(f))
     # findBoxVertexesForAxis(v, 2, 0)
     # v, f = findBoundaryFaces(v, f, 2)
-    v, f = removeDoubleVertexesAndFaces(v, f)
+    v, f = removeDoubleVertexesAndFaces(v, f, args.boxsize)
     writeFile('out.obj', v, f)
     print "After"
     print "Number of vertexes: %i    Number of faces %i" % (len(v), len(f))
