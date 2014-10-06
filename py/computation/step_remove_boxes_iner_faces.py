@@ -179,7 +179,6 @@ def getIndexesOfSingleFacesBlocks(faces):
     # working with whole list of faces is time consuming
     # this is why we do this in blocks
     block_size = 20
-    # import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
     for i in range(0, faces.shape[0]):
         # select faces with first
         selected = (faces[:, 0] >= i) * (faces[:, 0] < i + block_size)
@@ -196,12 +195,8 @@ def getIndexesOfSingleFacesBlocks(faces):
         selected_idx_nz = np.nonzero(selected)
         selected_idx = selected_idx_nz[0]
 
-
         # arrange subset to original data
         reduced_bool[selected_idx[subset_reduced_idx]] = True
-        # import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
-        # reduced_idx[selected] = subset_reduced_idx
-    #import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
         reduced_idx = np.nonzero(reduced_bool)[0]
     return reduced_idx
 
@@ -213,9 +208,10 @@ def facesHaveAllPointsInList(faces, isOnBoundaryInds):
     for vertexInd in isOnBoundaryInds:
         isInVoxelList = isInVoxelList + (faces == vertexInd)
 
+    print 'is in ',isInVoxelList
     suma = np.sum(isInVoxelList, 1)
-    print 'sum ', np.max(suma)
-    return suma >= 3
+    print 'sum ', suma
+    return suma >= faces.shape[1]
 
 
 def findBoundaryFaces(vertexes, faces, step):
@@ -223,22 +219,26 @@ def findBoundaryFaces(vertexes, faces, step):
     vertexes, step
     """
 
-    faces = np.array(faces)
+    # faces = np.array(faces)
     print 'start ', faces.shape
     facesOnBoundary = np.zeros(len(faces), dtype=np.bool)
     for axis in range(0, 3):
         isOnBoundary = findBoundaryVertexesForAxis(
             vertexes, step, axis)
-
-        isOnBoundaryInds = np.nonzero(isOnBoundary)[0]
+# faces.shape[1]
+        isOnBoundaryInds = (np.nonzero(isOnBoundary)[0] + 1).tolist()
         facesOnBoundary += facesHaveAllPointsInList(faces, isOnBoundaryInds)
+        import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
 
         print 'bound sum ', np.sum(facesOnBoundary)
 
     # reduced faces set
-    faces_new = faces[- facesOnBoundary]
-    print ' faces ', faces_new.shape
-    return vertexes, faces_new.tolist()
+    on_boundary = np.nonzero(facesOnBoundary)[0]
+    off_boundary = np.nonzero(-facesOnBoundary)[0]
+    # faces_new = faces[- facesOnBoundary]
+    # print ' faces ', faces_new.shape
+    # return vertexes, faces_new.tolist()
+    return on_boundary, off_boundary
 
 
 def main():

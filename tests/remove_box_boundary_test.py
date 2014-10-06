@@ -60,5 +60,41 @@ class HistologyTest(unittest.TestCase):
         faces_new = rmbox.removeDoubleFaces(new_faces)
         self.assertAlmostEqual(0, np.sum(faces_new - expected_faces))
 
+
+    def test_face_have_all_points_in_list(self):
+        faces = [
+            [4, 1, 2, 3 ],
+            [1, 4, 2, 5]
+        ]
+        isOnBoundary = [1, 2, 3, 4]
+
+        fb = rmbox.facesHaveAllPointsInList(faces, isOnBoundary)
+        self.assertItemsEqual(fb, [True, False])
+
+
+    def test_findBoundaryFaces(self):
+        v = [
+            [10, 3, 3],
+            [10, 4, 1],
+            [10, 6, 2],
+            [10, 6, 6],
+            [8, 6, 6],
+            [11, 8, 8],
+        ]
+        f = [
+            [4, 1, 2, 3],
+            [2, 4, 1, 6]
+        ]
+
+        on, off = rmbox.findBoundaryFaces(v, f, 10)
+        import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
+
+    def test_real_data(self):
+        v, f = rmbox.readFile("smallbb2.obj")
+        vn, fn = rmbox.findBoundaryFaces(v, f, 2)
+        # import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
+
+
+
 if __name__ == "__main__":
     unittest.main()
