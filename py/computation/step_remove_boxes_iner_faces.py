@@ -28,14 +28,13 @@ def writeFile(filename, vertexes, faces):
             f.write("v %i %i %i\n" % (vertex[0], vertex[1], vertex[2]))
 
         for face in faces:
-            fstr = "f "
+            fstr = "f"
             for i in range(0, len(face)):
-                fstr += "%i " % (face[i])
+                fstr += " %i" % (face[i])
 
             fstr += "\n"
 
             f.write(fstr)
-            # f.write("f %i %i %i\n" % (face[0], face[1], face[2]))
 
 
 def readFile(filename):
@@ -43,7 +42,7 @@ def readFile(filename):
     faces = []
     with open(filename, "r") as f:
         for line in f.readlines():
-            lnarr = line.split(' ')
+            lnarr = line.strip().split(' ')
             if lnarr[0] == 'v':
                 vertexes.append([
                     int(lnarr[1]),
