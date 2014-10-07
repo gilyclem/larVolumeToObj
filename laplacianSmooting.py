@@ -131,9 +131,6 @@ def main():
 
     V, FV = readFile(args.inputfile)
 
-    import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
-
-
     csrAdj = adjacencyQuery(V, FV)
 # transformation of FV to 0-based indices (as required by LAR)
     FV = [[v - 1 for v in face] for face in FV]
