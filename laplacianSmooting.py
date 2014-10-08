@@ -6,10 +6,19 @@ logger = logging.getLogger(__name__)
 
 import argparse
 
+import time
+import pickle
+
 import sys
+import os
 """ import modules from lar-cc/lib """
-sys.path.insert(0, '/home/mjirik/projects/lar-cc/lib/py')
-from larcc import *
+sys.path.insert(0, os.path.expanduser('~/projects/lar-cc/lib/py'))
+sys.path.insert(0, './py/computation')
+# sys.path.insert(0, '/home/mjirik/projects/lar-cc/lib/py')
+
+from larcc import * # noqa
+
+from fileio import writeFile, readFile
 
 
 # input of test file nrn100.py (with definetion of V and FV)
@@ -20,40 +29,23 @@ from larcc import *
 # from nrn100 import *
 
 
-def writeFile(filename, vertexes, faces):
-    with open(filename, "w") as f:
-        for vertex in vertexes:
-            f.write("v %i %i %i\n" % (vertex[0], vertex[1], vertex[2]))
 
-        for face in faces:
-            fstr = "f"
-            for i in range(0, len(face)):
-                fstr += " %i" % (face[i])
+def triangulateSquares(F,
+                       a=[0, 1, 2], b=[2, 3, 0],
+                       c=[1, 0, 2], d=[3, 2, 0]
+                       ):
+    """
+    Convert squares to triangles
+    """
+    FT = []
+    for face in F:
+        FT.append([face[a[0]], face[a[1]], face[a[2]]])
+        FT.append([face[b[0]], face[b[1]], face[b[2]]])
+        # FT.append([face[c[0]], face[c[1]], face[c[2]]])
+        # FT.append([face[d[0]], face[d[1]], face[d[2]]])
+        # FT.append([face[0], face[3], face[2]])
+    return FT
 
-            fstr += "\n"
-
-            f.write(fstr)
-
-
-def readFile(filename):
-    vertexes = []
-    faces = []
-    with open(filename, "r") as f:
-        for line in f.readlines():
-            lnarr = line.strip().split(' ')
-            if lnarr[0] == 'v':
-                vertexes.append([
-                    int(lnarr[1]),
-                    int(lnarr[2]),
-                    int(lnarr[3])
-                ])
-            if lnarr[0] == 'f':
-                face = [0] * (len(lnarr) - 1)
-                for i in range(1, len(lnarr)):
-                    face[i - 1] = int(lnarr[i])
-                faces.append(face)
-
-    return vertexes, faces
 
 # scipy.sparse matrices required
 # Computation of Vertex-to-vertex adjacency matrix
@@ -123,21 +115,44 @@ def main():
         help='input file'
     )
     parser.add_argument(
+        '-v', '--visualization', action='store_true',
+        help='Use visualization')
+    parser.add_argument(
         '-d', '--debug', action='store_true',
         help='Debug mode')
+
     args = parser.parse_args()
     if args.debug:
         logger.setLevel(logging.DEBUG)
 
+    t0 = time.time()
     V, FV = readFile(args.inputfile)
 
+    t1 = time.time()
+    logger.info('Data imported                   %ss. #V: %i, #FV: %i' %
+                (str(t1 - t0), len(V), len(FV)))
+
     csrAdj = adjacencyQuery(V, FV)
+    t2 = time.time()
+    logger.info('Adjency query                   %ss' %
+                (str(t2 - t1)))
+
 # transformation of FV to 0-based indices (as required by LAR)
     FV = [[v - 1 for v in face] for face in FV]
-    VIEW(STRUCT(MKPOLS((V, FV))))
-    VIEW(EXPLODE(1.2, 1.2, 1.2)(MKPOLS((V, FV))))
+    t3 = time.time()
+    logger.info('FV transformation               %ss' %
+                (str(t3 - t2)))
 
+    if False:
+    # if args.visualization:
+        VIEW(STRUCT(MKPOLS((V, FV))))
+        VIEW(EXPLODE(1.2, 1.2, 1.2)(MKPOLS((V, FV))))
+
+    t4 = time.time()
     VV = adjVerts(V, FV)
+    t5 = time.time()
+    logger.info('adj verts                       %ss' %
+                (str(t5 - t4)))
 # VIEW(STRUCT(MKPOLS((V,CAT([DISTR([VV[v],v ]) for v in range(n)]))))) #
 # long time to evaluate
 
@@ -147,11 +162,33 @@ def main():
 #
     V1 = AA(CCOMB)([[V[v] for v in adjs] for adjs in VV])
 
+    t6 = time.time()
+    logger.info('1st iteration                   %ss' %
+                (str(t6 - t5)))
 # input V1
 # output V2 = new positions of vertices
 #
     V2 = AA(CCOMB)([[V1[v] for v in adjs] for adjs in VV])
-    VIEW(STRUCT(MKPOLS((V2, FV))))
+    t7 = time.time()
+    logger.info('2st iteration                   %ss' %
+                (str(t7 - t6)))
+
+    if args.visualization:
+        # FV = triangulateSquares(FV)
+        tv1 = time.time()
+        logger.info('triangulation               %ss' %
+                    (str(tv1 - t7)))
+        VIEW(STRUCT(MKPOLS((V2, FV))))
+
+    import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
+
+# move index basis back
+    FV = (np.array(FV) + 1).tolist()
+
+# write outputs
+    writeFile(args.outputfile + '.pkl', V2, FV)
+    writeFile(args.outputfile, V2, FV)
+    logger.info("Data stored to ' %s" % (args.outputfile))
 
 if __name__ == "__main__":
     main()
