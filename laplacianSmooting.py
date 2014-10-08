@@ -7,9 +7,12 @@ logger = logging.getLogger(__name__)
 import argparse
 
 import sys
+import os
 """ import modules from lar-cc/lib """
-sys.path.insert(0, '/home/mjirik/projects/lar-cc/lib/py')
-from larcc import *
+sys.path.insert(0, os.path.expanduser('~/projects/lar-cc/lib/py'))
+# sys.path.insert(0, '/home/mjirik/projects/lar-cc/lib/py')
+
+from larcc import * # noqa
 
 
 # input of test file nrn100.py (with definetion of V and FV)
@@ -134,7 +137,7 @@ def main():
     import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
 
 
-    csrAdj = adjacencyQuery(V, FV)
+    csrAdj = adjacencyQuery(V, FV)  # noqa
 # transformation of FV to 0-based indices (as required by LAR)
     FV = [[v - 1 for v in face] for face in FV]
     VIEW(STRUCT(MKPOLS((V, FV))))
