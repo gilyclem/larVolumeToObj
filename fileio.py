@@ -118,7 +118,7 @@ def main():
     parser.add_argument(
         '-mib', '--moveindexbasis',
         type=int,
-        default = 0
+        default=0,
         help='indexes are 0-based or 1-based')
     parser.add_argument(
         '-d', '--debug', action='store_true',
