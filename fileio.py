@@ -88,6 +88,8 @@ def readFile(filename, ftype='auto'):
                         face[i - 1] = int(lnarr[i])
                     faces.append(face)
 
+    return vertexes, faces
+
 
 def main():
 
@@ -114,8 +116,10 @@ def main():
         help='input file'
     )
     parser.add_argument(
-        '-v', '--visualization', action='store_true',
-        help='Use visualization')
+        '-mib', '--moveindexbasis',
+        type=int,
+        default = 0
+        help='indexes are 0-based or 1-based')
     parser.add_argument(
         '-d', '--debug', action='store_true',
         help='Debug mode')
@@ -127,6 +131,8 @@ def main():
     # t0 = time.time()
     V, FV = readFile(args.inputfile)
     logger.info("Data readed from '%s'" % (args.inputfile))
+    if args.moveindexbasis is not 0:
+        FV = (np.array(FV) + args.moveindexbasis).tolist()
 
     writeFile(args.outputfile, V, FV)
     logger.info("Data stored to '%s'" % (args.outputfile))
