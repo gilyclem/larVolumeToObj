@@ -18,7 +18,7 @@ sys.path.insert(0, './py/computation')
 
 from larcc import * # noqa
 
-from fileio import writeFile, writeFilePickle, readFile
+from fileio import writeFile, readFile
 
 
 # input of test file nrn100.py (with definetion of V and FV)
@@ -182,7 +182,11 @@ def main():
 
     import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
 
-    writeFilePickle(args.outputfile+'.pkl', V2, FV)
+# move index basis back
+    FV = (np.array(FV) + 1).tolist()
+
+# write outputs
+    writeFile(args.outputfile + '.pkl', V2, FV)
     writeFile(args.outputfile, V2, FV)
     logger.info("Data stored to ' %s" % (args.outputfile))
 
