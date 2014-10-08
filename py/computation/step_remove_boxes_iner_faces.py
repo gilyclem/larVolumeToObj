@@ -17,45 +17,13 @@ import numpy as np
 import copy
 import time
 
+from io import readFile, writeFile
+
 
 def removeFromOneAxis():
     pass
 
 
-def writeFile(filename, vertexes, faces):
-    with open(filename, "w") as f:
-        for vertex in vertexes:
-            f.write("v %i %i %i\n" % (vertex[0], vertex[1], vertex[2]))
-
-        for face in faces:
-            fstr = "f"
-            for i in range(0, len(face)):
-                fstr += " %i" % (face[i])
-
-            fstr += "\n"
-
-            f.write(fstr)
-
-
-def readFile(filename):
-    vertexes = []
-    faces = []
-    with open(filename, "r") as f:
-        for line in f.readlines():
-            lnarr = line.strip().split(' ')
-            if lnarr[0] == 'v':
-                vertexes.append([
-                    int(lnarr[1]),
-                    int(lnarr[2]),
-                    int(lnarr[3])
-                ])
-            if lnarr[0] == 'f':
-                face = [0] * (len(lnarr) - 1)
-                for i in range(1, len(lnarr)):
-                    face[i - 1] = int(lnarr[i])
-                faces.append(face)
-
-    return vertexes, faces
 
 
 def findBoundaryVertexesForAxis(vertexes, step, axis, isOnBoundary=None):
@@ -278,6 +246,12 @@ def main():
         help='input file'
     )
     parser.add_argument(
+        '-o', '--outputfile',
+        default=None,
+        required=True,
+        help='output file'
+    )
+    parser.add_argument(
         '-b', '--boxsize',
         default=None,
         type=int,
@@ -297,7 +271,7 @@ def main():
     # findBoxVertexesForAxis(v, 2, 0)
     # v, f = findBoundaryFaces(v, f, 2)
     v, f = removeDoubleVertexesAndFaces(v, f, args.boxsize)
-    writeFile('out.obj', v, f)
+    writeFile(args.outputfile, v, f)
     print "After"
     print "Number of vertexes: %i    Number of faces %i" % (len(v), len(f))
 
