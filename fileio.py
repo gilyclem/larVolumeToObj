@@ -84,14 +84,11 @@ def readFile(filename, ftype='auto'):
                             int(lnarr[3])
                         ]
                     except:
-                        try:
-                            vertex = [
-                                float(lnarr[1]),
-                                float(lnarr[2]),
-                                float(lnarr[3])
-                            ]
-                        except:
-                            import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
+                        vertex = [
+                            float(lnarr[1]),
+                            float(lnarr[2]),
+                            float(lnarr[3])
+                        ]
 
                     vertexes.append(vertex)
                 if lnarr[0] == 'f':
