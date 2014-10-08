@@ -9,10 +9,10 @@ import argparse
 # import time
 import pickle
 
-# import sys
+import sys
 import os
 # """ import modules from lar-cc/lib """
-# sys.path.insert(0, os.path.expanduser('~/projects/lar-cc/lib/py'))
+sys.path.insert(0, os.path.expanduser('~/projects/lar-cc/lib/py'))
 # sys.path.insert(0, '/home/mjirik/projects/lar-cc/lib/py')
 
 from larcc import * # noqa
@@ -123,6 +123,9 @@ def main():
     parser.add_argument(
         '-d', '--debug', action='store_true',
         help='Debug mode')
+    parser.add_argument(
+        '--console', action='store_true',
+        help='Debug mode')
 
     args = parser.parse_args()
     if args.debug:
@@ -133,6 +136,10 @@ def main():
     logger.info("Data readed from '%s'" % (args.inputfile))
     if args.moveindexbasis is not 0:
         FV = (np.array(FV) + args.moveindexbasis).tolist()
+
+    if args.console:
+        import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
+
 
     writeFile(args.outputfile, V, FV)
     logger.info("Data stored to '%s'" % (args.outputfile))
