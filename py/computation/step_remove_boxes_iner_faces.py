@@ -10,20 +10,19 @@ import logging
 logger = logging.getLogger(__name__)
 
 import argparse
-# import sys
+import sys
 
 import numpy as np
 # import traceback
 import copy
 import time
 
+sys.path.insert(0, './py/computation')
 from fileio import readFile, writeFile
 
 
 def removeFromOneAxis():
     pass
-
-
 
 
 def findBoundaryVertexesForAxis(vertexes, step, axis, isOnBoundary=None):
@@ -216,7 +215,6 @@ def findBoundaryFaces(vertexes, faces, step):
 # faces.shape[1]
         isOnBoundaryInds = (np.nonzero(isOnBoundary)[0] + 1).tolist()
         facesOnBoundary += facesHaveAllPointsInList(faces, isOnBoundaryInds)
-
 
     # reduced faces set
     on_boundary = np.nonzero(facesOnBoundary)[0]
