@@ -6,6 +6,8 @@ logger = logging.getLogger(__name__)
 
 import argparse
 
+import time
+
 import sys
 import os
 """ import modules from lar-cc/lib """
@@ -24,6 +26,11 @@ from larcc import * # noqa
 
 
 def writeFile(filename, vertexes, faces):
+    """
+    filename
+    vertexes
+    faces
+    """
     with open(filename, "w") as f:
         for vertex in vertexes:
             f.write("v %i %i %i\n" % (vertex[0], vertex[1], vertex[2]))
@@ -126,24 +133,43 @@ def main():
         help='input file'
     )
     parser.add_argument(
+        '-v', '--visualization', action='store_true',
+        help='Use visualization')
+    parser.add_argument(
         '-d', '--debug', action='store_true',
         help='Debug mode')
+
     args = parser.parse_args()
     if args.debug:
         logger.setLevel(logging.DEBUG)
 
+    t0 = time.time()
     V, FV = readFile(args.inputfile)
 
-    import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
+    t1 = time.time()
+    logger.info('Data imported                   %ss. #V: %i, #FV: %i' %
+                (str(t1 - t0), len(V), len(FV)))
 
+    csrAdj = adjacencyQuery(V, FV)
+    t2 = time.time()
+    logger.info('Adjency query                   %ss' %
+                (str(t2 - t1)))
 
-    csrAdj = adjacencyQuery(V, FV)  # noqa
 # transformation of FV to 0-based indices (as required by LAR)
     FV = [[v - 1 for v in face] for face in FV]
-    VIEW(STRUCT(MKPOLS((V, FV))))
-    VIEW(EXPLODE(1.2, 1.2, 1.2)(MKPOLS((V, FV))))
+    t3 = time.time()
+    logger.info('FV transformation               %ss' %
+                (str(t3 - t2)))
 
+    if args.visualization:
+        VIEW(STRUCT(MKPOLS((V, FV))))
+        VIEW(EXPLODE(1.2, 1.2, 1.2)(MKPOLS((V, FV))))
+
+    t4 = time.time()
     VV = adjVerts(V, FV)
+    t5 = time.time()
+    logger.info('adj verts                       %ss' %
+                (str(t5 - t4)))
 # VIEW(STRUCT(MKPOLS((V,CAT([DISTR([VV[v],v ]) for v in range(n)]))))) #
 # long time to evaluate
 
@@ -153,11 +179,24 @@ def main():
 #
     V1 = AA(CCOMB)([[V[v] for v in adjs] for adjs in VV])
 
+    t6 = time.time()
+    logger.info('1st iteration                   %ss' %
+                (str(t6 - t5)))
 # input V1
 # output V2 = new positions of vertices
 #
     V2 = AA(CCOMB)([[V1[v] for v in adjs] for adjs in VV])
-    VIEW(STRUCT(MKPOLS((V2, FV))))
+    t7 = time.time()
+    logger.info('2st iteration                   %ss' %
+                (str(t7 - t6)))
+
+    if args.visualization:
+        VIEW(STRUCT(MKPOLS((V2, FV))))
+
+    import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
+
+    writeFile(args.outputfile, V2, FV)
+    logger.info("Data stored to ' %s" % (args.outputfile))
 
 if __name__ == "__main__":
     main()
