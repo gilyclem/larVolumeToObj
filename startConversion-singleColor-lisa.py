@@ -29,7 +29,7 @@ def main():
     logger = logging.getLogger()
 
     logger.setLevel(logging.WARNING)
-    # ch = logging.StreamHandler()
+    ch = logging.StreamHandler()
     # logger.addHandler(ch)
 
     # logger.debug('input params')
