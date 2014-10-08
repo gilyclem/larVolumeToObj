@@ -7,6 +7,7 @@ logger = logging.getLogger(__name__)
 import argparse
 
 import time
+import pickle
 
 import sys
 import os
@@ -24,6 +25,9 @@ from larcc import * # noqa
 # sys.path.insert(1, '/Users/paoluzzi/Documents/RICERCA/pilsen/ricerca/')
 # from nrn100 import *
 
+def writeFilePickle(filename, vertexes, faces):
+    pickle.dump([vertexes, faces], open(filename, 'wb'))
+
 
 def writeFile(filename, vertexes, faces):
     """
@@ -33,7 +37,11 @@ def writeFile(filename, vertexes, faces):
     """
     with open(filename, "w") as f:
         for vertex in vertexes:
-            f.write("v %i %i %i\n" % (vertex[0], vertex[1], vertex[2]))
+            try:
+                f.write("v %i %i %i\n" % (vertex[0], vertex[1], vertex[2]))
+            except:
+                import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
+
 
         for face in faces:
             fstr = "f"
@@ -43,6 +51,23 @@ def writeFile(filename, vertexes, faces):
             fstr += "\n"
 
             f.write(fstr)
+
+
+def triangulateSquares(F,
+                       a=[0, 1, 2], b=[2, 3, 0],
+                       c=[1, 0, 2], d=[3, 2, 0]
+                       ):
+    """
+    Convert squares to triangles
+    """
+    FT = []
+    for face in F:
+        FT.append([face[a[0]], face[a[1]], face[a[2]]])
+        FT.append([face[b[0]], face[b[1]], face[b[2]]])
+        # FT.append([face[c[0]], face[c[1]], face[c[2]]])
+        # FT.append([face[d[0]], face[d[1]], face[d[2]]])
+        # FT.append([face[0], face[3], face[2]])
+    return FT
 
 
 def readFile(filename):
@@ -161,7 +186,8 @@ def main():
     logger.info('FV transformation               %ss' %
                 (str(t3 - t2)))
 
-    if args.visualization:
+    if False:
+    # if args.visualization:
         VIEW(STRUCT(MKPOLS((V, FV))))
         VIEW(EXPLODE(1.2, 1.2, 1.2)(MKPOLS((V, FV))))
 
@@ -190,11 +216,18 @@ def main():
     logger.info('2st iteration                   %ss' %
                 (str(t7 - t6)))
 
+    import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
+
     if args.visualization:
+        FV = triangulateSquares(FV)
+        tv1 = time.time()
+        logger.info('triangulation               %ss' %
+                    (str(tv1 - t7)))
         VIEW(STRUCT(MKPOLS((V2, FV))))
 
     import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
 
+    writeFilePickle(args.outputfile+'.pkl', V2, FV)
     writeFile(args.outputfile, V2, FV)
     logger.info("Data stored to ' %s" % (args.outputfile))
 
