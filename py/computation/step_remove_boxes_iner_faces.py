@@ -17,7 +17,7 @@ import numpy as np
 import copy
 import time
 
-from io import readFile, writeFile
+from fileio import readFile, writeFile
 
 
 def removeFromOneAxis():

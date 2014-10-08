@@ -13,9 +13,12 @@ import sys
 import os
 """ import modules from lar-cc/lib """
 sys.path.insert(0, os.path.expanduser('~/projects/lar-cc/lib/py'))
+sys.path.insert(0, './py/computation')
 # sys.path.insert(0, '/home/mjirik/projects/lar-cc/lib/py')
 
 from larcc import * # noqa
+
+from fileio import writeFile, writeFilePickle, readFile
 
 
 # input of test file nrn100.py (with definetion of V and FV)
@@ -25,32 +28,6 @@ from larcc import * # noqa
 # sys.path.insert(1, '/Users/paoluzzi/Documents/RICERCA/pilsen/ricerca/')
 # from nrn100 import *
 
-def writeFilePickle(filename, vertexes, faces):
-    pickle.dump([vertexes, faces], open(filename, 'wb'))
-
-
-def writeFile(filename, vertexes, faces):
-    """
-    filename
-    vertexes
-    faces
-    """
-    with open(filename, "w") as f:
-        for vertex in vertexes:
-            try:
-                f.write("v %i %i %i\n" % (vertex[0], vertex[1], vertex[2]))
-            except:
-                import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
-
-
-        for face in faces:
-            fstr = "f"
-            for i in range(0, len(face)):
-                fstr += " %i" % (face[i])
-
-            fstr += "\n"
-
-            f.write(fstr)
 
 
 def triangulateSquares(F,
@@ -69,26 +46,6 @@ def triangulateSquares(F,
         # FT.append([face[0], face[3], face[2]])
     return FT
 
-
-def readFile(filename):
-    vertexes = []
-    faces = []
-    with open(filename, "r") as f:
-        for line in f.readlines():
-            lnarr = line.strip().split(' ')
-            if lnarr[0] == 'v':
-                vertexes.append([
-                    int(lnarr[1]),
-                    int(lnarr[2]),
-                    int(lnarr[3])
-                ])
-            if lnarr[0] == 'f':
-                face = [0] * (len(lnarr) - 1)
-                for i in range(1, len(lnarr)):
-                    face[i - 1] = int(lnarr[i])
-                faces.append(face)
-
-    return vertexes, faces
 
 # scipy.sparse matrices required
 # Computation of Vertex-to-vertex adjacency matrix
@@ -216,10 +173,8 @@ def main():
     logger.info('2st iteration                   %ss' %
                 (str(t7 - t6)))
 
-    import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
-
     if args.visualization:
-        FV = triangulateSquares(FV)
+        # FV = triangulateSquares(FV)
         tv1 = time.time()
         logger.info('triangulation               %ss' %
                     (str(tv1 - t7)))
