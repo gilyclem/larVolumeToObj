@@ -49,7 +49,7 @@ def writeFile(filename, vertexes, faces, ftype='auto'):
                     ))
                 except:
                     logger.warning('empty vertex %i ' % (i))
-                    f.write("v 0 0 0")
+                    f.write("v 0 0 0\n")
                     # import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
 
             for face in faces:
@@ -77,11 +77,23 @@ def readFile(filename, ftype='auto'):
             for line in f.readlines():
                 lnarr = line.strip().split(' ')
                 if lnarr[0] == 'v':
-                    vertexes.append([
-                        int(lnarr[1]),
-                        int(lnarr[2]),
-                        int(lnarr[3])
-                    ])
+                    try:
+                        vertex = [
+                            int(lnarr[1]),
+                            int(lnarr[2]),
+                            int(lnarr[3])
+                        ]
+                    except:
+                        try:
+                            vertex = [
+                                float(lnarr[1]),
+                                float(lnarr[2]),
+                                float(lnarr[3])
+                            ]
+                        except:
+                            import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
+
+                    vertexes.append(vertex)
                 if lnarr[0] == 'f':
                     face = [0] * (len(lnarr) - 1)
                     for i in range(1, len(lnarr)):
@@ -139,7 +151,6 @@ def main():
 
     if args.console:
         import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
-
 
     writeFile(args.outputfile, V, FV)
     logger.info("Data stored to '%s'" % (args.outputfile))
