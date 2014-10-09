@@ -18,7 +18,8 @@ import multiprocessing
 from multiprocessing import Process, Value, Lock
 from Queue import Queue
 # cython stuf. not used now
-import pyximport; pyximport.install()
+import pyximport
+pyximport.install()
 import calc_chains_helper as cch
 
 
@@ -43,7 +44,7 @@ logging_level = 2;
 # 3 = many many details
 
 def log(n, l):
-    if __name__=="__main__" and n <= logging_level:
+    if __name__ == "__main__" and n <= logging_level:
         for s in l:
             print "Log:", s;
 
@@ -58,13 +59,13 @@ BIN_EXTENSION = ".bin"
 # Utility toolbox
 # ------------------------------------------------------------
 
-def invertIndex(nx,ny,nz):
-    nx,ny,nz = nx+1,ny+1,nz+1
+def invertIndex(nx, ny, nz):
+    nx, ny, nz = nx+1, ny+1, nz+1
     def invertIndex0(offset):
         a0, b0 = offset / nx, offset % nx
         a1, b1 = a0 / ny, a0 % ny
         a2, b2 = a1 / nz, a1 % nz
-        return b0,b1,b2
+        return b0, b1, b2
     return invertIndex0
 
 def countFilesInADir(directory):
@@ -85,7 +86,7 @@ def read_pkl_by_block(datap, startImage, endImage, centroidsCalc):
     # datap = dr.Get3DData(imageDirPkl, qt_app=None, dataplus_format=True, gui=False)
     # print "start im ", startImage, ' ', endImage
     wanted_label = 1
-    segmentation = datap['segmentation'][startImage:endImage:, :, :]
+    segmentation = datap['segmentation'][startImage:endImage:,:,:]
     # print np.unique(segmentation)
     # segmentation = datap['segmentation'][startImage:endImage, ::5, ::5]
     # segmentation[:10,:15,:20]=2
@@ -103,18 +104,18 @@ def read_pkl_by_block(datap, startImage, endImage, centroidsCalc):
     return segmentation
 
 def computeChainsThread(
-    startImage,endImage,imageHeight,imageWidth,
-    imageDx,imageDy,imageDz,
-    Nx,Ny,Nz,
-    calculateout,BORDER_FILE,
+    startImage, endImage, imageHeight, imageWidth,
+    imageDx, imageDy, imageDz,
+    Nx, Ny, Nz,
+    calculateout, BORDER_FILE,
     centroidsCalc, colorIdx, datap, DIR_O):
 # centroidsCalc - remove
 # @TODO use centroidsCalc
     # print 'cC '
     # print centroidsCalc
 
-    #centroidsCalc = np.array([[0],[ 1]])
-    log(2, [ "Working task: " +str(startImage) + "-" + str(endImage) + " [" + str( imageHeight) + "-" + str( imageWidth ) + "-" + str(imageDx) + "-" + str( imageDy) + "-" + str (imageDz) + "]" ])
+    # centroidsCalc = np.array([[0],[ 1]])
+    log(2, [ "Working task: " + str(startImage) + "-" + str(endImage) + " [" + str( imageHeight) + "-" + str( imageWidth ) + "-" + str(imageDx) + "-" + str( imageDy) + "-" + str (imageDz) + "]" ])
 
     bordo3 = None
     if (calculateout == True):
@@ -132,14 +133,14 @@ def computeChainsThread(
                         DATA = np.asarray(bordo3_json['DATA'], dtype=np.int8)
                     # print "border m ",  ROW.shape, COL.shape, DATA.shape
                     # print  "55555555555555555555555555555555555555"
-                    bordo3 = csr_matrix((DATA,COL,ROW),shape=(ROWCOUNT,COLCOUNT));
+                    bordo3 = csr_matrix((DATA, COL, ROW), shape=(ROWCOUNT, COLCOUNT));
 
-    xEnd, yEnd = 0,0
+    xEnd, yEnd = 0, 0
     beginImageStack = 0
 # @TODO do something with the input colorNumber
     saveTheColors = centroidsCalc
-    #saveTheColors = np.array([1,0])
-    saveTheColors = np.array( sorted(saveTheColors.reshape(1,len(centroidsCalc))[0]), dtype=np.int )
+    # saveTheColors = np.array([1,0])
+    saveTheColors = np.array( sorted(saveTheColors.reshape(1, len(centroidsCalc))[0]), dtype=np.int )
 
     fileName = "pselettori-"
     if (calculateout == True):
@@ -152,16 +153,16 @@ def computeChainsThread(
         print "fileToWrite", DIR_O+'/'+fileName+str(saveTheColors[colorIdx])+BIN_EXTENSION
         fileToWrite = open(DIR_O+'/'+fileName+str(saveTheColors[colorIdx])+BIN_EXTENSION, "wb")
         try:
-            log(2, [ "Working task: " +str(startImage) + "-" + str(endImage) + " [loading colors]" ])
-            #theImage,colorNumber,theColors = pngstack2array3d(
+            log(2, [ "Working task: " + str(startImage) + "-" + str(endImage) + " [loading colors]" ])
+            # theImage,colorNumber,theColors = pngstack2array3d(
             #        imageDir, startImage, endImage, colorNumber,
             #        pixelCalc, centroidsCalc)
 
-            #imageDirPkl = "data.pklz"
+            # imageDirPkl = "data.pklz"
 # -------------------------------
 
-            theImage= read_pkl_by_block(
-                    #imageDirPkl,
+            theImage = read_pkl_by_block(
+                    # imageDirPkl,
                     datap,
                     startImage, endImage,
                     centroidsCalc)
@@ -180,7 +181,7 @@ def computeChainsThread(
             #    log(1, [ "Error: colorNumber have changed"] )
             #    sys.exit(2)
 
-            log(2, [ "Working task: " +str(startImage) + "-" + str(endImage) + " [comp loop]" ])
+            log(2, [ "Working task: " + str(startImage) + "-" + str(endImage) + " [comp loop]" ])
             for xBlock in xrange(imageHeight/imageDx):
                 # print "Working task: " +str(startImage) + "-" + str(endImage) + " [Xblock]"
                 for yBlock in xrange(imageWidth/imageDy):
@@ -190,8 +191,8 @@ def computeChainsThread(
 
                     image = theImage[:, xStart:xEnd, yStart:yEnd]
                     # print "xy start end %i, %i, %i, %i" % (xStart, xEnd, yStart, yEnd)
-                    #print "image ", image
-                    nz,nx,ny = image.shape
+                    # print "image ", image
+                    nz, nx, ny = image.shape
 
                     # Compute a quotient complex of chains with constant field
                     # ------------------------------------------------------------
@@ -205,10 +206,10 @@ def computeChainsThread(
                     zStart = startImage - beginImageStack;
 
                     if (calculateout == True):
-                        chains3D_old = cch.setList(nx,ny,nz, colorIdx, image,saveTheColors)
+                        chains3D_old = cch.setList(nx, ny, nz, colorIdx, image, saveTheColors)
                     else:
-                        hasSomeOne,chains3D = cch.setListNP(nx,ny,nz, colorIdx,
-                                                            image,saveTheColors)
+                        hasSomeOne, chains3D = cch.setListNP(nx, ny, nz, colorIdx,
+                                                            image, saveTheColors)
 
                     # print "Working task: " +str(startImage) + "-" + str(endImage) + " [hasSomeOne: " + str(hasSomeOne) +"]"
 
@@ -216,16 +217,16 @@ def computeChainsThread(
                     # ------------------------------------------------------------
                     objectBoundaryChain = None
                     if (calculateout == True) and (len(chains3D_old) > 0):
-                        objectBoundaryChain = larBoundaryChain(bordo3,chains3D_old)
+                        objectBoundaryChain = larBoundaryChain(bordo3, chains3D_old)
 
                     # Save
                     if (calculateout == True):
                         if (objectBoundaryChain != None):
-                            writeOffsetToFile( fileToWrite, np.array([zStart,xStart,yStart], dtype=int32) )
+                            writeOffsetToFile( fileToWrite, np.array([zStart, xStart, yStart], dtype=int32) )
                             fileToWrite.write( bytearray( np.array(objectBoundaryChain.toarray().astype('b').flatten()) ) )
                     else:
                         if (hasSomeOne != False):
-                            writeOffsetToFile( fileToWrite, np.array([zStart,xStart,yStart], dtype=int32) )
+                            writeOffsetToFile( fileToWrite, np.array([zStart, xStart, yStart], dtype=int32) )
                             fileToWrite.write( bytearray( np.array(chains3D, dtype=np.dtype('b')) ) )
         except:
             exc_type, exc_value, exc_traceback = sys.exc_info()
@@ -234,7 +235,6 @@ def computeChainsThread(
             returnProcess = 2
         finally:
             fileToWrite.close()
-        # -------------------------------------------------------------------------
     except:
         exc_type, exc_value, exc_traceback = sys.exc_info()
         lines = traceback.format_exception(exc_type, exc_value, exc_traceback)
@@ -248,10 +248,10 @@ def collectResult(resData):
     processRes.append(resData)
 
 def startComputeChains(
-    imageHeight,imageWidth,imageDepth,
-    imageDx,imageDy,imageDz,
-    Nx,Ny,Nz, calculateout,BORDER_FILE,
-    centroidsCalc, colorIdx,datap,DIR_O):
+    imageHeight, imageWidth, imageDepth,
+    imageDx, imageDy, imageDz,
+    Nx, Ny, Nz, calculateout, BORDER_FILE,
+    centroidsCalc, colorIdx, datap, DIR_O):
 
     beginImageStack = 0
     endImage = beginImageStack
@@ -259,7 +259,7 @@ def startComputeChains(
     saveTheColors = centroidsCalc
     print 'ccalc: ', centroidsCalc
     log(2, [ centroidsCalc ])
-    saveTheColors = np.array( sorted(saveTheColors.reshape(1,len(centroidsCalc))[0]), dtype=np.int )
+    saveTheColors = np.array( sorted(saveTheColors.reshape(1, len(centroidsCalc))[0]), dtype=np.int )
     log(2, [ saveTheColors ])
     # print str(imageHeight) + '-' + str(imageWidth) + '-' + str(imageDepth)
     # print str(imageDx) + '-' + str(imageDy) + '-' + str(imageDz)
@@ -280,10 +280,10 @@ def startComputeChains(
 
             pool.apply_async(
                             computeChainsThread,
-                            args = (startImage,endImage,imageHeight,imageWidth,
-                                imageDx,imageDy,imageDz, Nx,Ny,Nz, calculateout,
+                            args = (startImage, endImage, imageHeight, imageWidth,
+                                imageDx, imageDy, imageDz, Nx, Ny, Nz, calculateout,
                                 BORDER_FILE, centroidsCalc,
-                                colorIdx,datap,DIR_O, ),
+                                colorIdx, datap, DIR_O, ),
                             callback = collectResult)
 
         log(2, [ "Waiting for completion..." ])
@@ -309,8 +309,8 @@ def segmentation_from_data3d(datap):
 
     return datap
 
-def runComputation(imageDx,imageDy,imageDz, coloridx,calculateout,
-    V,FV, input_pkl_file, BORDER_FILE, DIR_O):
+def runComputation(imageDx, imageDy, imageDz, coloridx, calculateout,
+    V, FV, input_pkl_file, BORDER_FILE, DIR_O):
 
     dr = datareader.DataReader()
     datap = dr.Get3DData(input_pkl_file, qt_app=None, dataplus_format=True,
@@ -320,22 +320,22 @@ def runComputation(imageDx,imageDy,imageDz, coloridx,calculateout,
     print '###################################'
     segmentation = datap['segmentation'].astype(np.uint8)
 
-    #segmentation = datap['segmentation'][::5,::5,::5]
-    #segmentation = datap['segmentation'][300:330,300:350,300:350]
+    # segmentation = datap['segmentation'][::5,::5,::5]
+    # segmentation = datap['segmentation'][300:330,300:350,300:350]
     # datap['segmentation'] = (segmentation ==  1).astype(np.uint8)
     # import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
     # hack kvuli barvam
-    segmentation[0,0,0] = 0
-    segmentation[0,0,1] = 1
+    segmentation[0, 0, 0] = 0
+    segmentation[0, 0, 1] = 1
     datap['segmentation'] = segmentation
     print np.unique(datap['segmentation'])
     print datap.keys()
     print datap['segmentation'].shape
-    imageHeight,imageWidth = datap['segmentation'][:,:,:].shape[1:3]
-    #getImageData(INPUT_DIR+str(BEST_IMAGE)+PNG_EXTENSION)
-    #imageDepth = countFilesInADir(INPUT_DIR)
+    imageHeight, imageWidth = datap['segmentation'][:,:,:].shape[1:3]
+    # getImageData(INPUT_DIR+str(BEST_IMAGE)+PNG_EXTENSION)
+    # imageDepth = countFilesInADir(INPUT_DIR)
     imageDepth = datap['segmentation'].shape[0]
-    Nx,Ny,Nz = imageHeight/imageDx, imageWidth/imageDx, imageDepth/imageDz
+    Nx, Ny, Nz = imageHeight/imageDx, imageWidth/imageDx, imageDepth/imageDz
     returnValue = 2
 
     try:
@@ -343,11 +343,11 @@ def runComputation(imageDx,imageDy,imageDz, coloridx,calculateout,
                 # centroidsCalc = np.array([0, 1])
         centroidsCalc = np.unique(datap['segmentation'])
         returnValue = startComputeChains(
-                        imageHeight,imageWidth,imageDepth,
-                        imageDx,imageDy,imageDz, Nx,Ny,Nz,
-                        calculateout,BORDER_FILE,
+                        imageHeight, imageWidth, imageDepth,
+                        imageDx, imageDy, imageDz, Nx, Ny, Nz,
+                        calculateout, BORDER_FILE,
                         centroidsCalc, coloridx,
-                        datap,DIR_O)
+                        datap, DIR_O)
     except:
         exc_type, exc_value, exc_traceback = sys.exc_info()
         lines = traceback.format_exception(exc_type, exc_value, exc_traceback)
@@ -360,7 +360,7 @@ def main(argv):
     ARGS_STRING = 'Args: -r -b <borderfile> -x <borderX> -y <borderY> -z <borderZ> -i <inputdirectory> -c <colors> -d <coloridx> -o <outputdir> -q <bestimage>'
 
     try:
-        opts, args = getopt.getopt(argv,"rb:x:y:z:i:c:d:o:q:")
+        opts, args = getopt.getopt(argv, "rb:x:y:z:i:c:d:o:q:")
     except getopt.GetoptError:
         print ARGS_STRING
         sys.exit(2)
@@ -371,7 +371,7 @@ def main(argv):
 
     mandatory = 5
     calculateout = False
-    #Files
+    # Files
     BORDER_FILE = 'bordo3.json'
     BEST_IMAGE = ''
     DIR_IN = ''
@@ -404,7 +404,7 @@ def main(argv):
             coloridx = int(arg)
         elif opt == '-q':
             BEST_IMAGE = int(arg)
-            #BEST_IMAGE = 10
+            # BEST_IMAGE = 10
 
     if mandatory != 0:
         print 'Not all arguments where given'
@@ -421,6 +421,7 @@ def main(argv):
         coloridx
         )
 
+
 def calcchains_main(
     nx, ny, nz,
     calculateout,
@@ -429,29 +430,35 @@ def calcchains_main(
     DIR_O,
     colors,
     coloridx
-    ):
+):
     # if (coloridx >= colors):
     #     print 'Not all arguments where given (coloridx >= colors)'
     #     print ARGS_STRING
     #     sys.exit(2)
 
-    def ind(x,y,z): return x + (nx+1) * (y + (ny+1) * (z))
-
+    def ind(x, y, z):
+        return x + (nx+1) * (y + (ny+1) * (z))
 
     chunksize = nx * ny + nx * nz + ny * nz + 3 * nx * ny * nz
-    V = [[x,y,z] for z in xrange(nz+1) for y in xrange(ny+1) for x in xrange(nx+1) ]
+    V = [[x, y, z]
+         for z in xrange(nz + 1)
+         for y in xrange(ny + 1)
+         for x in xrange(nx + 1)]
 
-    v2coords = invertIndex(nx,ny,nz)
+    v2coords = invertIndex(nx, ny, nz)
 
 
-        # mj
-        # construction of vertex grid
+    # mj
+    # construction of vertex grid
     FV = []
     for h in xrange(len(V)):
-        x,y,z = v2coords(h)
-        if (x < nx) and (y < ny): FV.append([h,ind(x+1,y,z),ind(x,y+1,z),ind(x+1,y+1,z)])
-        if (x < nx) and (z < nz): FV.append([h,ind(x+1,y,z),ind(x,y,z+1),ind(x+1,y,z+1)])
-        if (y < ny) and (z < nz): FV.append([h,ind(x,y+1,z),ind(x,y,z+1),ind(x,y+1,z+1)])
+        x, y, z = v2coords(h)
+        if (x < nx) and (y < ny):
+            FV.append([h, ind(x+1, y, z), ind(x, y+1, z), ind(x+1, y+1, z)])
+        if (x < nx) and (z < nz):
+            FV.append([h, ind(x+1, y, z), ind(x, y, z+1), ind(x+1, y, z+1)])
+        if (y < ny) and (z < nz):
+            FV.append([h, ind(x, y+1, z), ind(x, y, z+1), ind(x, y+1, z+1)])
 
     print 'colors', colors, coloridx
     print 'calc', calculateout
