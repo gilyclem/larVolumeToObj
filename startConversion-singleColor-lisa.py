@@ -15,9 +15,7 @@ sys.path.append(os.path.join(path_to_script, "./py/computation/"))
 
 from fileio import readFile, writeFile
 
-import numpy as np
 # import traceback
-import copy
 
 	#$PYBIN ./py/computation/step_calcchains_serial_tobinary_filter_proc_lisa.py\
         # -r -b $BORDER_DIR/$BORDER_FILE -x $BORDER_X -y $BORDER_Y -z $BORDER_Z\

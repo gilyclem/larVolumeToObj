@@ -98,7 +98,7 @@ def read_pkl_by_block(datap, startImage, endImage, centroidsCalc):
     # segmentation[segmentation==24] = 0
     # segmentation = (segmentation == wanted_label).astype(np.uint8)
     # print segmentation==2
-    print 'suniq ', np.unique(segmentation)
+    # print 'suniq ', np.unique(segmentation)
     # theColors=np.array([[0, 1]])
     return segmentation
 
@@ -110,8 +110,8 @@ def computeChainsThread(
     centroidsCalc, colorIdx, datap, DIR_O):
 # centroidsCalc - remove
 # @TODO use centroidsCalc
-    print 'cC '
-    print centroidsCalc
+    # print 'cC '
+    # print centroidsCalc
 
     #centroidsCalc = np.array([[0],[ 1]])
     log(2, [ "Working task: " +str(startImage) + "-" + str(endImage) + " [" + str( imageHeight) + "-" + str( imageWidth ) + "-" + str(imageDx) + "-" + str( imageDy) + "-" + str (imageDz) + "]" ])
@@ -130,8 +130,8 @@ def computeChainsThread(
                     else:
                         # this is general form
                         DATA = np.asarray(bordo3_json['DATA'], dtype=np.int8)
-                    print "border m ",  ROW.shape, COL.shape, DATA.shape
-                    print  "55555555555555555555555555555555555555"
+                    # print "border m ",  ROW.shape, COL.shape, DATA.shape
+                    # print  "55555555555555555555555555555555555555"
                     bordo3 = csr_matrix((DATA,COL,ROW),shape=(ROWCOUNT,COLCOUNT));
 
     xEnd, yEnd = 0,0
