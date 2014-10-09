@@ -90,6 +90,54 @@ def adjVerts(V, FV):
     return VV
 
 
+def makeSmoothing(V,FV):
+    t1 = time.time()
+    csrAdj = adjacencyQuery(V, FV)
+    t2 = time.time()
+    logger.info('Adjency query                   %ss' %
+                (str(t2 - t1)))
+
+# transformation of FV to 0-based indices (as required by LAR)
+    FV = [[v - 1 for v in face] for face in FV]
+    t3 = time.time()
+    logger.info('FV transformation               %ss' %
+                (str(t3 - t2)))
+
+    if False:
+    # if args.visualization:
+        VIEW(STRUCT(MKPOLS((V, FV))))
+        VIEW(EXPLODE(1.2, 1.2, 1.2)(MKPOLS((V, FV))))
+
+    t4 = time.time()
+    VV = adjVerts(V, FV)
+    t5 = time.time()
+    logger.info('adj verts                       %ss' %
+                (str(t5 - t4)))
+# VIEW(STRUCT(MKPOLS((V,CAT([DISTR([VV[v],v ]) for v in range(n)]))))) #
+# long time to evaluate
+
+# Iterative Laplacian smoothing
+# input V = initial positions of vertices
+# output V1 = new positions of vertices
+#
+    V1 = AA(CCOMB)([[V[v] for v in adjs] for adjs in VV])
+
+    t6 = time.time()
+    logger.info('1st iteration                   %ss' %
+                (str(t6 - t5)))
+# input V1
+# output V2 = new positions of vertices
+#
+    V2 = AA(CCOMB)([[V1[v] for v in adjs] for adjs in VV])
+    t7 = time.time()
+    logger.info('2st iteration                   %ss' %
+                (str(t7 - t6)))
+
+# move index basis back
+    FV = (np.array(FV) + 1).tolist()
+
+    return V2, FV
+
 def main():
 
     logger = logging.getLogger()
@@ -132,58 +180,16 @@ def main():
     logger.info('Data imported                   %ss. #V: %i, #FV: %i' %
                 (str(t1 - t0), len(V), len(FV)))
 
-    csrAdj = adjacencyQuery(V, FV)
-    t2 = time.time()
-    logger.info('Adjency query                   %ss' %
-                (str(t2 - t1)))
-
-# transformation of FV to 0-based indices (as required by LAR)
-    FV = [[v - 1 for v in face] for face in FV]
-    t3 = time.time()
-    logger.info('FV transformation               %ss' %
-                (str(t3 - t2)))
-
-    if False:
-    # if args.visualization:
-        VIEW(STRUCT(MKPOLS((V, FV))))
-        VIEW(EXPLODE(1.2, 1.2, 1.2)(MKPOLS((V, FV))))
-
-    t4 = time.time()
-    VV = adjVerts(V, FV)
-    t5 = time.time()
-    logger.info('adj verts                       %ss' %
-                (str(t5 - t4)))
-# VIEW(STRUCT(MKPOLS((V,CAT([DISTR([VV[v],v ]) for v in range(n)]))))) #
-# long time to evaluate
-
-# Iterative Laplacian smoothing
-# input V = initial positions of vertices
-# output V1 = new positions of vertices
-#
-    V1 = AA(CCOMB)([[V[v] for v in adjs] for adjs in VV])
-
-    t6 = time.time()
-    logger.info('1st iteration                   %ss' %
-                (str(t6 - t5)))
-# input V1
-# output V2 = new positions of vertices
-#
-    V2 = AA(CCOMB)([[V1[v] for v in adjs] for adjs in VV])
-    t7 = time.time()
-    logger.info('2st iteration                   %ss' %
-                (str(t7 - t6)))
+    V2, FV = makeSmoothing(V, FV)
 
     if args.visualization:
-        # FV = triangulateSquares(FV)
-        tv1 = time.time()
-        logger.info('triangulation               %ss' %
-                    (str(tv1 - t7)))
-        VIEW(STRUCT(MKPOLS((V2, FV))))
-
-    import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
-
-# move index basis back
-    FV = (np.array(FV) + 1).tolist()
+        FVV = (np.array(FV) - 1).tolist()
+        # t7 = time.time()
+        # # FV = triangulateSquares(FV)
+        # tv1 = time.time()
+        # logger.info('triangulation               %ss' %
+        #             (str(tv1 - t7)))
+        VIEW(STRUCT(MKPOLS((V2, FVV))))
 
 # write outputs
     writeFile(args.outputfile + '.pkl', V2, FV)
