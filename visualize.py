@@ -10,7 +10,8 @@ import sys
 import os
 """ import modules from lar-cc/lib """
 sys.path.insert(0, os.path.expanduser('~/projects/lar-cc/lib/py'))
-# sys.path.insert(0, '/home/mjirik/projects/lar-cc/lib/py')
+path_to_script = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.join(path_to_script, "./py/computation/"))
 
 from larcc import * # noqa
 from fileio import readFile
@@ -85,7 +86,7 @@ def main():
 
     logger.info("Data readed from ' %s" % (args.inputfile))
 # indexed from zero
-    FV1 = (np.array(FV) - 1 ).tolist()
+    FV1 = (np.array(FV) - 1).tolist()
     VIEW(STRUCT(MKPOLS((V, FV1))))
 
 if __name__ == "__main__":

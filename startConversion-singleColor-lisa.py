@@ -9,21 +9,42 @@ import logging
 logger = logging.getLogger(__name__)
 import argparse
 import sys
+import os
+path_to_script = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.join(path_to_script, "./py/computation/"))
+
+from fileio import readFile, writeFile
 
 import numpy as np
 # import traceback
 import copy
 
 	#$PYBIN ./py/computation/step_calcchains_serial_tobinary_filter_proc_lisa.py\
-        -r -b $BORDER_DIR/$BORDER_FILE -x $BORDER_X -y $BORDER_Y -z $BORDER_Z\
-        -i $DIRINPUT -c $COLORS -d $CHAINCURR -q $BESTFILE -o $COMPUTATION_DIR_BIN
-import step_calcchains_serial_tobinary_filter_proc_lisa as s_bin
+        # -r -b $BORDER_DIR/$BORDER_FILE -x $BORDER_X -y $BORDER_Y -z $BORDER_Z\
+        # -i $DIRINPUT -c $COLORS -d $CHAINCURR -q $BESTFILE -o $COMPUTATION_DIR_BIN
+import step_calcchains_serial_tobinary_filter_proc_lisa as s2bin
+import step_remove_boxes_iner_faces as rmbox
+import laplacianSmoothing as ls
 
 
 def convert(filename, boxsize):
-    argv =
     s_bin.main()
     pass
+
+
+def makeAll(args):
+    V, F = readFile(args.inputfile)
+    print "Before"
+    print "Number of vertexes: %i    Number of faces %i" % (len(V), len(F))
+    # findBoxVertexesForAxis(v, 2, 0)
+    # v, f = findBoundaryFaces(v, f, 2)
+    V, F = rmbox.removeDoubleVertexesAndFaces(V, F, args.boxsize)
+    writeFile(args.outputfile + "cl.obj", V, F)
+    print "After"
+    print "Number of vertexes: %i    Number of faces %i" % (len(V), len(F))
+    V, F = ls.makeSmoothing(V, F)
+    writeFile(args.outputfile + "sm.obj", V, F)
+    return V, F
 
 def main():
     logger = logging.getLogger()
@@ -43,6 +64,11 @@ def main():
         default=None,
         required=True,
         help='input file'
+    )
+    parser.add_argument(
+        '-o', '--outputfile',
+        default='out',
+        help='output file'
     )
     parser.add_argument(
         '-l', '--label',
@@ -76,6 +102,9 @@ def main():
 
     if args.borderfile is None:
         args.borderfile = args.borderdir
+
+    makeAll(args)
+
 
 if __name__ == "__main__":
     main()
