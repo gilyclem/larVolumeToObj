@@ -17,16 +17,16 @@ from fileio import readFile, writeFile
 
 # import traceback
 
-	#$PYBIN ./py/computation/step_calcchains_serial_tobinary_filter_proc_lisa.py\
-        # -r -b $BORDER_DIR/$BORDER_FILE -x $BORDER_X -y $BORDER_Y -z $BORDER_Z\
-        # -i $DIRINPUT -c $COLORS -d $CHAINCURR -q $BESTFILE -o $COMPUTATION_DIR_BIN
+# $PYBIN ./py/computation/step_calcchains_serial_tobinary_filter_proc_lisa.py\
+# -r -b $BORDER_DIR/$BORDER_FILE -x $BORDER_X -y $BORDER_Y -z $BORDER_Z\
+# -i $DIRINPUT -c $COLORS -d $CHAINCURR -q $BESTFILE -o $COMPUTATION_DIR_BIN
 import step_calcchains_serial_tobinary_filter_proc_lisa as s2bin
 import step_remove_boxes_iner_faces as rmbox
 import laplacianSmoothing as ls
 
 
 def convert(filename, boxsize):
-    s_bin.main()
+    s2bin.main()
     pass
 
 
@@ -43,6 +43,7 @@ def makeAll(args):
     V, F = ls.makeSmoothing(V, F)
     writeFile(args.outputfile + "sm.obj", V, F)
     return V, F
+
 
 def main():
     logger = logging.getLogger()
