@@ -18,6 +18,7 @@ import copy
 import time
 
 sys.path.insert(0, './py/computation')
+sys.path.insert(0, '../../')
 from fileio import readFile, writeFile
 
 
