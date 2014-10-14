@@ -37,11 +37,11 @@ def makeAll(args):
     # findBoxVertexesForAxis(v, 2, 0)
     # v, f = findBoundaryFaces(v, f, 2)
     V, F = rmbox.removeDoubleVertexesAndFaces(V, F, args.boxsize)
-    writeFile(args.outputfile + "cl.obj", V, F)
+    writeFile(args.outputfile + "_cl.obj", V, F)
     print "After"
     print "Number of vertexes: %i    Number of faces %i" % (len(V), len(F))
     V, F = ls.makeSmoothing(V, F)
-    writeFile(args.outputfile + "sm.obj", V, F)
+    writeFile(args.outputfile + "_sm.obj", V, F)
     return V, F
 
 
