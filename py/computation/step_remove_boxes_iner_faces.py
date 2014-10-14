@@ -67,7 +67,8 @@ def reindexVertexesInFaces(faces, new_indexes):
     return faces
 
 
-def removeDoubleVertexesAndFaces(vertexes, faces, boxsize=None):
+def removeDoubleVertexesAndFaces(vertexes, faces, boxsize=None,
+                                 use_albertos=False):
     """
     Main function of module. Return object description cleand from double
     vertexes and faces.
@@ -141,6 +142,16 @@ def removeDoubleFaces(faces):
 
     unique_faces = faces_orig[reduced_idx]
     return unique_faces.tolist()
+
+
+def removeDoubleFacesByAlberto(FW):
+    from collections import defaultdict
+
+    cellDict = defaultdict(list)
+    for k,cell in enumerate(FW):
+        cellDict[tuple(cell)] += [k]
+    FW = [list(key) for key in cellDict.keys() if len(cellDict[key])==1]
+    return FW
 
 
 def getIndexesOfSingleFaces(faces):
@@ -259,6 +270,9 @@ def main():
         help='Size of box'
     )
     parser.add_argument(
+        '-a', '--alberto', action='store_true',
+        help='Albertos algorithm')
+    parser.add_argument(
         '-d', '--debug', action='store_true',
         help='Debug mode')
     args = parser.parse_args()
@@ -269,7 +283,8 @@ def main():
     print "Number of vertexes: %i    Number of faces %i" % (len(v), len(f))
     # findBoxVertexesForAxis(v, 2, 0)
     # v, f = findBoundaryFaces(v, f, 2)
-    v, f = removeDoubleVertexesAndFaces(v, f, args.boxsize)
+    v, f = removeDoubleVertexesAndFaces(v, f, args.boxsize,
+                                        use_albertos=args.alberto)
     writeFile(args.outputfile, v, f)
     print "After"
     print "Number of vertexes: %i    Number of faces %i" % (len(v), len(f))

@@ -60,17 +60,15 @@ class HistologyTest(unittest.TestCase):
         faces_new = rmbox.removeDoubleFaces(new_faces)
         self.assertAlmostEqual(0, np.sum(faces_new - expected_faces))
 
-
     def test_face_have_all_points_in_list(self):
         faces = [
-            [4, 1, 2, 3 ],
+            [4, 1, 2, 3],
             [1, 4, 2, 5]
         ]
         isOnBoundary = [1, 2, 3, 4]
 
         fb = rmbox.facesHaveAllPointsInList(faces, isOnBoundary)
         self.assertItemsEqual(fb, [True, False])
-
 
     def test_findBoundaryFaces(self):
         v = [
@@ -99,6 +97,38 @@ class HistologyTest(unittest.TestCase):
         new_faces = rmbox.removeDoubleFacesOnlyOnBoundaryBoxes(
             new_vertexes, new_faces, 2)
         rmbox.writeFile('test_smallbb2_cleaned.obj', new_vertexes, new_faces)
+
+    def test_benchmark_removeDoubleFaces(self):
+        """
+        Benchmark removing double faces
+        """
+        import time
+        from larcc import t, larCuboids, boundaryCells, Model, Struct, struct2lar
+        cubes = larCuboids([10, 10, 10], True)
+        V = cubes[0]
+        FV = cubes[1][-2]
+        CV = cubes[1][-1]
+        bcells = boundaryCells(CV, FV)
+        BV = [FV[f] for f in bcells]
+        # VIEW(EXPLODE(1.2, 1.2, 1.2)(MKPOLS((V, BV))))
+
+        block = Model((V, BV))
+        struct = Struct(10 * [block, t(10, 0, 0)])
+        struct = Struct(10 * [struct, t(0, 10, 0)])
+        struct = Struct(3 * [struct, t(0, 0, 10)])
+        W, FW = struct2lar(struct)
+
+        # VIEW(EXPLODE(1.2,1.2,1.2)(MKPOLS((W,FW))))
+        t0 = time.time()
+        rmbox.removeDoubleFaces(FW)
+        t1 = time.time()
+        print "normal ", t1 - t0
+        t0 = time.time()
+        rmbox.removeDoubleFacesByAlberto(FW)
+        t1 = time.time()
+        print "alberto ", t1 - t0
+        # rmbox.removeDoubleVertexesAndFaces(W, FW, use_albertos=True)
+        # rmbox.removeDoubleVertexesAndFaces(W, FW, use_albertos=True)
 
 
 
