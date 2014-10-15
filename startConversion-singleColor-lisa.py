@@ -8,11 +8,10 @@ Generator of histology report
 import logging
 logger = logging.getLogger(__name__)
 import argparse
-import sys
-import os
+# import sys
+# import os
 # path_to_script = os.path.dirname(os.path.abspath(__file__))
 # sys.path.append(os.path.join(path_to_script, "./py/computation/"))
-
 
 # import traceback
 
