@@ -26,7 +26,7 @@ from larcc import * # noqa
 # from nrn100 import *
 
 
-def writeFile(filename, vertexes, faces, ftype='auto'):
+def writeFile(filename, vertexes, faces, ftype='auto', shift_obj=True):
     """
     filename
     vertexes
@@ -39,6 +39,8 @@ def writeFile(filename, vertexes, faces, ftype='auto'):
     if ftype in ('pkl', 'pickle', 'p'):
         pickle.dump([vertexes, faces], open(filename, 'wb'))
     elif ftype == 'obj':
+        if shift_obj:
+            faces = (np.asarray(faces) + 1).tolist()
         with open(filename, "w") as f:
             for i, vertex in enumerate(vertexes):
                 try:
@@ -62,7 +64,7 @@ def writeFile(filename, vertexes, faces, ftype='auto'):
                 f.write(fstr)
 
 
-def readFile(filename, ftype='auto'):
+def readFile(filename, ftype='auto', shift_obj=True):
     if ftype == 'auto':
         _, ext = os.path.splitext(filename)
         ftype = ext[1:]
@@ -96,6 +98,7 @@ def readFile(filename, ftype='auto'):
                     for i in range(1, len(lnarr)):
                         face[i - 1] = int(lnarr[i])
                     faces.append(face)
+        faces = (np.asarray(faces) - 1).tolist()
 
     return vertexes, faces
 

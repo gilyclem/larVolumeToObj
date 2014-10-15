@@ -49,25 +49,27 @@ def findBoundaryVertexesForAxis(vertexes, step, axis, isOnBoundary=None):
 
     return isOnBoundary
 
+def shiftFaces(faces, i):
+    return (np.asarray(faces) + i).tolist()
 
-def reindexVertexesInFaces(faces, new_indexes):
+def reindexVertexesInFaces(faces, new_indexes, index_base=0):
     for face in faces:
         try:
             for i in range(0, len(face)):
-                face[i] = new_indexes[face[i]-1] + 1
+                face[i] = new_indexes[face[i] - index_base] + index_base
             # face[0] = new_indexes[face[0]-1] + 1
             # face[1] = new_indexes[face[1]-1] + 1
             # face[2] = new_indexes[face[2]-1] + 1
         except:
             import traceback
             traceback.print_exc()
-            print 'fc ', face
+            print 'fc ', face, ' i ', i
             print len(new_indexes)
 
     return faces
 
 
-def removeDoubleVertexesAndFaces(vertexes, faces, boxsize=None,
+def removeDoubleVertexesAndFaces(vertexes, faces, boxsize=None, index_base=0,
                                  use_albertos=False):
     """
     Main function of module. Return object description cleand from double
@@ -79,14 +81,15 @@ def removeDoubleVertexesAndFaces(vertexes, faces, boxsize=None,
     t1 = time.time()
     logger.info("Doubled vertex removed          " + str(t1 - t0))
     logger.info("Number of vertexes: %i " % (len(new_vertexes)))
-    new_faces = reindexVertexesInFaces(faces, inv_vertexes)
+    new_faces = reindexVertexesInFaces(faces, inv_vertexes,
+                                       index_base=index_base)
     t2 = time.time()
     logger.info("Vertexes in faces reindexed     " + str(t2 - t1))
     if boxsize is None:
         new_faces = removeDoubleFaces(new_faces)
     else:
         new_faces = removeDoubleFacesOnlyOnBoundaryBoxes(
-            new_vertexes, new_faces, boxsize[0])
+            new_vertexes, new_faces, boxsize[0], index_base=index_base)
 # @TODO add other axis
     t3 = time.time()
     logger.info("Double faces removed            " + str(t3 - t2))
@@ -107,14 +110,14 @@ def removeDoubleVertexes(vertexes):
     return unique_vertexes.tolist(), inv
 
 
-def removeDoubleFacesOnlyOnBoundaryBoxes(vertexes, faces, bbsize):
+def removeDoubleFacesOnlyOnBoundaryBoxes(vertexes, faces, bbsize, index_base=0):
     """
     Faster sister of removeDoubleFaces.
 
     It works only on box boundary
     """
 
-    on, off = findBoundaryFaces(vertexes, faces, bbsize)
+    on, off = findBoundaryFaces(vertexes, faces, bbsize, index_base)
 
     # on = range(1, 100)
 
@@ -146,11 +149,12 @@ def removeDoubleFaces(faces):
 
 def removeDoubleFacesByAlberto(FW):
     from collections import defaultdict
+    # use of Albertos algorithm
 
     cellDict = defaultdict(list)
-    for k,cell in enumerate(FW):
+    for k, cell in enumerate(FW):
         cellDict[tuple(cell)] += [k]
-    FW = [list(key) for key in cellDict.keys() if len(cellDict[key])==1]
+    FW = [list(key) for key in cellDict.keys() if len(cellDict[key]) == 1]
     return FW
 
 
@@ -213,9 +217,10 @@ def facesHaveAllPointsInList(faces, isOnBoundaryInds):
     return suma >= faces.shape[1]
 
 
-def findBoundaryFaces(vertexes, faces, step):
+def findBoundaryFaces(vertexes, faces, step, index_base=0):
     """
     vertexes, step
+    index_base is 0 or 1. Based on indexing of first vertex
     """
 
     # faces = np.array(faces)
@@ -225,7 +230,7 @@ def findBoundaryFaces(vertexes, faces, step):
         isOnBoundary = findBoundaryVertexesForAxis(
             vertexes, step, axis)
 # faces.shape[1]
-        isOnBoundaryInds = (np.nonzero(isOnBoundary)[0] + 1).tolist()
+        isOnBoundaryInds = (np.nonzero(isOnBoundary)[0] + index_base).tolist()
         facesOnBoundary += facesHaveAllPointsInList(faces, isOnBoundaryInds)
 
     # reduced faces set
@@ -279,12 +284,14 @@ def main():
     if args.debug:
         logger.setLevel(logging.DEBUG)
     v, f = readFile(args.inputfile)
+    f = (np.asarray(f) - 1).tolist()
     print "Before"
     print "Number of vertexes: %i    Number of faces %i" % (len(v), len(f))
     # findBoxVertexesForAxis(v, 2, 0)
     # v, f = findBoundaryFaces(v, f, 2)
     v, f = removeDoubleVertexesAndFaces(v, f, args.boxsize,
                                         use_albertos=args.alberto)
+    f = (np.asarray(f) + 1).tolist()
     writeFile(args.outputfile, v, f)
     print "After"
     print "Number of vertexes: %i    Number of faces %i" % (len(v), len(f))

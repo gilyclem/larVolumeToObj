@@ -46,17 +46,18 @@ class HistologyTest(unittest.TestCase):
             [1, 3, 5]]
 
         faces = [
-            [1, 2, 4],
-            [4, 3, 2],
-            [5, 4, 2],
-            [3, 1, 5],
-            [2, 4, 3],
-            [2, 4, 1]]
+            [0, 1, 3],
+            [3, 2, 1],
+            [4, 3, 1],
+            [2, 0, 4],
+            [1, 3, 2],
+            [1, 3, 0]]
 
         expected_faces = np.array([
-            [1, 2, 4], [1, 3, 4]])
+            [0, 1, 3], [0, 2, 3]])
         new_vertexes, inv_vertexes = rmbox.removeDoubleVertexes(vertexes)
-        new_faces = rmbox.reindexVertexesInFaces(faces, inv_vertexes)
+        new_faces = rmbox.reindexVertexesInFaces(faces, inv_vertexes,
+                                                 index_base=0)
         faces_new = rmbox.removeDoubleFaces(new_faces)
         self.assertAlmostEqual(0, np.sum(faces_new - expected_faces))
 
@@ -70,7 +71,7 @@ class HistologyTest(unittest.TestCase):
         fb = rmbox.facesHaveAllPointsInList(faces, isOnBoundary)
         self.assertItemsEqual(fb, [True, False])
 
-    def test_findBoundaryFaces(self):
+    def test_findBoundaryFacesIndexBase1(self):
         v = [
             [10, 3, 3],
             [10, 4, 1],
@@ -85,25 +86,48 @@ class HistologyTest(unittest.TestCase):
             [1, 4, 2, 5]
         ]
 
-        on, off = rmbox.findBoundaryFaces(v, f, 10)
+        on, off = rmbox.findBoundaryFaces(v, f, 10, index_base=1)
+        self.assertItemsEqual(on, [0])
+        self.assertItemsEqual(off, [1, 2])
+
+    def test_findBoundaryFacesIndexBase0(self):
+        v = [
+            [10, 3, 3],
+            [10, 4, 1],
+            [10, 6, 2],
+            [10, 6, 6],
+            [8, 6, 6],
+            [11, 8, 8],
+        ]
+        f = [
+            [3, 0, 1, 2],
+            [1, 3, 0, 5],
+            [0, 3, 1, 4]
+        ]
+
+        on, off = rmbox.findBoundaryFaces(v, f, 10, index_base=0)
         self.assertItemsEqual(on, [0])
         self.assertItemsEqual(off, [1, 2])
 
     def test_real_data(self):
         vertexes, faces = rmbox.readFile("smallbb2.obj")
+        # faces = rmbox.shiftFaces(faces, -1)
         new_vertexes, inv_vertexes = rmbox.removeDoubleVertexes(vertexes)
         new_faces = rmbox.reindexVertexesInFaces(faces, inv_vertexes)
         # new_faces = rmbox.removeDoubleFaces(new_faces)
         new_faces = rmbox.removeDoubleFacesOnlyOnBoundaryBoxes(
             new_vertexes, new_faces, 2)
+        # new_faces = rmbox.shiftFaces(new_faces, 1)
         rmbox.writeFile('test_smallbb2_cleaned.obj', new_vertexes, new_faces)
 
+    @unittest.skipIf(True, "skipping ")
     def test_benchmark_removeDoubleFaces(self):
         """
         Benchmark removing double faces
         """
         import time
-        from larcc import t, larCuboids, boundaryCells, Model, Struct, struct2lar
+        from larcc import t, larCuboids, boundaryCells, Model, Struct
+        from larcc import struct2lar
         cubes = larCuboids([10, 10, 10], True)
         V = cubes[0]
         FV = cubes[1][-2]
@@ -129,7 +153,6 @@ class HistologyTest(unittest.TestCase):
         print "alberto ", t1 - t0
         # rmbox.removeDoubleVertexesAndFaces(W, FW, use_albertos=True)
         # rmbox.removeDoubleVertexesAndFaces(W, FW, use_albertos=True)
-
 
 
 if __name__ == "__main__":

@@ -85,9 +85,7 @@ def main():
     V, FV = readFile(args.inputfile, ftype=args.filetype)
 
     logger.info("Data readed from ' %s" % (args.inputfile))
-# indexed from zero
-    FV1 = (np.array(FV) - 1).tolist()
-    VIEW(STRUCT(MKPOLS((V, FV1))))
+    VIEW(STRUCT(MKPOLS((V, FV))))
 
 if __name__ == "__main__":
     main()

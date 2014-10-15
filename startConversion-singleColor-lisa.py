@@ -10,16 +10,20 @@ logger = logging.getLogger(__name__)
 import argparse
 import sys
 import os
-path_to_script = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(os.path.join(path_to_script, "./py/computation/"))
+# path_to_script = os.path.dirname(os.path.abspath(__file__))
+# sys.path.append(os.path.join(path_to_script, "./py/computation/"))
 
-from fileio import readFile, writeFile
 
 # import traceback
 
 # $PYBIN ./py/computation/step_calcchains_serial_tobinary_filter_proc_lisa.py\
 # -r -b $BORDER_DIR/$BORDER_FILE -x $BORDER_X -y $BORDER_Y -z $BORDER_Z\
 # -i $DIRINPUT -c $COLORS -d $CHAINCURR -q $BESTFILE -o $COMPUTATION_DIR_BIN
+import py
+import py.computation
+from py.computation import step_remove_boxes_iner_faces, fileio
+from py.computation import step_calcchains_serial_tobinary_filter_proc_lisa
+from fileio import readFile, writeFile
 import step_calcchains_serial_tobinary_filter_proc_lisa as s2bin
 import step_remove_boxes_iner_faces as rmbox
 import laplacianSmoothing as ls
@@ -32,6 +36,7 @@ def convert(filename, boxsize):
 
 def makeAll(args):
     V, F = readFile(args.inputfile)
+    # F = rmbox.shiftFaces(F, -1)
     print "Before"
     print "Number of vertexes: %i    Number of faces %i" % (len(V), len(F))
     # findBoxVertexesForAxis(v, 2, 0)

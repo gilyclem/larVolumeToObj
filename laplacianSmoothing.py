@@ -98,7 +98,7 @@ def makeSmoothing(V,FV):
                 (str(t2 - t1)))
 
 # transformation of FV to 0-based indices (as required by LAR)
-    FV = [[v - 1 for v in face] for face in FV]
+    #FV = [[v - 1 for v in face] for face in FV]
     t3 = time.time()
     logger.info('FV transformation               %ss' %
                 (str(t3 - t2)))
@@ -134,7 +134,7 @@ def makeSmoothing(V,FV):
                 (str(t7 - t6)))
 
 # move index basis back
-    FV = (np.array(FV) + 1).tolist()
+    # FV = (np.array(FV) + 1).tolist()
 
     return V2, FV
 
