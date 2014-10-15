@@ -49,8 +49,6 @@ def findBoundaryVertexesForAxis(vertexes, step, axis, isOnBoundary=None):
 
     return isOnBoundary
 
-def shiftFaces(faces, i):
-    return (np.asarray(faces) + i).tolist()
 
 def reindexVertexesInFaces(faces, new_indexes, index_base=0):
     for face in faces:
@@ -85,11 +83,17 @@ def removeDoubleVertexesAndFaces(vertexes, faces, boxsize=None, index_base=0,
                                        index_base=index_base)
     t2 = time.time()
     logger.info("Vertexes in faces reindexed     " + str(t2 - t1))
-    if boxsize is None:
-        new_faces = removeDoubleFaces(new_faces)
+    if use_albertos:
+        logger.debug("Using Alberto")
+        new_faces = removeDoubleFacesByAlberto(new_faces)
     else:
-        new_faces = removeDoubleFacesOnlyOnBoundaryBoxes(
-            new_vertexes, new_faces, boxsize[0], index_base=index_base)
+        if boxsize is None:
+            logger.debug("Using removeDoubleFaces")
+            new_faces = removeDoubleFaces(new_faces)
+        else:
+            logger.debug("Using removeDoubleFacesOnlyOnBoundaryBoxes")
+            new_faces = removeDoubleFacesOnlyOnBoundaryBoxes(
+                new_vertexes, new_faces, boxsize[0], index_base=index_base)
 # @TODO add other axis
     t3 = time.time()
     logger.info("Double faces removed            " + str(t3 - t2))
@@ -284,14 +288,12 @@ def main():
     if args.debug:
         logger.setLevel(logging.DEBUG)
     v, f = readFile(args.inputfile)
-    f = (np.asarray(f) - 1).tolist()
     print "Before"
     print "Number of vertexes: %i    Number of faces %i" % (len(v), len(f))
     # findBoxVertexesForAxis(v, 2, 0)
     # v, f = findBoundaryFaces(v, f, 2)
     v, f = removeDoubleVertexesAndFaces(v, f, args.boxsize,
                                         use_albertos=args.alberto)
-    f = (np.asarray(f) + 1).tolist()
     writeFile(args.outputfile, v, f)
     print "After"
     print "Number of vertexes: %i    Number of faces %i" % (len(v), len(f))

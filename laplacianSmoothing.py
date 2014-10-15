@@ -7,7 +7,6 @@ logger = logging.getLogger(__name__)
 import argparse
 
 import time
-import pickle
 
 import sys
 import os
@@ -27,7 +26,6 @@ from fileio import writeFile, readFile
 #
 # sys.path.insert(1, '/Users/paoluzzi/Documents/RICERCA/pilsen/ricerca/')
 # from nrn100 import *
-
 
 
 def triangulateSquares(F,
@@ -90,21 +88,21 @@ def adjVerts(V, FV):
     return VV
 
 
-def makeSmoothing(V,FV):
-    t1 = time.time()
-    csrAdj = adjacencyQuery(V, FV)
+def makeSmoothing(V, FV):
+    # t1 = time.time()
+    # csrAdj = adjacencyQuery(V, FV)
     t2 = time.time()
-    logger.info('Adjency query                   %ss' %
-                (str(t2 - t1)))
+    # logger.info('Adjency query                   %ss' %
+    #             (str(t2 - t1)))
 
 # transformation of FV to 0-based indices (as required by LAR)
-    #FV = [[v - 1 for v in face] for face in FV]
+    # FV = [[v - 1 for v in face] for face in FV]
     t3 = time.time()
     logger.info('FV transformation               %ss' %
                 (str(t3 - t2)))
 
     if False:
-    # if args.visualization:
+        # if args.visualization:
         VIEW(STRUCT(MKPOLS((V, FV))))
         VIEW(EXPLODE(1.2, 1.2, 1.2)(MKPOLS((V, FV))))
 
@@ -137,6 +135,7 @@ def makeSmoothing(V,FV):
     # FV = (np.array(FV) + 1).tolist()
 
     return V2, FV
+
 
 def main():
 
@@ -183,7 +182,6 @@ def main():
     V2, FV = makeSmoothing(V, FV)
 
     if args.visualization:
-        FVV = (np.array(FV) - 1).tolist()
         # t7 = time.time()
         # # FV = triangulateSquares(FV)
         # tv1 = time.time()

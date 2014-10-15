@@ -11,6 +11,7 @@ import unittest
 
 import step_remove_boxes_iner_faces as rmbox
 import numpy as np
+import copy
 
 
 class HistologyTest(unittest.TestCase):
@@ -120,7 +121,7 @@ class HistologyTest(unittest.TestCase):
         # new_faces = rmbox.shiftFaces(new_faces, 1)
         rmbox.writeFile('test_smallbb2_cleaned.obj', new_vertexes, new_faces)
 
-    @unittest.skipIf(True, "skipping ")
+    @unittest.skipIf(False, "skipping ")
     def test_benchmark_removeDoubleFaces(self):
         """
         Benchmark removing double faces
@@ -128,6 +129,7 @@ class HistologyTest(unittest.TestCase):
         import time
         from larcc import t, larCuboids, boundaryCells, Model, Struct
         from larcc import struct2lar
+        from larcc import VIEW, EXPLODE, MKPOLS
         cubes = larCuboids([10, 10, 10], True)
         V = cubes[0]
         FV = cubes[1][-2]
@@ -140,19 +142,21 @@ class HistologyTest(unittest.TestCase):
         struct = Struct(10 * [block, t(10, 0, 0)])
         struct = Struct(10 * [struct, t(0, 10, 0)])
         struct = Struct(3 * [struct, t(0, 0, 10)])
-        W, FW = struct2lar(struct)
+        W, FW1 = struct2lar(struct)
+        FW2 = copy.copy(FW1)
 
         # VIEW(EXPLODE(1.2,1.2,1.2)(MKPOLS((W,FW))))
         t0 = time.time()
-        rmbox.removeDoubleFaces(FW)
+        FWO1 = rmbox.removeDoubleFaces(FW1)
         t1 = time.time()
         print "normal ", t1 - t0
         t0 = time.time()
-        rmbox.removeDoubleFacesByAlberto(FW)
+        FWO2 = rmbox.removeDoubleFacesByAlberto(FW2)
         t1 = time.time()
         print "alberto ", t1 - t0
-        # rmbox.removeDoubleVertexesAndFaces(W, FW, use_albertos=True)
-        # rmbox.removeDoubleVertexesAndFaces(W, FW, use_albertos=True)
+        # import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
+        # VIEW(EXPLODE(1.2,1.2,1.2)(MKPOLS((W,FWO1))))
+        # VIEW(EXPLODE(1.2,1.2,1.2)(MKPOLS((W,FWO2))))
 
 
 if __name__ == "__main__":
