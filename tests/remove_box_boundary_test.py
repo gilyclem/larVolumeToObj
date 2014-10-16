@@ -38,6 +38,25 @@ class HistologyTest(unittest.TestCase):
 
         self.assertAlmostEqual(0, np.sum(faces_new - expected_faces))
 
+    def test_remove_double_faces_by_alberto(self):
+        faces = [
+            [1, 3, 6],
+            [3, 2, 1],
+            [4, 3, 1],
+            [2, 1, 4],
+            [1, 3, 2],
+            [1, 3, 6]]
+
+# sort all
+        for face in faces:
+            face = face.sort()
+
+        faces_new = rmbox.removeDoubleFacesByAlberto(faces)
+        faces_new = np.array(faces_new)
+        expected_faces = np.array([
+            [1, 2, 4], [1, 3, 4]])
+
+        self.assertAlmostEqual(0, np.sum(faces_new - expected_faces))
     def test_remove_vertexes(self):
         vertexes = [
             [1, 3, 6],
@@ -121,7 +140,7 @@ class HistologyTest(unittest.TestCase):
         # new_faces = rmbox.shiftFaces(new_faces, 1)
         rmbox.writeFile('test_smallbb2_cleaned.obj', new_vertexes, new_faces)
 
-    @unittest.skipIf(False, "skipping ")
+    @unittest.skipIf(True, "skipping ")
     def test_benchmark_removeDoubleFaces(self):
         """
         Benchmark removing double faces
