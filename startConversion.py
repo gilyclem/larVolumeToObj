@@ -50,7 +50,7 @@ def makeCleaningAndSmoothing(V, F, outputfile=None):
     V, F = rmbox.removeDoubleVertexesAndFaces(V, F, use_albertos=True)
     if outputfile is not None:
         writeFile(outputfile + "_cl.obj", V, F)
-    V, F = ls.makeSmoothing(V, F)
+    V = ls.makeSmoothing(V, F)
     if outputfile is not None:
         writeFile(outputfile + "_sm.obj", V, F,
                   ignore_empty_vertex_warning=True)

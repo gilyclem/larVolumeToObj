@@ -6,8 +6,8 @@ import sys
 import os.path
 
 path_to_script = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(os.path.join(path_to_script, "../py/computation/"))
-sys.path.append(os.path.join(path_to_script, "../"))
+# sys.path.append(os.path.join(path_to_script, "../py/computation/"))
+# sys.path.append(os.path.join(path_to_script, "../"))
 import unittest
 
 import numpy as np
@@ -15,9 +15,10 @@ import laplacianSmoothing as ls
 import step_remove_boxes_iner_faces as rmbox
 import fileio
 import visualize
+import startConversion as sc
 
 
-class SmoothingTest(unittest.TestCase):
+class CommonTest(unittest.TestCase):
     def test_smooth_alberto(self):
         vertexes = np.array([
             [1, 3, 6],
@@ -55,23 +56,16 @@ class SmoothingTest(unittest.TestCase):
             0, np.sum(smooth_vertexes[32] - expected_vertex))
         # visualize.visualize(smooth_vertexes, faces)
 
-    def test_real_data_(self):
+    def test_real_data(self):
         V, F = fileio.readFile(
             os.path.join(path_to_script, "smallbb2.obj")
         )
-        V, F = rmbox.removeDoubleVertexesAndFaces(V, F, use_albertos=True)
-        visualize.visualize(V, F)
-
-        # rmbox.writeFile(
-        #     os.path.join(path_to_script, 'test_smallbb2_cleaned.obj'),
-        #     vertexes, faces)
-        V = ls.iterativeLaplacianSmoothing(V, F)
-        visualize.visualize(V, F)
-        expected_vertex = np.array(
-            [1, 3, 5])
-        self.assertAlmostEqual(
-            0, np.sum(V[32] - expected_vertex))
-        # print V
-        print F
+        V, F = sc.makeCleaningAndSmoothing(V, F)
+        # visualize.visualize(V, F)
+        # expected_vertex = np.array(
+        #     [1, 3, 5])
+        # print V[32]
+        # self.assertAlmostEqual(
+        #     0, np.sum(V[32] - expected_vertex))
 if __name__ == "__main__":
     unittest.main()
