@@ -57,6 +57,7 @@ class HistologyTest(unittest.TestCase):
             [1, 2, 4], [1, 3, 4]])
 
         self.assertAlmostEqual(0, np.sum(faces_new - expected_faces))
+
     def test_remove_vertexes(self):
         vertexes = [
             [1, 3, 6],
@@ -130,7 +131,9 @@ class HistologyTest(unittest.TestCase):
         self.assertItemsEqual(off, [1, 2])
 
     def test_real_data(self):
-        vertexes, faces = rmbox.readFile("smallbb2.obj")
+        vertexes, faces = rmbox.readFile(
+            os.path.join(path_to_script, "smallbb2.obj")
+        )
         # faces = rmbox.shiftFaces(faces, -1)
         new_vertexes, inv_vertexes = rmbox.removeDoubleVertexes(vertexes)
         new_faces = rmbox.reindexVertexesInFaces(faces, inv_vertexes)
@@ -138,7 +141,9 @@ class HistologyTest(unittest.TestCase):
         new_faces = rmbox.removeDoubleFacesOnlyOnBoundaryBoxes(
             new_vertexes, new_faces, 2)
         # new_faces = rmbox.shiftFaces(new_faces, 1)
-        rmbox.writeFile('test_smallbb2_cleaned.obj', new_vertexes, new_faces)
+        rmbox.writeFile(
+            os.path.join(path_to_script, 'test_smallbb2_cleaned.obj'),
+            new_vertexes, new_faces)
 
     @unittest.skipIf(True, "skipping ")
     def test_benchmark_removeDoubleFaces(self):
@@ -148,7 +153,7 @@ class HistologyTest(unittest.TestCase):
         import time
         from larcc import t, larCuboids, boundaryCells, Model, Struct
         from larcc import struct2lar
-        from larcc import VIEW, EXPLODE, MKPOLS
+        # from larcc import VIEW, EXPLODE, MKPOLS
         cubes = larCuboids([10, 10, 10], True)
         V = cubes[0]
         FV = cubes[1][-2]
@@ -173,6 +178,9 @@ class HistologyTest(unittest.TestCase):
         FWO2 = rmbox.removeDoubleFacesByAlberto(FW2)
         t1 = time.time()
         print "alberto ", t1 - t0
+
+        print 'FWO1[:5] ', FWO1[:5]
+        print 'FWO2[:5] ', FWO2[:5]
         # import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
         # VIEW(EXPLODE(1.2,1.2,1.2)(MKPOLS((W,FWO1))))
         # VIEW(EXPLODE(1.2,1.2,1.2)(MKPOLS((W,FWO2))))
