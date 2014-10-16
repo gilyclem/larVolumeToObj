@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # import funkcí z jiného adresáře
-import sys
+# import sys
 import os.path
 
 path_to_script = os.path.dirname(os.path.abspath(__file__))
@@ -14,7 +14,7 @@ import numpy as np
 import laplacianSmoothing as ls
 import step_remove_boxes_iner_faces as rmbox
 import fileio
-import visualize
+# import visualize
 import startConversion as sc
 
 
