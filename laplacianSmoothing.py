@@ -102,7 +102,7 @@ def makeSmoothing(V, FV):
     # FV = [[v - 1 for v in face] for face in FV]
     # t3 = time.time()
     # logger.info('FV transformation               %ss' %
-                # (str(t3 - t2)))
+    # (str(t3 - t2)))
 
     if False:
         # if args.visualization:
