@@ -81,9 +81,9 @@ def reindexVertexesInFaces(faces, new_indexes):
     for face in faces:
         try:
             f2 = face[2]
-            face[0] = new_indexes[face[0]-1] + 1
-            face[1] = new_indexes[face[1]-1] + 1
-            face[2] = new_indexes[f2-1] + 1
+            face[0] = new_indexes[face[0] - 1] + 1
+            face[1] = new_indexes[face[1] - 1] + 1
+            face[2] = new_indexes[f2 - 1] + 1
         except:
             import traceback
             traceback.print_exc()
@@ -182,12 +182,12 @@ def smoothPositionOfVertex(v, f, vertex_index):
     """
 
     sub = f[
-        (f[:,0] == vertex_index) +
-        (f[:,1] == vertex_index) +
-        (f[:,2] == vertex_index)
+        (f[:, 0] == vertex_index) +
+        (f[:, 1] == vertex_index) +
+        (f[:, 2] == vertex_index)
     ]
 
-    #neighbooring vertex indexes
+    # neighbooring vertex indexes
     # vertex indexes are indexed from 1
     nverts_ind = np.unique(sub) - 1
 
@@ -196,8 +196,7 @@ def smoothPositionOfVertex(v, f, vertex_index):
     mn = np.mean(nverts, axis=0)
 
     if np.isnan(mn[0]):
-        return v[vertex_index-1, :]
-
+        return v[vertex_index - 1, :]
 
     return mn
 
@@ -209,16 +208,13 @@ def smoothVertexes(v, f):
     vnew = []
     for i in xrange(0, lenv):
         mn = smoothPositionOfVertex(v, f, i + 1)
-        #v[i,:] = mn
+        # v[i,:] = mn
         vnew.append(mn.tolist())
 
-        if i%100 == 0:
+        if i % 100 == 0:
             logger.debug("%i" % (i))
 
     return vnew
-
-
-
 
 
 def main(argv):
