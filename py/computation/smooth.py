@@ -19,7 +19,7 @@ def removeFromOneAxis():
     pass
 
 
-def writeFile(filename, vertexes, faces):
+def writeFileOld(filename, vertexes, faces):
     with open(filename, "w") as f:
         for vertex in vertexes:
             f.write("v %i %i %i\n" % (vertex[0], vertex[1], vertex[2]))
@@ -28,7 +28,7 @@ def writeFile(filename, vertexes, faces):
             f.write("f %i %i %i\n" % (face[0], face[1], face[2]))
 
 
-def readFile(filename):
+def readFileOld(filename):
     vertexes = []
     faces = []
     with open(filename, "r") as f:
@@ -255,14 +255,14 @@ def main(argv):
     if args.debug:
         logger.setLevel(logging.DEBUG)
 
-    v, f = readFile(args.inputfile)
+    v, f = readFileOld(args.inputfile)
     print "Number of vertexes: %i    Number of faces %i" % (len(v), len(f))
     # findBoxVertexesForAxis(v, 2, 0)
     # v, f = findBoundaryFaces(v, f, 2)
     v = smoothVertexes(v, f)
     print v
     # v = 10*np.array(v)
-    writeFile('outsm.obj', v, f)
+    writeFileOld('outsm.obj', v, f)
 
 if __name__ == "__main__":
     main(sys.argv[1:])
