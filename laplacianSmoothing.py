@@ -15,7 +15,7 @@ sys.path.insert(0, os.path.expanduser('~/projects/lar-cc/lib/py'))
 sys.path.insert(0, './py/computation')
 # sys.path.insert(0, '/home/mjirik/projects/lar-cc/lib/py')
 
-from larcc import * # noqa
+from larcc import *  # noqa
 
 from fileio import writeFile, readFile
 
@@ -89,17 +89,20 @@ def adjVerts(V, FV):
 
 
 def makeSmoothing(V, FV):
+    """
+    deprecated version of algorithm
+    """
     # t1 = time.time()
     # csrAdj = adjacencyQuery(V, FV)
-    t2 = time.time()
+    # t2 = time.time()
     # logger.info('Adjency query                   %ss' %
     #             (str(t2 - t1)))
 
 # transformation of FV to 0-based indices (as required by LAR)
     # FV = [[v - 1 for v in face] for face in FV]
-    t3 = time.time()
-    logger.info('FV transformation               %ss' %
-                (str(t3 - t2)))
+    # t3 = time.time()
+    # logger.info('FV transformation               %ss' %
+                # (str(t3 - t2)))
 
     if False:
         # if args.visualization:
@@ -134,7 +137,40 @@ def makeSmoothing(V, FV):
 # move index basis back
     # FV = (np.array(FV) + 1).tolist()
 
-    return V2, FV
+    return V2
+
+
+def ccomb(box):
+    minVert, maxVert = box
+    coordPair = zip(minVert, maxVert)
+
+    def ccomb0((p, vectors)):
+        theSum = VECTSUM(vectors)
+        num = float(len(vectors))
+        for i in range(3):
+            for coord in coordPair[i]:
+                if p[i] == coord:
+                    if theSum != []:
+                        theSum[i] = num * coord
+        return (sp.array(theSum) / num).tolist()
+    return ccomb0
+
+
+def iterativeLaplacianSmoothing(V, FV, iterations=1):
+    # Iterative Laplacian smoothing
+    # input V = initial positions of vertices
+    # output V1 = new positions of vertices
+    #
+
+    # V1 = AA(CCOMB)([[V[v] for v in adjs] for adjs in  VV])
+    VV = adjVerts(V, FV)
+    box = (V[0], V[-1])
+    for i in range(0, iterations):
+        V = AA(ccomb(box))(
+            [(V[k], [V[v] for v in adjs]) for k, adjs in enumerate(VV)]
+        )
+    return V
+    # VIEW(STRUCT(MKPOLS((V1, FV))))
 
 
 def main():
@@ -183,7 +219,7 @@ def main():
 
     if args.visualization:
         # t7 = time.time()
-        # # FV = triangulateSquares(FV)
+        # FV = triangulateSquares(FV)
         # tv1 = time.time()
         # logger.info('triangulation               %ss' %
         #             (str(tv1 - t7)))
