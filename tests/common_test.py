@@ -72,5 +72,6 @@ class SmoothingTest(unittest.TestCase):
         self.assertAlmostEqual(
             0, np.sum(V[32] - expected_vertex))
         # print V
+        print F
 if __name__ == "__main__":
     unittest.main()

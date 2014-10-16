@@ -35,19 +35,25 @@ def convert(filename, boxsize):
 
 def makeAll(args):
     V, F = readFile(args.inputfile)
-    # F = rmbox.shiftFaces(F, -1)
     print "Before"
     print "Number of vertexes: %i    Number of faces %i" % (len(V), len(F))
-    # findBoxVertexesForAxis(v, 2, 0)
-    # v, f = findBoundaryFaces(v, f, 2)
-    V, F = rmbox.removeDoubleVertexesAndFaces(V, F, args.boxsize,
-                                              use_albertos=True)
-    writeFile(args.outputfile + "_cl.obj", V, F)
+    # F = rmbox.shiftFaces(F, -1)
+    V, F = makeCleaningAndSmoothing(V, F, args.outputfile)
     print "After"
     print "Number of vertexes: %i    Number of faces %i" % (len(V), len(F))
+    return V, F
+
+
+def makeCleaningAndSmoothing(V, F, outputfile=None):
+    # findBoxVertexesForAxis(v, 2, 0)
+    # v, f = findBoundaryFaces(v, f, 2)
+    V, F = rmbox.removeDoubleVertexesAndFaces(V, F, use_albertos=True)
+    if outputfile is not None:
+        writeFile(outputfile + "_cl.obj", V, F)
     V, F = ls.makeSmoothing(V, F)
-    writeFile(args.outputfile + "_sm.obj", V, F,
-              ignore_empty_vertex_warning=True)
+    if outputfile is not None:
+        writeFile(outputfile + "_sm.obj", V, F,
+                  ignore_empty_vertex_warning=True)
     return V, F
 
 
