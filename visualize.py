@@ -46,6 +46,9 @@ def triangulateSquares(F,
 # Computation of Vertex-to-vertex adjacency matrix
 #
 
+def visualize(V, FV):
+    VIEW(STRUCT(MKPOLS((V, FV))))
+
 
 def main():
 
@@ -85,7 +88,7 @@ def main():
     V, FV = readFile(args.inputfile, ftype=args.filetype)
 
     logger.info("Data readed from ' %s" % (args.inputfile))
-    VIEW(STRUCT(MKPOLS((V, FV))))
+    visualize(V, FV)
 
 if __name__ == "__main__":
     main()
