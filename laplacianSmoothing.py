@@ -215,7 +215,7 @@ def main():
     logger.info('Data imported                   %ss. #V: %i, #FV: %i' %
                 (str(t1 - t0), len(V), len(FV)))
 
-    V2, FV = makeSmoothing(V, FV)
+    V2 = makeSmoothing(V, FV)
 
     if args.visualization:
         # t7 = time.time()
@@ -223,7 +223,7 @@ def main():
         # tv1 = time.time()
         # logger.info('triangulation               %ss' %
         #             (str(tv1 - t7)))
-        VIEW(STRUCT(MKPOLS((V2, FVV))))
+        VIEW(STRUCT(MKPOLS((V2, FV))))
 
 # write outputs
     writeFile(args.outputfile + '.pkl', V2, FV)
