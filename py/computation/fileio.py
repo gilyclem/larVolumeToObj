@@ -44,7 +44,8 @@ def writeFile(filename, vertexes, faces, ftype='auto', shift_obj=True,
             faces = (np.asarray(faces) + 1).tolist()
         with open(filename, "w") as f:
             for i, vertex in enumerate(vertexes):
-                __writeVertexLineToObjFile(vertex, ignore_empty_vertex_warning)
+                __writeVertexLineToObjFile(f, vertex,
+                                           ignore_empty_vertex_warning)
                     # import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
 
             for face in faces:
@@ -57,7 +58,7 @@ def writeFile(filename, vertexes, faces, ftype='auto', shift_obj=True,
                 f.write(fstr)
 
 
-def __writeVertexLineToObjFile(vertex, ignore_empty_vertex_warning):
+def __writeVertexLineToObjFile(f, vertex, ignore_empty_vertex_warning):
     try:
         f.write("v %s %s %s\n" % (
             str(vertex[0]),
