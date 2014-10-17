@@ -106,6 +106,9 @@ def __readObjStream(f):
                     float(lnarr[2]),
                     float(lnarr[3])
                 ]
+            except:
+                import traceback
+                traceback.print_exc()
 
             vertexes.append(vertex)
         elif lnarr[0] == 'f':
