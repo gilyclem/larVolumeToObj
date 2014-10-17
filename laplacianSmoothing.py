@@ -215,7 +215,8 @@ def main():
     logger.info('Data imported                   %ss. #V: %i, #FV: %i' %
                 (str(t1 - t0), len(V), len(FV)))
 
-    V2 = makeSmoothing(V, FV)
+    # V2 = makeSmoothing(V, FV)
+    V2 = iterativeLaplacianSmoothing(V, FV)
 
     if args.visualization:
         # t7 = time.time()
