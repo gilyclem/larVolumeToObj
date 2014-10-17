@@ -44,16 +44,7 @@ def writeFile(filename, vertexes, faces, ftype='auto', shift_obj=True,
             faces = (np.asarray(faces) + 1).tolist()
         with open(filename, "w") as f:
             for i, vertex in enumerate(vertexes):
-                try:
-                    f.write("v %s %s %s\n" % (
-                        str(vertex[0]),
-                        str(vertex[1]),
-                        str(vertex[2])
-                    ))
-                except IndexError:
-                    if not ignore_empty_vertex_warning:
-                        logger.warning('empty vertex %i ' % (i))
-                    f.write("v 0 0 0\n")
+                __writeVertexLineToObjFile(vertex, ignore_empty_vertex_warning)
                     # import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
 
             for face in faces:
@@ -66,6 +57,19 @@ def writeFile(filename, vertexes, faces, ftype='auto', shift_obj=True,
                 f.write(fstr)
 
 
+def __writeVertexLineToObjFile(vertex, ignore_empty_vertex_warning):
+    try:
+        f.write("v %s %s %s\n" % (
+            str(vertex[0]),
+            str(vertex[1]),
+            str(vertex[2])
+        ))
+    except IndexError:
+        if not ignore_empty_vertex_warning:
+            logger.warning('empty vertex %i ' % (i))
+        f.write("v 0 0 0\n")
+
+
 def readFile(filename, ftype='auto', shift_obj=True):
     if ftype == 'auto':
         _, ext = os.path.splitext(filename)
@@ -75,32 +79,39 @@ def readFile(filename, ftype='auto', shift_obj=True):
         fdata = pickle.load(open(filename, "rb"))
         vertexes, faces = fdata
     elif ftype == 'obj':
-        vertexes = []
-        faces = []
         with open(filename, "r") as f:
-            for line in f.readlines():
-                lnarr = line.strip().split(' ')
-                if lnarr[0] == 'v':
-                    try:
-                        vertex = [
-                            int(lnarr[1]),
-                            int(lnarr[2]),
-                            int(lnarr[3])
-                        ]
-                    except ValueError:
-                        vertex = [
-                            float(lnarr[1]),
-                            float(lnarr[2]),
-                            float(lnarr[3])
-                        ]
+            vertexes, faces = __readObjStream(f)
+        if shift_obj:
+            faces = (np.asarray(faces) - 1).tolist()
 
-                    vertexes.append(vertex)
-                if lnarr[0] == 'f':
-                    face = [0] * (len(lnarr) - 1)
-                    for i in range(1, len(lnarr)):
-                        face[i - 1] = int(lnarr[i])
-                    faces.append(face)
-        faces = (np.asarray(faces) - 1).tolist()
+    return vertexes, faces
+
+
+def __readObjStream(f):
+    vertexes = []
+    faces = []
+    for line in f.readlines():
+        lnarr = line.strip().split(' ')
+        if lnarr[0] == 'v':
+            try:
+                vertex = [
+                    int(lnarr[1]),
+                    int(lnarr[2]),
+                    int(lnarr[3])
+                ]
+            except ValueError:
+                vertex = [
+                    float(lnarr[1]),
+                    float(lnarr[2]),
+                    float(lnarr[3])
+                ]
+
+            vertexes.append(vertex)
+        elif lnarr[0] == 'f':
+            face = [0] * (len(lnarr) - 1)
+            for i in range(1, len(lnarr)):
+                face[i - 1] = int(lnarr[i])
+            faces.append(face)
 
     return vertexes, faces
 
