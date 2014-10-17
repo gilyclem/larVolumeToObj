@@ -53,7 +53,7 @@ def writeFile(filename, vertexes, faces, ftype='auto', shift_obj=True,
                 except:
                     if not ignore_empty_vertex_warning:
                         logger.warning('empty vertex %i ' % (i))
-                        f.write("v 0 0 0\n")
+                    f.write("v 0 0 0\n")
                     # import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
 
             for face in faces:
