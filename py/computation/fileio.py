@@ -50,7 +50,7 @@ def writeFile(filename, vertexes, faces, ftype='auto', shift_obj=True,
                         str(vertex[1]),
                         str(vertex[2])
                     ))
-                except:
+                except IndexError:
                     if not ignore_empty_vertex_warning:
                         logger.warning('empty vertex %i ' % (i))
                     f.write("v 0 0 0\n")
@@ -87,7 +87,7 @@ def readFile(filename, ftype='auto', shift_obj=True):
                             int(lnarr[2]),
                             int(lnarr[3])
                         ]
-                    except:
+                    except ValueError:
                         vertex = [
                             float(lnarr[1]),
                             float(lnarr[2]),
