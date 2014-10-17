@@ -18,14 +18,15 @@ import argparse
 # $PYBIN ./py/computation/step_calcchains_serial_tobinary_filter_proc_lisa.py\
 # -r -b $BORDER_DIR/$BORDER_FILE -x $BORDER_X -y $BORDER_Y -z $BORDER_Z\
 # -i $DIRINPUT -c $COLORS -d $CHAINCURR -q $BESTFILE -o $COMPUTATION_DIR_BIN
-import py
-import py.computation
+# import py
+# import py.computation
 from py.computation import step_remove_boxes_iner_faces, fileio
 from py.computation import step_calcchains_serial_tobinary_filter_proc_lisa
-from fileio import readFile, writeFile
+from py.computation.fileio import readFile, writeFile
 import step_calcchains_serial_tobinary_filter_proc_lisa as s2bin
 import step_remove_boxes_iner_faces as rmbox
 import laplacianSmoothing as ls
+import visualize
 
 
 def convert(filename, boxsize):
@@ -41,6 +42,10 @@ def makeAll(args):
     V, F = makeCleaningAndSmoothing(V, F, args.outputfile)
     print "After"
     print "Number of vertexes: %i    Number of faces %i" % (len(V), len(F))
+
+    if args.visualization:
+        visualize.visualize(V, F)
+
     return V, F
 
 
@@ -104,6 +109,9 @@ def main():
         nargs='+',
         help='Size of box'
     )
+    parser.add_argument(
+        '-v', '--visualization', action='store_true',
+        help='Visualization')
     parser.add_argument(
         '-d', '--debug', action='store_true',
         help='Debug mode')
