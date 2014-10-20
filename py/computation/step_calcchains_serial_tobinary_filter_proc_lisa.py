@@ -23,6 +23,8 @@ pyximport.install()
 import calc_chains_helper as cch
 
 
+import logging
+logger = logging.getLogger(__name__)
 # ---------------mjirik
 
 # import funkcí z jiného adresáře
@@ -351,7 +353,6 @@ def runComputation(imageDx, imageDy, imageDz, coloridx, calculateout,
                             gui=False)
     if 'segmentation' not in datap.keys():
         datap = segmentation_from_data3d(datap)
-    print '###################################'
     segmentation = datap['segmentation'].astype(np.uint8)
 
     # segmentation = datap['segmentation'][::5,::5,::5]
@@ -362,9 +363,7 @@ def runComputation(imageDx, imageDy, imageDz, coloridx, calculateout,
     segmentation[0, 0, 0] = 0
     segmentation[0, 0, 1] = 1
     datap['segmentation'] = segmentation
-    print np.unique(datap['segmentation'])
-    print datap.keys()
-    print datap['segmentation'].shape
+    logger.debug("unique %s " %(str(np.unique(datap['segmentation']))))
     imageHeight, imageWidth = datap['segmentation'][:,:,:].shape[1:3]
     # getImageData(INPUT_DIR+str(BEST_IMAGE)+PNG_EXTENSION)
     # imageDepth = countFilesInADir(INPUT_DIR)
@@ -387,8 +386,9 @@ def runComputation(imageDx, imageDy, imageDz, coloridx, calculateout,
         lines = traceback.format_exception(exc_type, exc_value, exc_traceback)
         log(1, [ "Error: " + ''.join('!! ' + line for line in lines) ])  # Log it or whatever here
         returnValue = 2
+        tracert.print_exc()
 
-    sys.exit(returnValue)
+    return returnValue
 
 def main(argv):
     ARGS_STRING = 'Args: -r -b <borderfile> -x <borderX> -y <borderY> -z <borderZ> -i <inputdirectory> -c <colors> -d <coloridx> -o <outputdir> -q <bestimage>'
@@ -445,24 +445,25 @@ def main(argv):
         print ARGS_STRING
         sys.exit(2)
 
-    calcchains_main(
+    returnValue = calcchains_main(
         nx, ny, nz,
         calculateout,
         DIR_IN,
         BORDER_FILE,
         DIR_O,
-        colors,
+        # colors,
         coloridx
         )
 
+    sys.exit(returnValue)
 
 def calcchains_main(
     nx, ny, nz,
     calculateout,
-    DIR_IN,
+    input_filename,
     BORDER_FILE,
     DIR_O,
-    colors,
+    # colors,
     coloridx
 ):
     # if (coloridx >= colors):
@@ -493,13 +494,14 @@ def calcchains_main(
         if (y < ny) and (z < nz):
             FV.append([h, ind(x, y+1, z), ind(x, y, z+1), ind(x, y+1, z+1)])
 
-    print 'colors', colors, coloridx
+    print 'coloridx ', coloridx
     print 'calc', calculateout
     print 'V.len: ', len(V), ' V[0:4]: ', V[0:4]
     print 'FV.len: ', len(FV), 'FV[0:4]: ', FV[0:4]
-    print 'dirl', DIR_IN, BORDER_FILE
+    print 'dirl', input_filename, BORDER_FILE
     print 'diro ', DIR_O
-    runComputation(nx, ny, nz, coloridx, calculateout, V, FV, DIR_IN,
+
+    return runComputation(nx, ny, nz, coloridx, calculateout, V, FV, input_filename,
                    BORDER_FILE, DIR_O)
 
 if __name__ == "__main__":
