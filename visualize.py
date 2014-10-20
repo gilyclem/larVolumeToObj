@@ -47,7 +47,16 @@ def triangulateSquares(F,
 #
 
 def visualize(V, FV):
-    VIEW(STRUCT(MKPOLS((V, FV))))
+    import time
+    # VIEW(STRUCT(MKPOLS((V, FV))))
+    t0 = time.time()
+    mkpols = MKPOLS((V, FV))
+    t1 = time.time()
+    logger.debug("MKPOLS() done in %ss" % (str(t1 - t0)))
+    struct = STRUCT(mkpols)
+    t2 = time.time()
+    logger.debug("STRUCT() done in %ss" % (str(t2 - t1)))
+    VIEW(struct)
 
 
 def main():
