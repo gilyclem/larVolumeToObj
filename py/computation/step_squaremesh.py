@@ -150,6 +150,30 @@ def readFile(V,FV,chunksize,inputFile,OUT_DIR): #outputVtx="outputVtx.obj",outpu
 					lines = traceback.format_exception(exc_type, exc_value, exc_traceback)
 					log(1, [ "EOF or error: " + ''.join('!! ' + line for line in lines) ])
 
+def make_obj(nx, ny, nz, FILE_IN, OUT_DIR):
+
+	def ind(x,y,z): return x + (nx+1) * (y + (ny+1) * (z))
+
+	chunksize = nx * ny + nx * nz + ny * nz + 3 * nx * ny * nz
+	V = [[x,y,z] for z in xrange(nz+1) for y in xrange(ny+1) for x in xrange(nx+1) ]
+
+	v2coords = invertIndex(nx,ny,nz)
+
+	FV = []
+	for h in xrange(len(V)):
+		x,y,z = v2coords(h)
+		if (x < nx) and (y < ny): FV.append([h,ind(x+1,y,z),ind(x,y+1,z),ind(x+1,y+1,z)])
+		if (x < nx) and (z < nz): FV.append([h,ind(x+1,y,z),ind(x,y,z+1),ind(x+1,y,z+1)])
+		if (y < ny) and (z < nz): FV.append([h,ind(x,y+1,z),ind(x,y,z+1),ind(x,y+1,z+1)])
+
+	try:
+		readFile(V,FV,chunksize,FILE_IN,OUT_DIR)
+	except:
+		exc_type, exc_value, exc_traceback = sys.exc_info()
+		lines = traceback.format_exception(exc_type, exc_value, exc_traceback)
+		log(1, [ "Error: " + ''.join('!! ' + line for line in lines) ])
+		sys.exit(2)
+
 def main(argv):
 	ARGS_STRING = 'Args: -x <borderX> -y <borderY> -z <borderZ> -i <inputfile> -o <outdir>'
 
@@ -185,27 +209,7 @@ def main(argv):
 		print ARGS_STRING
 		sys.exit(2)
 
-	def ind(x,y,z): return x + (nx+1) * (y + (ny+1) * (z))
-
-	chunksize = nx * ny + nx * nz + ny * nz + 3 * nx * ny * nz
-	V = [[x,y,z] for z in xrange(nz+1) for y in xrange(ny+1) for x in xrange(nx+1) ]
-
-	v2coords = invertIndex(nx,ny,nz)
-
-	FV = []
-	for h in xrange(len(V)):
-		x,y,z = v2coords(h)
-		if (x < nx) and (y < ny): FV.append([h,ind(x+1,y,z),ind(x,y+1,z),ind(x+1,y+1,z)])
-		if (x < nx) and (z < nz): FV.append([h,ind(x+1,y,z),ind(x,y,z+1),ind(x+1,y,z+1)])
-		if (y < ny) and (z < nz): FV.append([h,ind(x,y+1,z),ind(x,y,z+1),ind(x,y+1,z+1)])
-
-	try:
-		readFile(V,FV,chunksize,FILE_IN,OUT_DIR)
-	except:
-		exc_type, exc_value, exc_traceback = sys.exc_info()
-		lines = traceback.format_exception(exc_type, exc_value, exc_traceback)
-		log(1, [ "Error: " + ''.join('!! ' + line for line in lines) ])
-		sys.exit(2)
+	make_obj(nx, ny, nz, FILE_IN, OUT_DIR)
 
 if __name__ == "__main__":
 	main(sys.argv[1:])
