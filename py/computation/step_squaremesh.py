@@ -10,6 +10,8 @@ import getopt, sys
 import os
 import traceback
 
+import logging
+logger = logging.getLogger(__name__)
 # ------------------------------------------------------------
 # Logging & Timer
 # ------------------------------------------------------------
@@ -166,13 +168,17 @@ def make_obj(nx, ny, nz, FILE_IN, OUT_DIR):
         if (x < nx) and (z < nz): FV.append([h,ind(x+1,y,z),ind(x,y,z+1),ind(x+1,y,z+1)])
         if (y < ny) and (z < nz): FV.append([h,ind(x,y+1,z),ind(x,y,z+1),ind(x,y+1,z+1)])
 
+    logger.debug('before readFile()')
     try:
         readFile(V,FV,chunksize,FILE_IN,OUT_DIR)
     except:
+        import traceback
+        traceback.print_exc()
         exc_type, exc_value, exc_traceback = sys.exc_info()
         lines = traceback.format_exception(exc_type, exc_value, exc_traceback)
         log(1, [ "Error: " + ''.join('!! ' + line for line in lines) ])
         sys.exit(2)
+    logger.debug('after readFile()')
 
 def main(argv):
     ARGS_STRING = 'Args: -x <borderX> -y <borderY> -z <borderZ> -i <inputfile> -o <outdir>'

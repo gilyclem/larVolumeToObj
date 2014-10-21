@@ -28,14 +28,50 @@ import step_remove_boxes_iner_faces as rmbox
 import laplacianSmoothing as ls
 import visualize
 
+import py.computation.step_squaremesh as sq
 
-def convert(filename, boxsize):
-    s2bin.main()
+def convert(filename, boxsize=[2, 2, 2]):
+
+    logger.debug("in convert()")
+    s2bin.calcchains_main(
+        nx=boxsize[0], ny=boxsize[1], nz=boxsize[2],
+        calculateout=True,
+        input_filename=filename,
+        BORDER_FILE='./tmp/border/bordo3_2-2-2.json',
+        # BORDER_FILE=border_file,
+        DIR_O='tmp/output',
+        # colors=,
+        coloridx=2
+        )
+    logger.debug("calcchains_main finished")
+
+    concatenate_files("tmp/output/*.bin", 'model-2.bin')
+    logger.debug("concatenate() finished")
+    nx, ny, nz = boxsize
+    sq.make_obj(
+        nx, ny, nz,
+        'model-2.bin',
+        './tmp/output/stl/')
+    logger.debug("obj file  finished")
     pass
 
 
+def concatenate_files(input_filemasc, output_filename):
+    import glob
+
+    read_files = glob.glob(input_filemasc)
+
+    with open(output_filename, "wb") as outfile:
+        for f in read_files:
+            with open(f, "rb") as infile:
+                outfile.write(infile.read())
+
 def makeAll(args):
-    V, F = readFile(args.inputfile)
+    print 'before pklz read'
+    convert(args.inputfile)
+    print 'after pklz read'
+    # V, F = readFile(args.inputfile)
+    V, F = readFile('tmp/output/stl/model-2.obj')
     print "Before"
     print "Number of vertexes: %i    Number of faces %i" % (len(V), len(F))
     # F = rmbox.shiftFaces(F, -1)
