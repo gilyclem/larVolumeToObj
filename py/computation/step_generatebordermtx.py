@@ -73,37 +73,21 @@ def computeBordo3(FV,CV,inputFile='bordo3.json'):
 		# json.dump({"ROWCOUNT":ROWCOUNT, "COLCOUNT":COLCOUNT, "ROW":ROW, "COL":COL, "DATA":DATA }, file, separators=(',',':'))
 		file.flush();
 
-def main(argv):
-	ARGS_STRING = 'Args: -x <borderX> -y <borderY> -z <borderZ> -o <outputdir>'
 
-	try:
-		opts, args = getopt.getopt(argv,"o:x:y:z:")
-	except getopt.GetoptError:
-		print ARGS_STRING
-		sys.exit(2)
+def getBrodo3Path(nx, ny, nz, OUT_DIR):
+	"""
+	Function try read boro3 from file. If it fail. Matrix is computed
+	"""
 
-	mandatory = 2
-	#Files
-	DIR_OUT = ''
+	fileName = DIR_OUT+'/bordo3_'+str(nx)+'-'+str(ny)+'-'+str(nz)+'.json'
+	if os.path.exists(fileName):
+		return fileName
+	else:
+		V, FV, CV = getBases(nx, ny, nz)
+		computeBordo3(FV, CV, fileName)
 
-	for opt, arg in opts:
-		if opt == '-x':
-			nx = ny = nz = int(arg)
-			mandatory = mandatory - 1
-		elif opt == '-y':
-			ny = nz = int(arg)
-		elif opt == '-z':
-			nz = int(arg)
-		elif opt == '-o':
-			DIR_OUT = arg
-			mandatory = mandatory - 1
 
-	if mandatory != 0:
-		print 'Not all arguments where given'
-		print ARGS_STRING
-		sys.exit(2)
-
-	log(1, ["nx, ny, nz = " + str(nx) + "," + str(ny) + "," + str(nz)]);
+def getBases(nx, ny, nz):
 
 	def ind(x,y,z): return x + (nx+1) * (y + (ny+1) * (z))
 
@@ -138,6 +122,41 @@ def main(argv):
 		if (x < nx) and (y < ny): FV.append([h,ind(x+1,y,z),ind(x,y+1,z),ind(x+1,y+1,z)])
 		if (x < nx) and (z < nz): FV.append([h,ind(x+1,y,z),ind(x,y,z+1),ind(x+1,y,z+1)])
 		if (y < ny) and (z < nz): FV.append([h,ind(x,y+1,z),ind(x,y,z+1),ind(x,y+1,z+1)])
+	return V, FV, CV
+
+def main(argv):
+	ARGS_STRING = 'Args: -x <borderX> -y <borderY> -z <borderZ> -o <outputdir>'
+
+	try:
+		opts, args = getopt.getopt(argv,"o:x:y:z:")
+	except getopt.GetoptError:
+		print ARGS_STRING
+		sys.exit(2)
+
+	mandatory = 2
+	#Files
+	DIR_OUT = ''
+
+	for opt, arg in opts:
+		if opt == '-x':
+			nx = ny = nz = int(arg)
+			mandatory = mandatory - 1
+		elif opt == '-y':
+			ny = nz = int(arg)
+		elif opt == '-z':
+			nz = int(arg)
+		elif opt == '-o':
+			DIR_OUT = arg
+			mandatory = mandatory - 1
+
+	if mandatory != 0:
+		print 'Not all arguments where given'
+		print ARGS_STRING
+		sys.exit(2)
+
+	log(1, ["nx, ny, nz = " + str(nx) + "," + str(ny) + "," + str(nz)]);
+
+	V, FV, CV = getBases(nx, ny, nz)
 
 	log(3, ["FV = " + str(FV)]);
 
