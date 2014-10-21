@@ -18,6 +18,7 @@ import argparse
 # $PYBIN ./py/computation/step_calcchains_serial_tobinary_filter_proc_lisa.py\
 # -r -b $BORDER_DIR/$BORDER_FILE -x $BORDER_X -y $BORDER_Y -z $BORDER_Z\
 # -i $DIRINPUT -c $COLORS -d $CHAINCURR -q $BESTFILE -o $COMPUTATION_DIR_BIN
+import numpy as np
 # import py
 # import py.computation
 from py.computation import step_remove_boxes_iner_faces, fileio
@@ -29,6 +30,7 @@ import laplacianSmoothing as ls
 import visualize
 
 import py.computation.step_squaremesh as sq
+
 
 def convert(filename, boxsize=[2, 2, 2]):
 
@@ -66,6 +68,7 @@ def concatenate_files(input_filemasc, output_filename):
             with open(f, "rb") as infile:
                 outfile.write(infile.read())
 
+
 def makeAll(args):
     print 'before pklz read'
     convert(args.inputfile)
@@ -88,12 +91,15 @@ def makeAll(args):
 def makeCleaningAndSmoothing(V, F, outputfile=None):
     # findBoxVertexesForAxis(v, 2, 0)
     # v, f = findBoundaryFaces(v, f, 2)
-    V, F = rmbox.removeDoubleVertexesAndFaces(V, F)
+    V, F = rmbox.removeDoubleVertexesAndFaces(V, F, use_dict_algorithm=False)
     if outputfile is not None:
         writeFile(outputfile + "_cl.obj", V, F)
     V = ls.makeSmoothing(V, F)
     if outputfile is not None:
         writeFile(outputfile + "_sm.obj", V, F,
+                  ignore_empty_vertex_warning=True)
+        writeFile(outputfile + "_sm_i.obj",
+                  (np.asarray(V) * 10).tolist(), F,
                   ignore_empty_vertex_warning=True)
     return V, F
 

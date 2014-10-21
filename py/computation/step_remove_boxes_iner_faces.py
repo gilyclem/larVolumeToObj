@@ -68,7 +68,7 @@ def reindexVertexesInFaces(faces, new_indexes, index_base=0):
 
 
 def removeDoubleVertexesAndFaces(vertexes, faces, boxsize=None, index_base=0,
-                                 use_albertos=True):
+                                 use_dict_algorithm=True):
     """
     Main function of module. Return object description cleand from double
     vertexes and faces.
@@ -83,7 +83,7 @@ def removeDoubleVertexesAndFaces(vertexes, faces, boxsize=None, index_base=0,
                                        index_base=index_base)
     t2 = time.time()
     logger.info("Vertexes in faces reindexed     " + str(t2 - t1))
-    if use_albertos:
+    if use_dict_algorithm:
         logger.debug("Using Alberto")
         new_faces = removeDoubleFacesByAlberto(new_faces)
     else:
@@ -114,7 +114,8 @@ def removeDoubleVertexes(vertexes):
     return unique_vertexes.tolist(), inv
 
 
-def removeDoubleFacesOnlyOnBoundaryBoxes(vertexes, faces, bbsize, index_base=0):
+def removeDoubleFacesOnlyOnBoundaryBoxes(vertexes, faces, bbsize,
+                                         index_base=0):
     """
     Faster sister of removeDoubleFaces.
 
@@ -293,7 +294,7 @@ def main():
     # findBoxVertexesForAxis(v, 2, 0)
     # v, f = findBoundaryFaces(v, f, 2)
     v, f = removeDoubleVertexesAndFaces(v, f, args.boxsize,
-                                        use_albertos=args.alberto)
+                                        use_dict_algorithm=args.alberto)
     writeFile(args.outputfile, v, f)
     print "After"
     print "Number of vertexes: %i    Number of faces %i" % (len(v), len(f))
