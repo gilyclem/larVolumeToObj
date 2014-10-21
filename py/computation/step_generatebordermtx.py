@@ -84,7 +84,7 @@ def getBrodo3Path(nx, ny, nz, DIR_OUT):
 	if os.path.exists(fileName):
 		return fileName
 	else:
-		V, FV, CV = getBases(nx, ny, nz)
+		V, FV, CV, VV, EV = getBases(nx, ny, nz)
 		computeBordo3(FV, CV, fileName)
 
 
@@ -123,7 +123,17 @@ def getBases(nx, ny, nz):
 		if (x < nx) and (y < ny): FV.append([h,ind(x+1,y,z),ind(x,y+1,z),ind(x+1,y+1,z)])
 		if (x < nx) and (z < nz): FV.append([h,ind(x+1,y,z),ind(x,y,z+1),ind(x+1,y,z+1)])
 		if (y < ny) and (z < nz): FV.append([h,ind(x,y+1,z),ind(x,y,z+1),ind(x,y+1,z+1)])
-	return V, FV, CV
+
+	VV = AA(LIST)(range(len(V)))
+
+	EV = []
+	for h in xrange(len(V)):
+		x,y,z = v2coords(h)
+		if (x < nx): EV.append([h,ind(x+1,y,z)])
+		if (y < ny): EV.append([h,ind(x,y+1,z)])
+		if (z < nz): EV.append([h,ind(x,y,z+1)])
+
+	return V, FV, CV, VV, EV
 
 def main(argv):
 	ARGS_STRING = 'Args: -x <borderX> -y <borderY> -z <borderZ> -o <outputdir>'
@@ -157,7 +167,7 @@ def main(argv):
 
 	log(1, ["nx, ny, nz = " + str(nx) + "," + str(ny) + "," + str(nz)]);
 
-	V, FV, CV = getBases(nx, ny, nz)
+	V, FV, CV, CV, VV = getBases(nx, ny, nz)
 
 	log(3, ["FV = " + str(FV)]);
 
