@@ -68,7 +68,7 @@ def reindexVertexesInFaces(faces, new_indexes, index_base=0):
 
 
 def removeDoubleVertexesAndFaces(vertexes, faces, boxsize=None, index_base=0,
-                                 use_albertos=False):
+                                 use_albertos=True):
     """
     Main function of module. Return object description cleand from double
     vertexes and faces.

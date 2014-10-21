@@ -88,7 +88,7 @@ def makeAll(args):
 def makeCleaningAndSmoothing(V, F, outputfile=None):
     # findBoxVertexesForAxis(v, 2, 0)
     # v, f = findBoundaryFaces(v, f, 2)
-    V, F = rmbox.removeDoubleVertexesAndFaces(V, F, use_albertos=True)
+    V, F = rmbox.removeDoubleVertexesAndFaces(V, F)
     if outputfile is not None:
         writeFile(outputfile + "_cl.obj", V, F)
     V = ls.makeSmoothing(V, F)
