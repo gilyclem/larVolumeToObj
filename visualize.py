@@ -59,6 +59,17 @@ def visualize(V, FV):
     VIEW(struct)
 
 
+def visualize_plasm(V, FV):
+    # import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
+    FV = triangulateSquares(FV)
+    logger.debug("triangulation done")
+
+    FV1 = (np.asarray(FV) + 1).tolist()
+    logger.debug(" + 1 done")
+    VIEW(MKPOL([V, FV1, []]))
+    # VIEW(MKPOL([V, AA(AA(lambda k:k + 1))(FV), []]))
+
+
 def main():
 
     logger = logging.getLogger()
@@ -97,7 +108,7 @@ def main():
     V, FV = readFile(args.inputfile, ftype=args.filetype)
 
     logger.info("Data readed from ' %s" % (args.inputfile))
-    visualize(V, FV)
+    visualize_plasm(V, FV)
 
 if __name__ == "__main__":
     main()
