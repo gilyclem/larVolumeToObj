@@ -11,6 +11,7 @@ import struct
 import sys
 import getopt, sys
 import traceback
+import os
 
 # ------------------------------------------------------------
 # Logging & Timer
@@ -74,7 +75,7 @@ def computeBordo3(FV,CV,inputFile='bordo3.json'):
 		file.flush();
 
 
-def getBrodo3Path(nx, ny, nz, OUT_DIR):
+def getBrodo3Path(nx, ny, nz, DIR_OUT):
 	"""
 	Function try read boro3 from file. If it fail. Matrix is computed
 	"""

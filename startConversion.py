@@ -26,6 +26,7 @@ import py.computation.step_calcchains_serial_tobinary_filter_proc_lisa as s2bin
 from py.computation.fileio import readFile, writeFile
 # import step_calcchains_serial_tobinary_filter_proc_lisa as s2bin
 import py.computation.step_remove_boxes_iner_faces as rmbox
+import py.computation.step_generatebordermtx as gbmatrix
 import laplacianSmoothing as ls
 import visualize
 
@@ -33,13 +34,16 @@ import py.computation.step_squaremesh as sq
 
 
 def convert(filename, boxsize=[2, 2, 2]):
+    nx, ny, nz = boxsize
 
+    brodo3path = gbmatrix.getBrodo3Path(nx, ny, nz, './tmp/border')
     logger.debug("in convert()")
     s2bin.calcchains_main(
         nx=boxsize[0], ny=boxsize[1], nz=boxsize[2],
         calculateout=True,
         input_filename=filename,
-        BORDER_FILE='./tmp/border/bordo3_2-2-2.json',
+        # BORDER_FILE='./tmp/border/bordo3_2-2-2.json',
+        BORDER_FILE=brodo3path,
         # BORDER_FILE=border_file,
         DIR_O='tmp/output',
         # colors=,
