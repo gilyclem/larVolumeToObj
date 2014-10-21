@@ -21,11 +21,11 @@ import argparse
 import numpy as np
 # import py
 # import py.computation
-from py.computation import step_remove_boxes_iner_faces, fileio
-from py.computation import step_calcchains_serial_tobinary_filter_proc_lisa
+# from py.computation import step_remove_boxes_iner_faces
+import py.computation.step_calcchains_serial_tobinary_filter_proc_lisa as s2bin
 from py.computation.fileio import readFile, writeFile
-import step_calcchains_serial_tobinary_filter_proc_lisa as s2bin
-import step_remove_boxes_iner_faces as rmbox
+# import step_calcchains_serial_tobinary_filter_proc_lisa as s2bin
+import py.computation.step_remove_boxes_iner_faces as rmbox
 import laplacianSmoothing as ls
 import visualize
 
