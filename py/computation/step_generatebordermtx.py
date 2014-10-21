@@ -57,6 +57,7 @@ def invertIndex(nx,ny,nz):
 		return b0,b1,b2
 	return invertIndex0
 
+
 def computeBordo3(FV,CV,inputFile='bordo3.json'):
 	log(1, ["bordo3 = Starting"])
 	bordo3 = larBoundary(FV,CV)
