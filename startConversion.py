@@ -33,13 +33,13 @@ import visualize
 import py.computation.step_squaremesh as sq
 
 
-def convert(filename, boxsize=[2, 2, 2]):
-    nx, ny, nz = boxsize
+def convert(filename, bordersize=[2, 2, 2]):
+    nx, ny, nz = bordersize
 
     brodo3path = gbmatrix.getBrodo3Path(nx, ny, nz, './tmp/border')
     logger.debug("in convert()")
     s2bin.calcchains_main(
-        nx=boxsize[0], ny=boxsize[1], nz=boxsize[2],
+        nx=nx, ny=ny, nz=nz,
         calculateout=True,
         input_filename=filename,
         # BORDER_FILE='./tmp/border/bordo3_2-2-2.json',
@@ -53,7 +53,7 @@ def convert(filename, boxsize=[2, 2, 2]):
 
     concatenate_files("tmp/output/*.bin", 'model-2.bin')
     logger.debug("concatenate() finished")
-    nx, ny, nz = boxsize
+    # nx, ny, nz = boxsize
     sq.make_obj(
         nx, ny, nz,
         'model-2.bin',
@@ -75,7 +75,7 @@ def concatenate_files(input_filemasc, output_filename):
 
 def makeAll(args):
     print 'before pklz read'
-    convert(args.inputfile)
+    convert(args.inputfile, args.bordersize)
     print 'after pklz read'
     # V, F = readFile(args.inputfile)
     V, F = readFile('tmp/output/stl/model-2.obj')
@@ -148,7 +148,7 @@ def main():
         help='input file'
     )
     parser.add_argument(
-        '-b', '--boxsize',
+        '-b', '--bordersize',
         default=[2, 2, 2],
         type=int,
         metavar='N',

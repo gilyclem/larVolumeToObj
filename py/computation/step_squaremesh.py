@@ -148,6 +148,9 @@ def readFile(V,FV,chunksize,inputFile,OUT_DIR): #outputVtx="outputVtx.obj",outpu
 
                     timer_stop();
                 except:
+                    # :TODO: trce where is obj file lost
+                    import tracert
+                    tracert.print_exc()
                     exc_type, exc_value, exc_traceback = sys.exc_info()
                     lines = traceback.format_exception(exc_type, exc_value, exc_traceback)
                     log(1, [ "EOF or error: " + ''.join('!! ' + line for line in lines) ])
