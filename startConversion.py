@@ -140,6 +140,7 @@ def main():
 
     logger.setLevel(logging.DEBUG)
     ch = logging.StreamHandler()
+    ch.setLevel(logging.ERROR)
     logger.addHandler(ch)
 
     # create file handler which logs even debug messages
@@ -201,8 +202,6 @@ def main():
 
     if args.borderfile is None:
         args.borderfile = args.borderdir
-
-    import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
 
     makeAll(args)
 
