@@ -11,27 +11,27 @@
 """
 import unittest
 import py.computation.step_generatebordermtx as gbmatrix
+from nose.plugins.attrib import attr
 import sys
 import os
 path_to_script = os.path.dirname(os.path.abspath(__file__))
-sys.path.append("/home/mjirik/projects/lar-cc/lib/py")
+sys.path.append(os.path.join(path_to_script, "../../lar-cc/lib/py"))
 
 
 class TemplateTest(unittest.TestCase):
 
+    @attr('interactive')
     def test_get_oriented_boundary(self):
         from larcc import VIEW, EXPLODE, MKPOLS, signedCellularBoundaryCells, AA, REVERSE, CAT
         V, FV, CV, VV, EV = gbmatrix.getBases(1, 2, 1)
-        VIEW(EXPLODE(1.2, 1.2, 1.2)(MKPOLS((V,EV))))
-        orientedBoundary = signedCellularBoundaryCells(V,AA(AA(REVERSE))([VV,EV,FV,CV]))
-        cells = [FV[f] if sign==1 else REVERSE(FV[f]) for (sign,f) in zip(*orientedBoundary)]
+        VIEW(EXPLODE(1.2, 1.2, 1.2)(MKPOLS((V, EV))))
+        orientedBoundary = signedCellularBoundaryCells( V, AA(AA(REVERSE))([VV, EV, FV, CV]))
+        cells = [FV[f] if sign == 1 else REVERSE(FV[f]) for (sign, f) in zip(*orientedBoundary)]
 
-        cells3 = CAT([[[v1, v2, v3], [v1, v3, v4]] for [v1, v2, v3, v4] in cells])
-        cells3 = CAT([[[v1, v2, v3], [v3, v2, v4]] for [v1, v2, v3, v4] in cells])
-        VIEW(EXPLODE(1.2, 1.2, 1.2)(MKPOLS((V,cells3))))
-        import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
-
-
+        FV3 = CAT([[[v1, v2, v3], [v1, v3, v4]] for [v1, v2, v3, v4] in cells])
+        FV3 = CAT([[[v1, v2, v3], [v3, v2, v4]] for [v1, v2, v3, v4] in cells])
+        VIEW(EXPLODE(1.2, 1.2, 1.2)(MKPOLS((V, FV3))))
+        import ipdb; ipdb.set_trace()  # noqa BREAKPOINT
 
     def test_getBases_correct_EV_len(self):
         V, FV, CV, VV, EV = gbmatrix.getBases(1, 2, 1)
