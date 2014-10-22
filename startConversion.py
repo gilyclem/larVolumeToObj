@@ -18,7 +18,10 @@ import argparse
 # $PYBIN ./py/computation/step_calcchains_serial_tobinary_filter_proc_lisa.py\
 # -r -b $BORDER_DIR/$BORDER_FILE -x $BORDER_X -y $BORDER_Y -z $BORDER_Z\
 # -i $DIRINPUT -c $COLORS -d $CHAINCURR -q $BESTFILE -o $COMPUTATION_DIR_BIN
+import os
+import errno
 import numpy as np
+import shutil
 # import py
 # import py.computation
 # from py.computation import step_remove_boxes_iner_faces
@@ -33,9 +36,18 @@ import visualize
 import py.computation.step_squaremesh as sq
 
 
-def convert(filename, bordersize=[2, 2, 2]):
-    nx, ny, nz = bordersize
+def convert(filename, bordersize=[2, 2, 2], output_dir='tmp/output'):
+    bindir = os.path.join(output_dir, 'compbin')
+    stldir = os.path.join(output_dir, 'stl')
+    binfile = os.path.join(bindir, 'model-2.bin')
+    stlfile = os.path.join(stldir, 'model-2.obj')
 
+    shutil.rmtree(output_dir)
+    mkdir_p(output_dir)
+    mkdir_p(stldir)
+    mkdir_p(bindir)
+
+    nx, ny, nz = bordersize
     brodo3path = gbmatrix.getBrodo3Path(nx, ny, nz, './tmp/border')
     logger.debug("in convert()")
     s2bin.calcchains_main(
@@ -45,32 +57,24 @@ def convert(filename, bordersize=[2, 2, 2]):
         # BORDER_FILE='./tmp/border/bordo3_2-2-2.json',
         BORDER_FILE=brodo3path,
         # BORDER_FILE=border_file,
-        DIR_O='tmp/output',
+        DIR_O=bindir,
         # colors=,
         coloridx=2
         )
     logger.debug("calcchains_main finished")
 
-    concatenate_files("tmp/output/*.bin", 'model-2.bin')
+    concatenate_files(
+        bindir + "/*.bin",
+        binfile)
     logger.debug("concatenate() finished")
     # nx, ny, nz = boxsize
     sq.make_obj(
         nx, ny, nz,
-        'model-2.bin',
-        './tmp/output/stl/')
+        binfile,
+        stldir)
     logger.debug("obj file  finished")
-    pass
 
-
-def concatenate_files(input_filemasc, output_filename):
-    import glob
-
-    read_files = glob.glob(input_filemasc)
-
-    with open(output_filename, "wb") as outfile:
-        for f in read_files:
-            with open(f, "rb") as infile:
-                outfile.write(infile.read())
+    concatenate_files(stldir + '/output-*-*.stl', stlfile)
 
 
 def makeAll(args):
@@ -106,6 +110,30 @@ def makeCleaningAndSmoothing(V, F, outputfile=None):
                   (np.asarray(V) * 10).tolist(), F,
                   ignore_empty_vertex_warning=True)
     return V, F
+
+
+def mkdir_p(path):
+    try:
+        os.makedirs(path)
+    except OSError as exc:  # Python >2.5
+        if exc.errno == errno.EEXIST and os.path.isdir(path):
+            pass
+        else:
+            raise
+
+
+def concatenate_files(input_filemasc, output_filename):
+    import glob
+
+    read_files = glob.glob(input_filemasc)
+    logger.debug('concatenate files')
+    logger.debug(str(read_files))
+
+    with open(output_filename, "wb") as outfile:
+        for f in read_files:
+            with open(f, "rb") as infile:
+                outfile.write(infile.read())
+    logger.info("Files concatenated to '%s'" % (output_filename))
 
 
 def main():
