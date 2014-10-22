@@ -139,11 +139,18 @@ def concatenate_files(input_filemasc, output_filename):
 def main():
     logger = logging.getLogger()
 
-    logger.setLevel(logging.WARNING)
+    logger.setLevel(logging.DEBUG)
     ch = logging.StreamHandler()
     logger.addHandler(ch)
 
-    # logger.debug('input params')
+    # create file handler which logs even debug messages
+    fh = logging.FileHandler('log.txt')
+    fh.setLevel(logging.DEBUG)
+    formatter = logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    fh.setFormatter(formatter)
+    logger.addHandler(fh)
+    logger.debug('start')
 
     # input parser
     parser = argparse.ArgumentParser(
@@ -191,7 +198,7 @@ def main():
         help='Debug mode')
     args = parser.parse_args()
     if args.debug:
-        logger.setLevel(logging.DEBUG)
+        ch.setLevel(logging.DEBUG)
 
     if args.borderfile is None:
         args.borderfile = args.borderdir
