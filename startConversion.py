@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Generator of histology report
-
+Read pklz with Pyplasm and LAR
 """
 import logging
 logger = logging.getLogger(__name__)
@@ -154,7 +153,7 @@ def main():
 
     # input parser
     parser = argparse.ArgumentParser(
-        description="Read pklz with Pyplasm and LAR"
+        description=__doc__
     )
     parser.add_argument(
         '-i', '--inputfile',
@@ -202,6 +201,8 @@ def main():
 
     if args.borderfile is None:
         args.borderfile = args.borderdir
+
+    import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
 
     makeAll(args)
 
