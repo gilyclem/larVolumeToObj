@@ -20,13 +20,24 @@ sys.path.append(os.path.join(path_to_script, "../../lar-cc/lib/py"))
 
 class TemplateTest(unittest.TestCase):
 
+    @attr('actual')
+    def test_brodo3(self):
+        V, bases = gbmatrix.getBases(1, 2, 1)
+        VV, EV, FV, CV = bases
+        from py.computation.lar import larBoundary
+        brodo3 = larBoundary(FV, CV)
+        obc = gbmatrix.orientedBoundaryCells(V, bases)
+        bm = gbmatrix.computeOrientedBrodo3(1, 2, 1)
+        import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
+
     @attr('interactive')
     def test_get_oriented_boundary(self):
         from larcc import VIEW, EXPLODE, MKPOLS,\
             AA, CAT, signedCellularBoundary, swap, VECTPROD, DIFF,\
             CCOMB, SUM, POLYLINE
         import scipy
-        V, FV, CV, VV, EV = gbmatrix.getBases(1, 2, 1)
+        V, bases = gbmatrix.getBases(1, 2, 1)
+        VV, EV, FV, CV = bases
         VIEW(EXPLODE(1.2, 1.2, 1.2)(MKPOLS((V, EV))))
         # orientedBoundary = signedCellularBoundaryCells(
         #     V, AA(AA(REVERSE))([VV, EV, FV, CV]))
@@ -73,7 +84,8 @@ class TemplateTest(unittest.TestCase):
         VIEW(EXPLODE(1.2, 1.2, 1.2)(MKPOLS((V, FVtriangles)) + normalVectors))
 
     def test_getBases_correct_EV_len(self):
-        V, FV, CV, VV, EV = gbmatrix.getBases(1, 2, 1)
+        V, bases = gbmatrix.getBases(1, 2, 1)
+        VV, EV, FV, CV = bases
         self.assertEqual(len(EV), 20)
 
 if __name__ == "__main__":

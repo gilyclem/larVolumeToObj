@@ -17,7 +17,7 @@ import os
 # Logging & Timer
 # ------------------------------------------------------------
 
-logging_level = 0;
+logging_level = 0
 
 # 0 = no_logging
 # 1 = few details
@@ -27,22 +27,22 @@ logging_level = 0;
 def log(n, l):
     if __name__=="__main__" and n <= logging_level:
         for s in l:
-            print "Log:", s;
+            print "Log:", s
 
-timer = 1;
+timer = 1
 
 timer_last =  tm.time()
 
 def timer_start(s):
-    global timer_last;
+    global timer_last
     if __name__=="__main__" and timer == 1:
-        log(3, ["Timer start:" + s]);
-    timer_last = tm.time();
+        log(3, ["Timer start:" + s])
+    timer_last = tm.time()
 
 def timer_stop():
-    global timer_last;
+    global timer_last
     if __name__=="__main__" and timer == 1:
-        log(3, ["Timer stop :" + str(tm.time() - timer_last)]);
+        log(3, ["Timer stop :" + str(tm.time() - timer_last)])
 
 # ------------------------------------------------------------
 # Computation of ∂3 operator on the image space
@@ -76,7 +76,59 @@ def computeBordo3(FV,CV,inputFile='bordo3.json'):
         file.flush();
 
 
-def getBrodo3Path(nx, ny, nz, DIR_OUT):
+def orientedBoundaryCells(V, (VV, EV, FV, CV)):
+
+    from larcc import signedCellularBoundary
+    boundaryMat = signedCellularBoundary(V, [VV, EV, FV, CV])
+    chainCoords = scipy.sparse.csc_matrix((len(CV), 1))
+    for cell in range(len(CV)):
+        chainCoords[cell, 0] = 1
+    boundaryCells = list((boundaryMat * chainCoords).tocoo().row)
+    orientations = list((boundaryMat * chainCoords).tocoo().data)
+    return zip(orientations, boundaryCells)
+
+
+def normalVector(V, facet):
+    v0, v1, v2 = facet[:3]
+    return VECTPROD([DIFF([V[v1], V[v0]]), DIFF([V[v2], V[v0]])])
+
+
+def orientedQuads(V, (VV, EV, FV, CV)):
+    boundaryCellspairs = orientedBoundaryCells(V, [VV, EV, FV, CV])
+
+    orientedQuads = [
+        [sign, FV[face]] if sign > 0
+        else [sign, swap(FV[face])]
+        for (sign, face) in boundaryCellspairs]
+
+    return orientedQuads
+
+
+def computeOrientedBrodo3(nx, ny, nz):
+    # from py.computation.lar import si
+    from larcc import signedCellularBoundary
+    # bordo3 = larBoundary(FV,CV)
+    V, [VV, EV, FV, CV] = getBases(nx, ny, nz)
+    boundaryMat = signedCellularBoundary(V, [VV, EV, FV, CV])
+    return boundaryMat
+
+
+def writeBrodo3(brodo3, inputFile):
+    ROWCOUNT = bordo3.shape[0]
+    COLCOUNT = bordo3.shape[1]
+    ROW = bordo3.indptr.tolist()
+    COL = bordo3.indices.tolist()
+    # DATA = bordo3.data.tolist()
+
+    with open(inputFile, "w") as file:
+        json.dump({
+            "ROWCOUNT": ROWCOUNT, "COLCOUNT": COLCOUNT,
+            "ROW": ROW, "COL": COL, "DATA": 1}, file,
+            separators=(',', ':'))
+        file.flush()
+
+
+def getOrientedBrodo3Path(nx, ny, nz, DIR_OUT):
     """
     Function try read boro3 from file. If it fail. Matrix is computed
     """
@@ -85,8 +137,10 @@ def getBrodo3Path(nx, ny, nz, DIR_OUT):
     if os.path.exists(fileName):
         return fileName
     else:
-        V, FV, CV, VV, EV = getBases(nx, ny, nz)
-        computeBordo3(FV, CV, fileName)
+        V, bases = getBases(nx, ny, nz)
+        VV, EV, FV, CV = bases
+        brodo3 = computeOrientedBrodo3(FV, CV, fileName)
+        writeBrodo3(brodo3, fileName)
 
 
 def getBases(nx, ny, nz):
@@ -103,14 +157,14 @@ def getBases(nx, ny, nz):
 
     V = [[x,y,z] for z in xrange(nz+1) for y in xrange(ny+1) for x in xrange(nx+1) ]
 
-    log(3, ["V = " + str(V)]);
+    log(3, ["V = " + str(V)])
 
     # Construction of CV relation (nx * ny * nz)
     # ------------------------------------------------------------
 
     CV = [the3Dcell([x,y,z]) for z in xrange(nz) for y in xrange(ny) for x in xrange(nx)]
 
-    log(3, ["CV = " + str(CV)]);
+    log(3, ["CV = " + str(CV)])
 
     # Construction of FV relation (nx * ny * nz)
     # ------------------------------------------------------------
@@ -134,7 +188,8 @@ def getBases(nx, ny, nz):
         if (y < ny): EV.append([h,ind(x,y+1,z)])
         if (z < nz): EV.append([h,ind(x,y,z+1)])
 
-    return V, FV, CV, VV, EV
+    # return V, FV, CV, VV, EV
+    return V, (VV, EV, FV, CV)
 
 def main(argv):
     ARGS_STRING = 'Args: -x <borderX> -y <borderY> -z <borderZ> -o <outputdir>'
@@ -166,11 +221,11 @@ def main(argv):
         print ARGS_STRING
         sys.exit(2)
 
-    log(1, ["nx, ny, nz = " + str(nx) + "," + str(ny) + "," + str(nz)]);
+    log(1, ["nx, ny, nz = " + str(nx) + "," + str(ny) + "," + str(nz)])
 
-    V, FV, CV, CV, VV = getBases(nx, ny, nz)
-
-    log(3, ["FV = " + str(FV)]);
+    V, bases = getBases(nx, ny, nz)
+    VV, EV, FV, CV = bases
+    log(3, ["FV = " + str(FV)])
 
     fileName = DIR_OUT+'/bordo3_'+str(nx)+'-'+str(ny)+'-'+str(nz)+'.json'
 
