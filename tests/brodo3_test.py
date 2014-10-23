@@ -21,14 +21,31 @@ sys.path.append(os.path.join(path_to_script, "../../lar-cc/lib/py"))
 class TemplateTest(unittest.TestCase):
 
     @attr('actual')
-    def test_brodo3(self):
-        V, bases = gbmatrix.getBases(1, 2, 1)
+    def test_make_boundary_from_boundary_matrix(self):
+
+        nx, ny, nz = [1, 2, 1]
+
+        V, bases = gbmatrix.getBases(nx, ny, nz)
         VV, EV, FV, CV = bases
+
+        bm = gbmatrix.computeOrientedBrodo3(nx, ny, nz)
+
+    def test_compare_two_brodo3(self):
         from py.computation.lar import larBoundary
-        brodo3 = larBoundary(FV, CV)
-        obc = gbmatrix.orientedBoundaryCells(V, bases)
-        bm = gbmatrix.computeOrientedBrodo3(1, 2, 1)
-        import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
+        import numpy as np
+
+        nx, ny, nz = [1, 2, 1]
+
+        V, bases = gbmatrix.getBases(nx, ny, nz)
+        VV, EV, FV, CV = bases
+
+        bm1 = larBoundary(FV, CV)
+        bm2 = gbmatrix.computeOrientedBrodo3(nx, ny, nz)
+
+        # in abs should be same
+        self.assertEqual(
+            bm1.todense().reshape(-1).tolist(),
+            np.abs(bm2).todense().reshape(-1).tolist())
 
     @attr('interactive')
     def test_get_oriented_boundary(self):
