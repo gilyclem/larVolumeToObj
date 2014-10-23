@@ -71,7 +71,9 @@ def computeBordo3(FV,CV,inputFile='bordo3.json'):
     # DATA = bordo3.data.tolist()
 
     with open(inputFile, "w") as file:
-        json.dump({"ROWCOUNT":ROWCOUNT, "COLCOUNT":COLCOUNT, "ROW":ROW, "COL":COL, "DATA":1}, file, separators=(',',':'))
+        json.dump({
+            "ROWCOUNT":ROWCOUNT, "COLCOUNT":COLCOUNT, "ROW":ROW,
+            "COL":COL, "DATA":1}, file, separators=(',',':'))
         # json.dump({"ROWCOUNT":ROWCOUNT, "COLCOUNT":COLCOUNT, "ROW":ROW, "COL":COL, "DATA":DATA }, file, separators=(',',':'))
         file.flush();
 
@@ -88,13 +90,25 @@ def orientedBoundaryCells(V, (VV, EV, FV, CV)):
     return zip(orientations, boundaryCells)
 
 
+def orientedBoundaryCellsFromBM(boundaryMat, lenCV):
+    """
+    part of orientedBoundaryCells
+    """
+    chainCoords = scipy.sparse.csc_matrix((lenCV, 1))
+    for cell in range(lenCV):
+        chainCoords[cell, 0] = 1
+    boundaryCells = list((boundaryMat * chainCoords).tocoo().row)
+    orientations = list((boundaryMat * chainCoords).tocoo().data)
+    return zip(orientations, boundaryCells)
+
+
 def normalVector(V, facet):
     v0, v1, v2 = facet[:3]
     return VECTPROD([DIFF([V[v1], V[v0]]), DIFF([V[v2], V[v0]])])
 
 
-def orientedQuads(V, (VV, EV, FV, CV)):
-    boundaryCellspairs = orientedBoundaryCells(V, [VV, EV, FV, CV])
+def orientedQuads(FV, boundaryCellspairs):
+    from larcc import swap
 
     orientedQuads = [
         [sign, FV[face]] if sign > 0

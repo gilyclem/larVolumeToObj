@@ -22,13 +22,38 @@ class TemplateTest(unittest.TestCase):
 
     @attr('actual')
     def test_make_boundary_from_boundary_matrix(self):
+        import scipy
+        from larcc import VIEW, EXPLODE, MKPOLS
 
         nx, ny, nz = [1, 2, 1]
 
         V, bases = gbmatrix.getBases(nx, ny, nz)
         VV, EV, FV, CV = bases
 
-        bm = gbmatrix.computeOrientedBrodo3(nx, ny, nz)
+        boundaryMat = gbmatrix.computeOrientedBrodo3(nx, ny, nz)
+    # time for saving/loading boundaryMat to file
+
+        boundaryCellspairs = gbmatrix.orientedBoundaryCellsFromBM(
+            boundaryMat, len(CV))
+
+        orientedQuads = gbmatrix.orientedQuads(FV, boundaryCellspairs)
+
+        FVo = [face[1] for face in orientedQuads]
+
+        FV4 = []
+        for [oriantation, face] in orientedQuads:
+            if oriantation > 0:
+                FV4.append(face)
+            else:
+                FV4.append(face[::-1])
+                #     face[3],
+                #     face[2],
+                #     face[1],
+                #     face[0]
+                # ])
+
+        VIEW(EXPLODE(1.2, 1.2, 1.2)(MKPOLS((V, FV4))))
+        import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
 
     def test_compare_two_brodo3(self):
         from py.computation.lar import larBoundary
@@ -53,7 +78,7 @@ class TemplateTest(unittest.TestCase):
             AA, CAT, signedCellularBoundary, swap, VECTPROD, DIFF,\
             CCOMB, SUM, POLYLINE
         import scipy
-        V, bases = gbmatrix.getBases(1, 2, 1)
+        V, bases = gbmatrix.getBases(3, 2, 1)
         VV, EV, FV, CV = bases
         VIEW(EXPLODE(1.2, 1.2, 1.2)(MKPOLS((V, EV))))
         # orientedBoundary = signedCellularBoundaryCells(
