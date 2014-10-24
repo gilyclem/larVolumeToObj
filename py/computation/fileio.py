@@ -72,6 +72,8 @@ def __writeVertexLineToObjFile(f, vertex, ignore_empty_vertex_warning):
 
 
 def readFile(filename, ftype='auto', shift_obj=True):
+    if not os.path.isfile(filename):
+        logger.error('File "%s" not found' % (filename))
     if ftype == 'auto':
         _, ext = os.path.splitext(filename)
         ftype = ext[1:]
