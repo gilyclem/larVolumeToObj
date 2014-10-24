@@ -93,7 +93,9 @@ def makeAll(
     print "Before"
     print "Number of vertexes: %i    Number of faces %i" % (len(V), len(F))
     # F = rmbox.shiftFaces(F, -1)
-    V, F = makeCleaningAndSmoothing(V, F, outputfile)
+    V, F = makeCleaningAndSmoothing(
+        V, F,
+        os.path.join(outputdir, outputfile))
     print "After"
     print "Number of vertexes: %i    Number of faces %i" % (len(V), len(F))
 
@@ -113,8 +115,12 @@ def makeCleaningAndSmoothing(V, F, outputfile=None):
     if outputfile is not None:
         writeFile(outputfile + "_sm.obj", V, F,
                   ignore_empty_vertex_warning=True)
+# fill empty vertexes
+        V = [v if len(v) == 3 else [0,0,0] for v in V]
+# make tenimes bigger
+        Vint = (np.asarray(V) * 10).astype(np.int).tolist()
         writeFile(outputfile + "_sm_i.obj",
-                  (np.asarray(V) * 10).tolist(), F,
+                  Vint, F,
                   ignore_empty_vertex_warning=True)
     return V, F
 
