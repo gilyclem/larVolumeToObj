@@ -134,10 +134,13 @@ def computeChainsThread(
                     COL = np.asarray(bordo3_json['COL'], dtype=np.int32)
                     if np.isscalar(bordo3_json['DATA']):
                         # in special case, when all numbers are same
+                        logger.debug('bordermatrix data stored as scalar 1')
                         DATA = np.ones(COL.shape, dtype=np.int8) *\
                             np.int8(bordo3_json['DATA'])
                     else:
                         # this is general form
+                        logger.debug(
+                            'bordermatrix data stored in general form')
                         DATA = np.asarray(bordo3_json['DATA'], dtype=np.int8)
                     # print "border m ",  ROW.shape, COL.shape, DATA.shape
                     # print  "55555555555555555555555555555555555555"
@@ -494,12 +497,12 @@ def calcchains_main(
         if (y < ny) and (z < nz):
             FV.append([h, ind(x, y+1, z), ind(x, y, z+1), ind(x, y+1, z+1)])
 
-    print 'coloridx ', coloridx
-    print 'calc', calculateout
-    print 'V.len: ', len(V), ' V[0:4]: ', V[0:4]
-    print 'FV.len: ', len(FV), 'FV[0:4]: ', FV[0:4]
-    print 'dirl', input_filename, BORDER_FILE
-    print 'diro ', DIR_O
+    # print 'coloridx ', coloridx
+    # print 'calc', calculateout
+    # print 'V.len: ', len(V), ' V[0:4]: ', V[0:4]
+    # print 'FV.len: ', len(FV), 'FV[0:4]: ', FV[0:4]
+    # print 'dirl', input_filename, BORDER_FILE
+    # print 'diro ', DIR_O
 
     return runComputation(nx, ny, nz, coloridx, calculateout, V, FV, input_filename,
                    BORDER_FILE, DIR_O)

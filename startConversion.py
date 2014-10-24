@@ -52,7 +52,6 @@ def convert(
 
     nx, ny, nz = bordersize
     brodo3path = gbmatrix.getOrientedBordo3Path(nx, ny, nz, borderdir)
-    print 'b3p ', brodo3path
     logger.debug("in convert()")
     s2bin.calcchains_main(
         nx=nx, ny=ny, nz=nz,

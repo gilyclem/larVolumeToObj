@@ -134,12 +134,12 @@ def writeBordo3(bordo3, inputFile):
     COLCOUNT = bordo3.shape[1]
     ROW = bordo3.indptr.tolist()
     COL = bordo3.indices.tolist()
-    # DATA = bordo3.data.tolist()
+    DATA = bordo3.data.tolist()
 
     with open(inputFile, "w") as file:
         json.dump({
             "ROWCOUNT": ROWCOUNT, "COLCOUNT": COLCOUNT,
-            "ROW": ROW, "COL": COL, "DATA": 1}, file,
+            "ROW": ROW, "COL": COL, "DATA": DATA}, file,
             separators=(',', ':'))
         file.flush()
 
