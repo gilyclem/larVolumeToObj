@@ -35,19 +35,19 @@ import visualize
 import py.computation.step_squaremesh as sq
 
 
-def convert(filename, bordersize=[2, 2, 2], output_dir='tmp/output'):
-    bindir = os.path.join(output_dir, 'compbin')
-    stldir = os.path.join(output_dir, 'stl')
+def convert(filename, bordersize=[2, 2, 2], outputdir='tmp/output'):
+    bindir = os.path.join(outputdir, 'compbin')
+    stldir = os.path.join(outputdir, 'stl')
     binfile = os.path.join(bindir, 'model-2.bin')
     stlfile = os.path.join(stldir, 'model-2.obj')
 
-    shutil.rmtree(output_dir)
-    mkdir_p(output_dir)
+    shutil.rmtree(outputdir)
+    mkdir_p(outputdir)
     mkdir_p(stldir)
     mkdir_p(bindir)
 
     nx, ny, nz = bordersize
-    brodo3path = gbmatrix.getBrodo3Path(nx, ny, nz, './tmp/border')
+    brodo3path = gbmatrix.getOrientedBrodo3Path(nx, ny, nz, './tmp/border')
     logger.debug("in convert()")
     s2bin.calcchains_main(
         nx=nx, ny=ny, nz=nz,
@@ -76,20 +76,27 @@ def convert(filename, bordersize=[2, 2, 2], output_dir='tmp/output'):
     concatenate_files(stldir + '/output-*-*.stl', stlfile)
 
 
-def makeAll(args):
+def makeAll(
+    inputfile,
+    bordersize,
+    outputdir,
+    outputfile,
+    visualization,
+    borderdir
+):
     print 'before pklz read'
-    convert(args.inputfile, args.bordersize)
+    convert(inputfile, bordersize, outputdir)
     print 'after pklz read'
     # V, F = readFile(args.inputfile)
-    V, F = readFile('tmp/output/stl/model-2.obj')
+    V, F = readFile(os.path.join(outputdir,'stl/model-2.obj'))
     print "Before"
     print "Number of vertexes: %i    Number of faces %i" % (len(V), len(F))
     # F = rmbox.shiftFaces(F, -1)
-    V, F = makeCleaningAndSmoothing(V, F, args.outputfile)
+    V, F = makeCleaningAndSmoothing(V, F, outputfile)
     print "After"
     print "Number of vertexes: %i    Number of faces %i" % (len(V), len(F))
 
-    if args.visualization:
+    if visualization:
         visualize.visualize(V, F)
 
     return V, F
@@ -168,15 +175,20 @@ def main():
         help='output file'
     )
     parser.add_argument(
+        '-od', '--outputdir',
+        default='tmp/output/',
+        help='output file'
+    )
+    parser.add_argument(
         '-l', '--label',
         default=2,
         help='input file'
     )
-    parser.add_argument(
-        '-bf', '--borderfile',
-        default=None,
-        help='input file'
-    )
+    # parser.add_argument(
+    #     '-bf', '--borderfile',
+    #     default=None,
+    #     help='input file'
+    # )
     parser.add_argument(
         '-bd', '--borderdir',
         default="tmp/border",
@@ -200,10 +212,14 @@ def main():
     if args.debug:
         ch.setLevel(logging.DEBUG)
 
-    if args.borderfile is None:
-        args.borderfile = args.borderdir
-
-    makeAll(args)
+    makeAll(
+        inputfile=args.inputfile,
+        bordersize=args.bordersize,
+        outputdir=args.outputdir,
+        outputfile=args.outputfile,
+        visualization=args.visualization,
+        borderdir=args.borderdir
+    )
 
 
 if __name__ == "__main__":
