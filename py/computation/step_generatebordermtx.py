@@ -13,6 +13,8 @@ import getopt, sys
 import traceback
 import os
 
+import logging
+logger = logging.getLogger(__name__)
 # ------------------------------------------------------------
 # Logging & Timer
 # ------------------------------------------------------------
@@ -118,7 +120,7 @@ def orientedQuads(FV, boundaryCellspairs):
     return orientedQuads
 
 
-def computeOrientedBrodo3(nx, ny, nz):
+def computeOrientedBordo3(nx, ny, nz):
     # from py.computation.lar import si
     from larcc import signedCellularBoundary
     # bordo3 = larBoundary(FV,CV)
@@ -127,7 +129,7 @@ def computeOrientedBrodo3(nx, ny, nz):
     return boundaryMat
 
 
-def writeBrodo3(brodo3, inputFile):
+def writeBordo3(bordo3, inputFile):
     ROWCOUNT = bordo3.shape[0]
     COLCOUNT = bordo3.shape[1]
     ROW = bordo3.indptr.tolist()
@@ -142,19 +144,22 @@ def writeBrodo3(brodo3, inputFile):
         file.flush()
 
 
-def getOrientedBrodo3Path(nx, ny, nz, DIR_OUT):
+def getOrientedBordo3Path(nx, ny, nz, DIR_OUT):
     """
     Function try read boro3 from file. If it fail. Matrix is computed
     """
 
     fileName = DIR_OUT+'/bordo3_'+str(nx)+'-'+str(ny)+'-'+str(nz)+'.json'
     if os.path.exists(fileName):
-        return fileName
+        logger.info('used old bordermatrix')
     else:
+        logger.info("generating new border matrix")
         V, bases = getBases(nx, ny, nz)
         VV, EV, FV, CV = bases
-        brodo3 = computeOrientedBrodo3(FV, CV, fileName)
-        writeBrodo3(brodo3, fileName)
+        # bordo3 = computeBordo3(FV,CV,inputFile=fileName)
+        brodo3 = computeOrientedBordo3(nx, ny, nz)
+        writeBordo3(brodo3, fileName)
+    return fileName
 
 
 def getBases(nx, ny, nz):
@@ -169,7 +174,11 @@ def getBases(nx, ny, nz):
     # Construction of vertex coordinates (nx * ny * nz)
     # ------------------------------------------------------------
 
-    V = [[x,y,z] for z in xrange(nz+1) for y in xrange(ny+1) for x in xrange(nx+1) ]
+    try:
+        V = [[x,y,z] for z in xrange(nz+1) for y in xrange(ny+1) for x in xrange(nx+1) ]
+    except:
+        import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
+
 
     log(3, ["V = " + str(V)])
 

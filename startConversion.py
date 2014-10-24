@@ -35,7 +35,9 @@ import visualize
 import py.computation.step_squaremesh as sq
 
 
-def convert(filename, bordersize=[2, 2, 2], outputdir='tmp/output', borderdir='./tmp/border'):
+def convert(
+    filename, bordersize=[2, 2, 2],
+    outputdir='tmp/output', borderdir='./tmp/border'):
     bindir = os.path.join(outputdir, 'compbin')
     stldir = os.path.join(outputdir, 'stl')
     binfile = os.path.join(bindir, 'model-2.bin')
@@ -46,9 +48,11 @@ def convert(filename, bordersize=[2, 2, 2], outputdir='tmp/output', borderdir='.
     mkdir_p(outputdir)
     mkdir_p(stldir)
     mkdir_p(bindir)
+    mkdir_p(borderdir)
 
     nx, ny, nz = bordersize
-    brodo3path = gbmatrix.getOrientedBrodo3Path(nx, ny, nz, borderdir)
+    brodo3path = gbmatrix.getOrientedBordo3Path(nx, ny, nz, borderdir)
+    print 'b3p ', brodo3path
     logger.debug("in convert()")
     s2bin.calcchains_main(
         nx=nx, ny=ny, nz=nz,
@@ -86,7 +90,7 @@ def makeAll(
     borderdir
 ):
     print 'before pklz read'
-    convert(inputfile, bordersize, outputdir) # , borderdir=borderdir)
+    convert(inputfile, bordersize, outputdir, borderdir=borderdir)
     print 'after pklz read'
     # V, F = readFile(args.inputfile)
     V, F = readFile(os.path.join(outputdir,'stl/model-2.obj'))
@@ -106,6 +110,9 @@ def makeAll(
 
 
 def makeCleaningAndSmoothing(V, F, outputfile=None):
+    print "##############"
+    logger.debug("outputfile " + str(outputfile))
+    print F, V
     # findBoxVertexesForAxis(v, 2, 0)
     # v, f = findBoundaryFaces(v, f, 2)
     V, F = rmbox.removeDoubleVertexesAndFaces(V, F, use_dict_algorithm=False)

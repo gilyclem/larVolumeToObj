@@ -72,13 +72,16 @@ class CommonTest(unittest.TestCase):
     @attr('actual')
     def test_real_pklz_data(self):
         import startConversion
+        # if os.path.exists(borderdi):
+        #     shutil.rmtree(borderdir)
         F, V = startConversion.makeAll(
             inputfile='tests/nrn4.pklz',
-            bordersize=[3, 3, 3],
+            bordersize=[4, 2, 3],
             outputdir='tests/testpklz',
             outputfile='test_nrn4',
-            visualization=False,
-            borderdir='tests/border'
+            visualization=True,
+            borderdir='tests/testpklz/border'
+            # borderdir='tmp/border'
         )
         pass
 

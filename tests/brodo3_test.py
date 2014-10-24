@@ -30,7 +30,7 @@ class TemplateTest(unittest.TestCase):
         V, bases = gbmatrix.getBases(nx, ny, nz)
         VV, EV, FV, CV = bases
 
-        boundaryMat = gbmatrix.computeOrientedBrodo3(nx, ny, nz)
+        boundaryMat = gbmatrix.computeOrientedBordo3(nx, ny, nz)
     # time for saving/loading boundaryMat to file
 
         boundaryCellspairs = gbmatrix.orientedBoundaryCellsFromBM(
@@ -65,7 +65,7 @@ class TemplateTest(unittest.TestCase):
         VV, EV, FV, CV = bases
 
         bm1 = larBoundary(FV, CV)
-        bm2 = gbmatrix.computeOrientedBrodo3(nx, ny, nz)
+        bm2 = gbmatrix.computeOrientedBordo3(nx, ny, nz)
 
         # in abs should be same
         self.assertEqual(
