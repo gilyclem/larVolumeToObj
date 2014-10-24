@@ -75,7 +75,7 @@ class CommonTest(unittest.TestCase):
         F, V = startConversion.makeAll(
             inputfile='nrn4.pklz',
             bordersize=[3, 3, 3],
-            outputdir='tests/',
+            outputdir='tests/testpklz',
             outputfile='test_nrn4',
             visualization=False,
             borderdir='tests/border'
