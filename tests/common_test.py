@@ -10,6 +10,7 @@ path_to_script = os.path.dirname(os.path.abspath(__file__))
 # sys.path.append(os.path.join(path_to_script, "../"))
 import unittest
 
+from nose.plugins.attrib import attr
 import numpy as np
 import laplacianSmoothing as ls
 import step_remove_boxes_iner_faces as rmbox
@@ -67,5 +68,19 @@ class CommonTest(unittest.TestCase):
         # print V[32]
         # self.assertAlmostEqual(
         #     0, np.sum(V[32] - expected_vertex))
+
+    @attr('actual')
+    def test_real_pklz_data(self):
+        import startConversion
+        F, V = startConversion.makeAll(
+            inputfile='nrn4.pklz',
+            bordersize=[3, 3, 3],
+            outputdir='tests/',
+            outputfile='test_nrn4',
+            visualization=False,
+            borderdir='tests/border'
+        )
+        pass
+
 if __name__ == "__main__":
     unittest.main()
