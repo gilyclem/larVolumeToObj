@@ -56,7 +56,10 @@ def invertIndex(nx,ny,nz):
         return b0,b1,b2
     return invertIndex0
 
-def readFile(V,FV,chunksize,inputFile,OUT_DIR): #outputVtx="outputVtx.obj",outputFaces="outputFaces.obj"):
+def readFile(V,FV,chunksize,inputFile,OUT_DIR): # outputVtx="outputVtx.obj",outputFaces="outputFaces.obj"):
+    if not os.path.isfile(inputFile):
+        print "File '%s' not found" % (inputFile)
+        exit(-1)
     outputId = os.path.basename(inputFile).split('.')[0].split('-')[1]
     outputVtx=OUT_DIR+"/output-a-"+outputId+".stl"
     outputFaces=OUT_DIR+"/output-b-"+outputId+".stl"
@@ -147,7 +150,10 @@ def readFile(V,FV,chunksize,inputFile,OUT_DIR): #outputVtx="outputVtx.obj",outpu
                         fileFaces.flush()
 
                     timer_stop();
+                except struct.error:
+                    logger.debug('not importatnt reading error')
                 except:
+                    logger.debug('reading error')
                     traceback.print_exc()
                     exc_type, exc_value, exc_traceback = sys.exc_info()
                     lines = traceback.format_exception(exc_type, exc_value, exc_traceback)

@@ -35,19 +35,20 @@ import visualize
 import py.computation.step_squaremesh as sq
 
 
-def convert(filename, bordersize=[2, 2, 2], outputdir='tmp/output'):
+def convert(filename, bordersize=[2, 2, 2], outputdir='tmp/output', borderdir='./tmp/border'):
     bindir = os.path.join(outputdir, 'compbin')
     stldir = os.path.join(outputdir, 'stl')
     binfile = os.path.join(bindir, 'model-2.bin')
     stlfile = os.path.join(stldir, 'model-2.obj')
 
-    shutil.rmtree(outputdir)
+    if os.path.exists(outputdir):
+        shutil.rmtree(outputdir)
     mkdir_p(outputdir)
     mkdir_p(stldir)
     mkdir_p(bindir)
 
     nx, ny, nz = bordersize
-    brodo3path = gbmatrix.getOrientedBrodo3Path(nx, ny, nz, './tmp/border')
+    brodo3path = gbmatrix.getOrientedBrodo3Path(nx, ny, nz, borderdir)
     logger.debug("in convert()")
     s2bin.calcchains_main(
         nx=nx, ny=ny, nz=nz,
@@ -85,7 +86,7 @@ def makeAll(
     borderdir
 ):
     print 'before pklz read'
-    convert(inputfile, bordersize, outputdir)
+    convert(inputfile, bordersize, outputdir) # , borderdir=borderdir)
     print 'after pklz read'
     # V, F = readFile(args.inputfile)
     V, F = readFile(os.path.join(outputdir,'stl/model-2.obj'))

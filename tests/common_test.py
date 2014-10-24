@@ -73,7 +73,7 @@ class CommonTest(unittest.TestCase):
     def test_real_pklz_data(self):
         import startConversion
         F, V = startConversion.makeAll(
-            inputfile='nrn4.pklz',
+            inputfile='tests/nrn4.pklz',
             bordersize=[3, 3, 3],
             outputdir='tests/testpklz',
             outputfile='test_nrn4',
