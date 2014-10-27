@@ -57,6 +57,8 @@ def convert(
     nx, ny, nz = bordersize
     brodo3path = gbmatrix.getOrientedBordo3Path(nx, ny, nz, borderdir)
     logger.debug("in convert()")
+
+# read data per blocks, find boundary, write each block to binary file
     s2bin.calcchains_main(
         nx=nx, ny=ny, nz=nz,
         calculateout=True,
@@ -113,9 +115,7 @@ def makeAll(
 
 
 def makeCleaningAndSmoothing(V, F, outputfile=None):
-    print "##############"
     logger.debug("outputfile " + str(outputfile))
-    print F, V
     # findBoxVertexesForAxis(v, 2, 0)
     # v, f = findBoundaryFaces(v, f, 2)
     V, F = rmbox.removeDoubleVertexesAndFaces(V, F, use_dict_algorithm=False)
