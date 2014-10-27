@@ -236,6 +236,18 @@ def computeChainsThread(
                         objectBoundaryChain = larBoundaryChain(
                             bordo3, chains3D_old)
 
+                    print "ýýýýýýýýýýýýýýýýýýýý"
+                    # print objectBoundaryChain
+                    brd = bordo3.todense()
+                    print brd.shape
+                    print brd[:10,:10]
+                    print "chains3D_old"
+                    print chains3D_old
+                    print len(chains3D_old)
+                    print "objectBoundaryChain s",
+                    if objectBoundaryChain is not None:
+                        print objectBoundaryChain
+                        print "e ", objectBoundaryChain.todense()
                     # Save
                     if (calculateout == True):
                         if (objectBoundaryChain != None):
@@ -259,6 +271,8 @@ def computeChainsThread(
                                 bytearray(np.array(
                                     chains3D, dtype=np.dtype('b'))))
         except:
+            import traceback
+            traceback.print_exc()
             exc_type, exc_value, exc_traceback = sys.exc_info()
             lines = traceback.format_exception(
                 exc_type, exc_value, exc_traceback)

@@ -70,17 +70,54 @@ class CommonTest(unittest.TestCase):
         #     0, np.sum(V[32] - expected_vertex))
 
     @attr('actual')
+    def makeAll_test(self):
+        from larcc import VIEW, EXPLODE, MKPOLS
+        from startConversion import convert, makeCleaningAndSmoothing
+        from py.computation.fileio import readFile
+        from visualize import visualize
+        from py.computation.step_triangularmesh import triangulate_quads
+        import shutil
+
+        outputdir = 'tests/testpklz'
+        if os.path.exists(outputdir):
+            shutil.rmtree(outputdir)
+
+        inputfile = 'tests/nrn4.pklz'
+        bordersize = [4, 2, 3]
+        outputdir = outputdir
+        outputfile = 'test_nrn4'
+        visualization = True
+        borderdir = outputdir + '/border'
+
+        convert(inputfile, bordersize, outputdir, borderdir=borderdir)
+        V, F = readFile(os.path.join(outputdir, 'stl/model-2.obj'))
+        F3 = triangulate_quads(F)
+        # visualize(V, F3)
+        VIEW(EXPLODE(1.2, 1.2, 1.2)(MKPOLS((V, F3))))
+        V, F = makeCleaningAndSmoothing(
+            V, F,
+            os.path.join(outputdir, outputfile))
+        print "Number of vertexes: %i    Number of faces %i" % (len(V), len(F))
+
+        F3 = triangulate_quads(F)
+        # visualize(V, F3)
+        VIEW(EXPLODE(1.2, 1.2, 1.2)(MKPOLS((V, F3))))
+        # if visualization:
+        #     visualize(V, F)
+
     def test_real_pklz_data(self):
         import startConversion
-        # if os.path.exists(borderdi):
-        #     shutil.rmtree(borderdir)
+        import shutil
+        outputdir = 'tests/testpklz'
+        if os.path.exists(outputdir):
+            shutil.rmtree(outputdir)
         F, V = startConversion.makeAll(
             inputfile='tests/nrn4.pklz',
             bordersize=[4, 2, 3],
-            outputdir='tests/testpklz',
+            outputdir=outputdir,
             outputfile='test_nrn4',
             visualization=True,
-            borderdir='tests/testpklz/border'
+            borderdir=outputdir + '/border'
             # borderdir='tmp/border'
         )
         pass

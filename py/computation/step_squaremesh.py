@@ -87,6 +87,7 @@ def readFile(V,FV,chunksize,inputFile,OUT_DIR): # outputVtx="outputVtx.obj",outp
 
                         # log(1, ["chunksize = " + str(chunksize)]);
                         temp = file.read(chunksize);
+
                         # log(1, ["chunksize = OK"]);
 
                         i = 0
@@ -94,7 +95,12 @@ def readFile(V,FV,chunksize,inputFile,OUT_DIR): # outputVtx="outputVtx.obj",outp
                         while (i < chunksize):
                             if (temp[i] == '\x01'):
                                 LISTA_VETTORI2[i] = 1;
+                            elif (temp[i] == '\xff'):
+                                LISTA_VETTORI2[i] = -1;
                             i = i + 1;
+                        # TODO signum is wrong
+                        lista = LISTA_VETTORI2
+                        LISTA_VETTORI2 = np.abs(LISTA_VETTORI2)
                         timer_stop();
                         log(1, ["LISTA_VETTORI2[i] = " + str(i)]);
 
@@ -105,6 +111,7 @@ def readFile(V,FV,chunksize,inputFile,OUT_DIR): # outputVtx="outputVtx.obj",outp
 
                         timer_start("csrChainToCellList " + str(i));
                         b2cells = csrChainToCellList(objectBoundaryChain)
+                        import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
                         timer_stop();
 
                         timer_start("MKPOLS " + str(i));

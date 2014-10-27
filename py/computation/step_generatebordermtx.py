@@ -113,9 +113,20 @@ def orientedQuads(FV, boundaryCellspairs):
     from larcc import swap
 
     orientedQuads = [
-        [sign, FV[face]] if sign > 0
+        [sign, swap(FV[face])[::-1]] if sign > 0
         else [sign, swap(FV[face])]
         for (sign, face) in boundaryCellspairs]
+
+    # orientedQuads = []
+    # for (sign, face) in boundaryCellspairs:
+    #     if sign > 0:
+    #         # orientedQuads.append([sign, FV[face]])
+    #         orientedQuads.append([sign, swap(FV[face])[::-1]])
+    #         pass
+    #     else:
+    #         # [v1, v2, v3, v4] =
+    #         # orientedQuads.append([sign, FV[face][::-1]])
+    #         orientedQuads.append([sign, swap(FV[face])])
 
     return orientedQuads
 

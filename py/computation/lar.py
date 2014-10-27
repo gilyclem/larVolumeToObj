@@ -2,7 +2,7 @@
 """
 The MIT License
 ===============
-    
+
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
 'Software'), to deal in the Software without restriction, including
@@ -36,10 +36,10 @@ import time as tm
 
 
 # ------------------------------------------------------------
-# Logging & Timer 
+# Logging & Timer
 # ------------------------------------------------------------
 
-logging_level = 0; 
+logging_level = 0;
 
 # 0 = no_logging
 # 1 = few details
@@ -57,13 +57,13 @@ timer_last =  tm.time()
 
 def timer_start(s):
 	global timer_last;
-	if __name__=="__main__" and timer == 1:   
+	if __name__=="__main__" and timer == 1:
 		log(3, ["Timer start:" + s]);
 	timer_last = tm.time();
 
 def timer_stop():
 	global timer_last;
-	if __name__=="__main__" and timer == 1:   
+	if __name__=="__main__" and timer == 1:
 		log(3, ["Timer stop :" + str(tm.time() - timer_last)]);
 
 # ------------------------------------------------------------
@@ -85,7 +85,7 @@ def bezier(points):
     """
         To create a Bezier curve of degree n from a list of n+1 d-points.
         Each point is given as a list of coordinates.
-        
+
         Return a geometric object of HPC (Hierarchical Polyhedral Complex) type.
     """
     return MAP(BEZIERCURVE(points))(INTERVALS(1)(20))
@@ -94,7 +94,7 @@ def CCOMB(vectors):
     """
         To create the convex combination of a list of vectors.
         Each vector is given as a list of coordinates.
-        
+
         Return a vector.
     """
     return (COMP([ SCALARVECTPROD,CONS([ COMP([ DIV, CONS([K(1),LEN]) ]), VECTSUM ]) ]))(vectors)
@@ -103,7 +103,7 @@ def EXPLODE (sx,sy,sz):
     """
         To explode a HPC scene, given three real scaling parameters.
         sx,sy,sz >= 1.0
-        
+
         Return a function to be applied to a list of HPC (Hierarchical Polyhedral Complex) objects.
     """
     def explode0 (scene):
@@ -112,7 +112,7 @@ def EXPLODE (sx,sy,sz):
             Dimension-independent function (can be applied to points, edges, faces, cells, even mixed).
             Compute the centroid of each object, and apply to each of them a translation equal
             to the difference betwwen the scaled and the initial positions of its centroid.
-            
+
             Return a single HPC object (the assembly of input objects, properly translated).
         """
         centers = [CCOMB(S1(UKPOL(obj))) for obj in scene]
@@ -131,7 +131,7 @@ def MKPOLS (model):
         -   V is the list of vertices, given as lists of coordinates;
         -   FV is the face-vertex relation, given as a list of faces,
             where each face is given as a list of vertex indices.
-        
+
         Return a list of HPC objects.
     """
     V, FV = model
@@ -140,11 +140,11 @@ def MKPOLS (model):
 
 def LAR2PLASM (topology):
     """
-        To transform a topological relation from LAR format (base-index = 0, like C or python) 
+        To transform a topological relation from LAR format (base-index = 0, like C or python)
         to PyPLASM format (base-index = 1, like fortran or matlab).
         topology stands for any LAR d_cell-vertex relation (es: EV, FV, CV, etc.)
         represented as a list of lists of integers (vertex indices in 0-basis).
-        
+
         Return a list of lists of integers (vertex indices in 1-basis).
     """
     return AA(AA(lambda k: k+1))(topology)
@@ -153,7 +153,7 @@ def VERTS(geoms):
     """
         To generate the vertices of a grid of points from a list of d lists (of equal length) of numbers.
         geoms is the list of xcoods, ycoords, zcoords, etc., where xcoods, etc. is an increasing list of numbers.
-        
+
         returns a properly ordered list of d-vertices, each given a list of numbers (vertex coordinates).
     """
     return COMP([AA(REVERSE),CART,REVERSE])(geoms)
@@ -164,16 +164,16 @@ def VERTEXTRUDE((V,coords)):
         V is a list of d-vertices (each given as a list of d coordinates).
         coords is a list of absolute translation parameters to be applied to V in order
         to generate the output vertices.
-        
+
         Return a new list of (d+1)-vertices.
     """
     return CAT(AA(COMP([AA(AR),DISTR]))(DISTL([V,coords])))
 
 
 def format(cmat,shape="csr"):
-    """ Transform from list of triples (row,column,vale) 
-        to scipy.sparse corresponding formats. 
-        
+    """ Transform from list of triples (row,column,vale)
+        to scipy.sparse corresponding formats.
+
         Return by default a csr format of a scipy sparse matrix.
     """
     n = len(cmat)
@@ -301,12 +301,12 @@ def csrBoundaryFilter(CSRm, facetLengths):
     # data = [] # np.array([]).astype(np.int32);
 
 	k = 0
-	while (k < len(coo.data)):      
+	while (k < len(coo.data)):
 		if coo.data[k] == maxs[coo.row[k]]:
 			row.append(coo.row[k])
 			col.append(coo.col[k])
 		k += 1
-    
+
 	data = np.ones(len(col),dtype=np.int32);
 	mtx = coo_matrix( (data, ( np.array(row).astype(np.int32), np.array(col).astype(np.int32) )), shape=inputShape)
 
@@ -315,15 +315,17 @@ def csrBoundaryFilter(CSRm, facetLengths):
 
 #------------------------------------------------------------------
 def csrBinFilter(CSRm):
-    # can be done in parallel (by rows)
+# can be done in parallel (by rows)
 	inputShape = CSRm.shape
 	coo = CSRm.tocoo()
-    
+
 	k = 0
 	while (k < len(coo.data)):
-		if (coo.data[k] % 2 == 1): 
-			coo.data[k] = 1
-		else: 
+		# sg = 1 #
+		sg = math.copysign(1, coo.data[k])
+		if (coo.data[k] % 2 == 1):
+			coo.data[k] = 1 * sg
+		else:
 			coo.data[k] = 0
 		k += 1
     #mtx = coo_matrix((coo.data, (coo.row, coo.col)), shape=inputShape)
@@ -404,6 +406,10 @@ def larBoundaryChain(csrBoundaryMat,brcCellList):
     j = scipy.zeros(len(brcCellList))
     csrChain = coo_matrix((data,(i,j)),shape=(m,1)).tocsr()
     csrmat = matrixProduct(csrBoundaryMat,csrChain)
+    print "larBoundaryChain ", csrChain.todense().shape
+    print csrChain.todense()
+    print "csr mat"
+    print csrmat
     out = csrBinFilter(csrmat)
     return out
 

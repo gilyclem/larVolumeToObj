@@ -11,10 +11,10 @@ import os
 import traceback
 
 # ------------------------------------------------------------
-# Logging & Timer 
+# Logging & Timer
 # ------------------------------------------------------------
 
-logging_level = 0; 
+logging_level = 0;
 
 # 0 = no_logging
 # 1 = few details
@@ -32,18 +32,25 @@ timer_last =  tm.time()
 
 def timer_start(s):
 	global timer_last;
-	if __name__=="__main__" and timer == 1:   
+	if __name__=="__main__" and timer == 1:
 		log(3, ["Timer start:" + s]);
 	timer_last = tm.time();
 
 def timer_stop():
 	global timer_last;
-	if __name__=="__main__" and timer == 1:   
+	if __name__=="__main__" and timer == 1:
 		log(3, ["Timer stop :" + str(tm.time() - timer_last)]);
 
 # ------------------------------------------------------------
 
 # ------------------------------------------------------------
+
+def triangulate_quads(F):
+    Ftr = []
+    for [v1, v2, v3, v4] in F:
+        Ftr.append([v1, v2, v3])
+        Ftr.append([v1, v3, v4])
+    return Ftr
 
 def invertIndex(nx,ny,nz):
 	nx,ny,nz = nx+1,ny+1,nz+1
@@ -74,7 +81,7 @@ def readFile(V,FV,chunksize,inputFile,OUT_DIR): #outputVtx="outputVtx.obj",outpu
 						zStart = struct.unpack('>I', file.read(4))[0]
 						xStart = struct.unpack('>I', file.read(4))[0]
 						yStart = struct.unpack('>I', file.read(4))[0]
-					
+
 						log(1, ["zStart, xStart, yStart = " + str(zStart) + "," + str(xStart) + "," + str(yStart)]);
 						#	zStart, xStart, yStart = LISTA_OFFSET[i].astype(float64)
 
@@ -92,7 +99,7 @@ def readFile(V,FV,chunksize,inputFile,OUT_DIR): #outputVtx="outputVtx.obj",outpu
 							i = i + 1;
 						timer_stop();
 						log(1, ["LISTA_VETTORI2[i] = " + str(i)]);
-					
+
 						timer_start("objectBoundaryChain ");
 						l = len(LISTA_VETTORI2)
 						objectBoundaryChain = scipy.sparse.csr_matrix(LISTA_VETTORI2.reshape((l,1)))
@@ -103,10 +110,10 @@ def readFile(V,FV,chunksize,inputFile,OUT_DIR): #outputVtx="outputVtx.obj",outpu
 						timer_stop();
 
 						timer_start("MKPOLS " + str(i));
-					
+
 						for f in b2cells:
 							old_vertex_count = vertex_count
-						
+
 							for vtx in FV[f]:
 								fileVertex.write("v ")
 								fileVertex.write(str(V[vtx][0] + xStart))
@@ -116,7 +123,7 @@ def readFile(V,FV,chunksize,inputFile,OUT_DIR): #outputVtx="outputVtx.obj",outpu
 								fileVertex.write(str(V[vtx][2] + zStart))
 								fileVertex.write("\n")
 								vertex_count = vertex_count + 1
-							
+
 							fileFaces.write("f ")
 							fileFaces.write(str(old_vertex_count + 0))
 							fileFaces.write(" ")
@@ -131,11 +138,11 @@ def readFile(V,FV,chunksize,inputFile,OUT_DIR): #outputVtx="outputVtx.obj",outpu
 							fileFaces.write(str(old_vertex_count + 3))
 							fileFaces.write(" ")
 							fileFaces.write(str(old_vertex_count + 2))
-							fileFaces.write("\n")		
+							fileFaces.write("\n")
 
 						fileVertex.flush()
 						fileFaces.flush()
-						
+
 					timer_stop();
 				except:
 					exc_type, exc_value, exc_traceback = sys.exc_info()
@@ -144,19 +151,19 @@ def readFile(V,FV,chunksize,inputFile,OUT_DIR): #outputVtx="outputVtx.obj",outpu
 
 def main(argv):
 	ARGS_STRING = 'Args: -x <borderX> -y <borderY> -z <borderZ> -i <inputfile> -o <outdir>'
-	
+
 	try:
 		opts, args = getopt.getopt(argv,"i:o:x:y:z:")
 	except getopt.GetoptError:
 		print ARGS_STRING
 		sys.exit(2)
-	
+
 	nx = ny = nz = 64
 	mandatory = 3
 	#Files
 	FILE_IN = ''
 	OUT_DIR = ''
-	
+
 	for opt, arg in opts:
 		if opt == '-x':
 			nx = ny = nz = int(arg)
@@ -171,17 +178,17 @@ def main(argv):
 		elif opt == '-o':
 			OUT_DIR = arg
 			mandatory = mandatory - 1
-			
+
 	if mandatory != 0:
 		print 'Not all arguments where given'
 		print ARGS_STRING
 		sys.exit(2)
-		
+
 	def ind(x,y,z): return x + (nx+1) * (y + (ny+1) * (z))
-	
+
 	chunksize = nx * ny + nx * nz + ny * nz + 3 * nx * ny * nz
 	V = [[x,y,z] for z in xrange(nz+1) for y in xrange(ny+1) for x in xrange(nx+1) ]
-	
+
 	v2coords = invertIndex(nx,ny,nz)
 
 	FV = []

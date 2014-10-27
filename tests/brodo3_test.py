@@ -20,10 +20,39 @@ sys.path.append(os.path.join(path_to_script, "../../lar-cc/lib/py"))
 
 class TemplateTest(unittest.TestCase):
 
+    @attr('interactive')
+    def test_make_oriented_boundary_real_data(self):
+        import scipy
+        from larcc import VIEW, EXPLODE, MKPOLS
+        from startConversion import convert, makeCleaningAndSmoothing
+        from py.computation.fileio import readFile
+        from visualize import visualize
+        from py.computation.step_triangularmesh import triangulate_quads
+        inputfile = 'tests/nrn4.pklz'
+        bordersize = [4, 2, 3]
+        outputdir = 'tests/testpklz'
+        outputfile = 'test_nrn4'
+        visualization = True
+        borderdir = 'tests/testpklz/border'
+
+        convert(inputfile, bordersize, outputdir, borderdir=borderdir)
+        V, F = readFile(os.path.join(outputdir, 'stl/model-2.obj'))
+        F3 = triangulate_quads(F)
+        visualize(V, F3)
+
+    # def test_larcc_swap_for_quad(self):
+    #     from larcc import swap
+    #     face = [1, 2, 3, 4]
+    #     print face
+    #     print swap(face)
+    #     fro
+
     @attr('actual')
     def test_make_boundary_from_boundary_matrix(self):
         import scipy
         from larcc import VIEW, EXPLODE, MKPOLS
+        from py.computation.step_triangularmesh import triangulate_quads
+        from visualize import visualize
 
         nx, ny, nz = [1, 2, 1]
 
@@ -38,22 +67,24 @@ class TemplateTest(unittest.TestCase):
 
         orientedQuads = gbmatrix.orientedQuads(FV, boundaryCellspairs)
 
-        FVo = [face[1] for face in orientedQuads]
+        FV4 = [face[1] for face in orientedQuads]
 
-        FV4 = []
-        for [oriantation, face] in orientedQuads:
-            if oriantation > 0:
-                FV4.append(face)
-            else:
-                FV4.append(face[::-1])
-                #     face[3],
-                #     face[2],
-                #     face[1],
-                #     face[0]
-                # ])
-
+        # FV4 = []
+        # for [oriantation, face] in orientedQuads:
+        #     if oriantation > 0:
+        #         FV4.append(face)
+        #     else:
+        #         FV4.append(face[::-1])
+        #         #     face[3],
+        #         #     face[2],
+        #         #     face[1],
+        #         #     face[0]
+        #         # ])
+        #
+        FV3 = triangulate_quads(FV4)
+        visualize(V, FV3)
         VIEW(EXPLODE(1.2, 1.2, 1.2)(MKPOLS((V, FV4))))
-        import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
+        VIEW(EXPLODE(1.2, 1.2, 1.2)(MKPOLS((V, FV3))))
 
     def test_compare_two_brodo3(self):
         from py.computation.lar import larBoundary
