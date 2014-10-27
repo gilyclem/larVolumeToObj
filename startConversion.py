@@ -36,8 +36,12 @@ import py.computation.step_squaremesh as sq
 
 
 def convert(
-    filename, bordersize=[2, 2, 2],
-    outputdir='tmp/output', borderdir='./tmp/border'):
+    filename,
+    bordersize=[2, 2, 2],
+    outputdir='tmp/output',
+    borderdir='./tmp/border'
+):
+
     bindir = os.path.join(outputdir, 'compbin')
     stldir = os.path.join(outputdir, 'stl')
     binfile = os.path.join(bindir, 'model-2.bin')
@@ -92,7 +96,7 @@ def makeAll(
     convert(inputfile, bordersize, outputdir, borderdir=borderdir)
     print 'after pklz read'
     # V, F = readFile(args.inputfile)
-    V, F = readFile(os.path.join(outputdir,'stl/model-2.obj'))
+    V, F = readFile(os.path.join(outputdir, 'stl/model-2.obj'))
     print "Before"
     print "Number of vertexes: %i    Number of faces %i" % (len(V), len(F))
     # F = rmbox.shiftFaces(F, -1)
@@ -122,7 +126,7 @@ def makeCleaningAndSmoothing(V, F, outputfile=None):
         writeFile(outputfile + "_sm.obj", V, F,
                   ignore_empty_vertex_warning=True)
 # fill empty vertexes
-        V = [v if len(v) == 3 else [0,0,0] for v in V]
+        V = [v if len(v) == 3 else [0, 0, 0] for v in V]
 # make tenimes bigger
         Vint = (np.asarray(V) * 10).astype(np.int).tolist()
         writeFile(outputfile + "_sm_i.obj",
