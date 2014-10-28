@@ -56,6 +56,49 @@ def invertIndex(nx,ny,nz):
         return b0,b1,b2
     return invertIndex0
 
+
+def writeToStlFiles(fileVertex, fileFaces, b2cells, V, FV,
+                    xStart, yStart, zStart
+                    ):
+    vertex_count = 1
+    old_vertex_count = vertex_count
+
+    for f in b2cells:
+        old_vertex_count = vertex_count
+
+        for vtx in FV[f]:
+            fileVertex.write("v ")
+            fileVertex.write(str(V[vtx][0] + xStart))
+            fileVertex.write(" ")
+            fileVertex.write(str(V[vtx][1] + yStart))
+            fileVertex.write(" ")
+            fileVertex.write(str(V[vtx][2] + zStart))
+            fileVertex.write("\n")
+            vertex_count = vertex_count + 1
+
+        # fileFaces.write("f ")
+        # fileFaces.write(str(old_vertex_count + 0))
+        # fileFaces.write(" ")
+        # fileFaces.write(str(old_vertex_count + 1))
+        # fileFaces.write(" ")
+        # fileFaces.write(str(old_vertex_count + 3))
+        # fileFaces.write("\n")
+
+        # fileFaces.write("f ")
+        # fileFaces.write(str(old_vertex_count + 0))
+        # fileFaces.write(" ")
+        # fileFaces.write(str(old_vertex_count + 3))
+        # fileFaces.write(" ")
+        # fileFaces.write(str(old_vertex_count + 2))
+        # fileFaces.write("\n")
+
+        fileFaces.write("f %i %i %i %i\n" % (
+            old_vertex_count + 0,
+            old_vertex_count + 1,
+            old_vertex_count + 3,
+            old_vertex_count + 2
+        ))
+
 def readFile(V,FV,chunksize,inputFile,OUT_DIR): # outputVtx="outputVtx.obj",outputFaces="outputFaces.obj"):
     if not os.path.isfile(inputFile):
         print "File '%s' not found" % (inputFile)
@@ -68,8 +111,6 @@ def readFile(V,FV,chunksize,inputFile,OUT_DIR): # outputVtx="outputVtx.obj",outp
         with open(outputVtx, "w") as fileVertex:
             with open(outputFaces, "w") as fileFaces:
 
-                vertex_count = 1
-                old_vertex_count = vertex_count
                 count = 0
 
                 try:
@@ -111,46 +152,32 @@ def readFile(V,FV,chunksize,inputFile,OUT_DIR): # outputVtx="outputVtx.obj",outp
 
                         timer_start("csrChainToCellList " + str(i));
                         b2cells = csrChainToCellList(objectBoundaryChain)
-                        import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
+# mjirik code
+                        FVbo = []
+                        for i, orientation in enumerate(lista):
+                            face = FV[i]
+                            if orientation > 0:
+                                FVbo.append(face)
+                            if orientation < 0:
+                                FVbo.append(face[::-1])
+                        from py.computation.step_triangularmesh import triangulate_quads
+                        # for debug visualization i need make proper order
+                        FV4ordered = [[v1, v2, v4, v3] for
+                                      [v1, v2, v3, v4] in FVbo]
+                        FVbo3 = triangulate_quads(FVbo)
+                        # import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
+                        VIEW(EXPLODE(1.2, 1.2, 1.2)(MKPOLS((V, FVbo3))))
                         timer_stop();
 
                         timer_start("MKPOLS " + str(i));
 
-                        for f in b2cells:
-                            old_vertex_count = vertex_count
+                        writeToStlFiles(
+                            fileVertex, fileFaces,
+                            b2cells,
+                            V, FV,
+                            xStart, yStart, zStart
+                        )
 
-                            for vtx in FV[f]:
-                                fileVertex.write("v ")
-                                fileVertex.write(str(V[vtx][0] + xStart))
-                                fileVertex.write(" ")
-                                fileVertex.write(str(V[vtx][1] + yStart))
-                                fileVertex.write(" ")
-                                fileVertex.write(str(V[vtx][2] + zStart))
-                                fileVertex.write("\n")
-                                vertex_count = vertex_count + 1
-
-                            # fileFaces.write("f ")
-                            # fileFaces.write(str(old_vertex_count + 0))
-                            # fileFaces.write(" ")
-                            # fileFaces.write(str(old_vertex_count + 1))
-                            # fileFaces.write(" ")
-                            # fileFaces.write(str(old_vertex_count + 3))
-                            # fileFaces.write("\n")
-
-                            # fileFaces.write("f ")
-                            # fileFaces.write(str(old_vertex_count + 0))
-                            # fileFaces.write(" ")
-                            # fileFaces.write(str(old_vertex_count + 3))
-                            # fileFaces.write(" ")
-                            # fileFaces.write(str(old_vertex_count + 2))
-                            # fileFaces.write("\n")
-
-                            fileFaces.write("f %i %i %i %i\n" % (
-                                old_vertex_count + 0,
-                                old_vertex_count + 1,
-                                old_vertex_count + 3,
-                                old_vertex_count + 2
-                            ))
 
 
                         fileVertex.flush()
