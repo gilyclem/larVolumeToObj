@@ -29,6 +29,7 @@ from py.computation.fileio import readFile, writeFile
 # import step_calcchains_serial_tobinary_filter_proc_lisa as s2bin
 import py.computation.step_remove_boxes_iner_faces as rmbox
 import py.computation.step_generatebordermtx as gbmatrix
+from py.computation.step_triangularmesh import triangulate_quads
 import laplacianSmoothing as ls
 import visualize
 
@@ -92,7 +93,8 @@ def makeAll(
     outputdir,
     outputfile,
     visualization,
-    borderdir
+    borderdir,
+    make_triangulation=True
 ):
     print 'before pklz read'
     convert(inputfile, bordersize, outputdir, borderdir=borderdir)
@@ -107,12 +109,38 @@ def makeAll(
         os.path.join(outputdir, outputfile))
     print "After"
     print "Number of vertexes: %i    Number of faces %i" % (len(V), len(F))
+# write to ints
+# fill empty vertexes
+    V = [v if len(v) == 3 else [0, 0, 0] for v in V]
+# make tenimes bigger
+    Vint = (np.asarray(V) * 10).astype(np.int).tolist()
+    if outputfile is not None:
+        writeFile(
+            os.path.join(outputdir, outputfile + "_sm_i.obj"),
+            Vint, F,
+            ignore_empty_vertex_warning=True)
+# make triangulation
+    if make_triangulation:
+        print 'triang'
+        save_triangulated(V, Vint, F, outputdir, outputfile)
 
     if visualization:
         visualize.visualize(V, F)
 
     return V, F
 
+
+def save_triangulated(V, Vint, F, outputdir, outputfile):
+    logger.debug("triangulation")
+    Ftr = triangulate_quads(F)
+    if outputfile is not None:
+        outputfile = os.path.join(outputdir, outputfile)
+        writeFile(
+            outputfile + "_sm_i_tr.obj",
+            Vint, Ftr)
+        writeFile(
+            outputfile + "_sm_tr.obj",
+            V, Ftr)
 
 def makeCleaningAndSmoothing(V, F, outputfile=None):
     logger.debug("outputfile " + str(outputfile))
@@ -124,13 +152,6 @@ def makeCleaningAndSmoothing(V, F, outputfile=None):
     V = ls.makeSmoothing(V, F)
     if outputfile is not None:
         writeFile(outputfile + "_sm.obj", V, F,
-                  ignore_empty_vertex_warning=True)
-# fill empty vertexes
-        V = [v if len(v) == 3 else [0, 0, 0] for v in V]
-# make tenimes bigger
-        Vint = (np.asarray(V) * 10).astype(np.int).tolist()
-        writeFile(outputfile + "_sm_i.obj",
-                  Vint, F,
                   ignore_empty_vertex_warning=True)
     return V, F
 

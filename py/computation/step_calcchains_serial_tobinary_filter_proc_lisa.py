@@ -354,7 +354,6 @@ def startComputeChains(
 
 
 def segmentation_from_data3d(datap):
-    print "automatic segmentation"
 
     datap['segmentation'] = (datap['data3d'] > 6000).astype(np.uint8) * 2
     # datap['segmentation'][:30,:30,:30] = 1

@@ -69,7 +69,6 @@ class CommonTest(unittest.TestCase):
         # self.assertAlmostEqual(
         #     0, np.sum(V[32] - expected_vertex))
 
-    @attr('actual')
     def makeAll_test(self):
         from larcc import VIEW, EXPLODE, MKPOLS
         from startConversion import convert, makeCleaningAndSmoothing
@@ -105,13 +104,16 @@ class CommonTest(unittest.TestCase):
         # if visualization:
         #     visualize(V, F)
 
+    @attr('actual')
     def test_real_pklz_data(self):
         import startConversion
         import shutil
+        from py.computation.step_triangularmesh import triangulate_quads
+        from larcc import VIEW, EXPLODE, MKPOLS
         outputdir = 'tests/testpklz'
         if os.path.exists(outputdir):
             shutil.rmtree(outputdir)
-        F, V = startConversion.makeAll(
+        V, F = startConversion.makeAll(
             inputfile='tests/nrn4.pklz',
             bordersize=[4, 2, 3],
             outputdir=outputdir,
@@ -120,6 +122,9 @@ class CommonTest(unittest.TestCase):
             borderdir=outputdir + '/border'
             # borderdir='tmp/border'
         )
+        F3 = triangulate_quads(F)
+        # visualize(V, F3)
+        VIEW(EXPLODE(1.2, 1.2, 1.2)(MKPOLS((V, F3))))
         pass
 
 if __name__ == "__main__":
