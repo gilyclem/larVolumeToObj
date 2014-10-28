@@ -245,22 +245,18 @@ def computeChainsThread(
                         objectBoundaryChain = larBoundaryChain(
                             bordo3, chains3D_old)
 
-                    print "ýýýýýýýýýýýýýýýýýýýý"
                     # print objectBoundaryChain
-                    brd = bordo3.todense()
-                    print 'brd shape ', brd.shape
-                    print brd[:10,:10]
+                    # brd = bordo3.todense()
                     # print "chains3D_old"
                     # print chains3D_old
-                    print len(chains3D_old)
-                    print "objectBoundaryChain s",
-                    if objectBoundaryChain is not None:
-                        # print objectBoundaryChain
-                        print "e ", objectBoundaryChain.todense().shape
-                        print objectBoundaryChain.toarray().astype('b').flatten()
+                    # print len(chains3D_old)
+                    # print "objectBoundaryChain s",
+                    # if objectBoundaryChain is not None:
+                    #     # print objectBoundaryChain
+                    #     print "e ", objectBoundaryChain.todense().shape
+                    #     print objectBoundaryChain.toarray().astype('b').flatten()
                     # Save
                     if (calculateout == True):
-                        print "save"
                         if (objectBoundaryChain != None):
                             writeDataToFile(
                                 fileToWrite,
@@ -269,7 +265,6 @@ def computeChainsThread(
                                 objectBoundaryChain)
                     else:
                         if (hasSomeOne != False):
-                            print "save jinak"
                             writeOffsetToFile(
                                 fileToWrite,
                                 np.array([zStart, xStart, yStart], dtype=int32)
@@ -279,7 +274,7 @@ def computeChainsThread(
                                     chains3D, dtype=np.dtype('b'))))
         except:
             import traceback
-            traceback.print_exc()
+            logger.debug(traceback.format_exc())
             exc_type, exc_value, exc_traceback = sys.exc_info()
             lines = traceback.format_exception(
                 exc_type, exc_value, exc_traceback)
@@ -314,7 +309,6 @@ def startComputeChains(
     endImage = beginImageStack
 
     saveTheColors = centroidsCalc
-    print 'ccalc: ', centroidsCalc
     log(2, [centroidsCalc])
     saveTheColors = np.array(
         sorted(saveTheColors.reshape(1, len(centroidsCalc))[0]), dtype=np.int)

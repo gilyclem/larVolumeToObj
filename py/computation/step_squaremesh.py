@@ -181,24 +181,20 @@ def readFile(V,FV,chunksize,inputFile,OUT_DIR): # outputVtx="outputVtx.obj",outp
 
                         timer_start("csrChainToCellList " + str(i));
                         b2cells = csrChainToCellList(objectBoundaryChain)
-# mjirik code
-                        # order vertexes
-                        # FV = [[v1, v2, v4, v3] for
-                        #       [v1, v2, v3, v4] in FV]
-                        FVbo = []
-                        for i, orientation in enumerate(lista):
-                            [v1, v2, v3, v4] = FV[i]
-                            face = [v1, v2, v4, v3]
-                            # face = FV[i]
-                            if orientation > 0:
-                                FVbo.append(face)
-                            if orientation < 0:
-                                FVbo.append(face[::-1])
-                        from py.computation.step_triangularmesh import triangulate_quads
-                        # for debug visualization i need make proper order
-                        FVbo3 = triangulate_quads(FVbo)
-                        # import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
-                        # VIEW(EXPLODE(1.2, 1.2, 1.2)(MKPOLS((V, FVbo3))))
+# mjirik code used for debug. It is more efficient but not connected to file
+# write
+                        # FVbo = []
+                        # for i, orientation in enumerate(lista):
+                        #     [v1, v2, v3, v4] = FV[i]
+                        #     face = [v1, v2, v4, v3]
+                        #     if orientation > 0:
+                        #         FVbo.append(face)
+                        #     if orientation < 0:
+                        #         FVbo.append(face[::-1])
+                        # from py.computation.step_triangularmesh import triangulate_quads
+                        # # for debug visualization i need make proper order
+                        # FVbo3 = triangulate_quads(FVbo)
+                        # # VIEW(EXPLODE(1.2, 1.2, 1.2)(MKPOLS((V, FVbo3))))
                         timer_stop();
 
                         timer_start("MKPOLS " + str(i));
@@ -214,6 +210,7 @@ def readFile(V,FV,chunksize,inputFile,OUT_DIR): # outputVtx="outputVtx.obj",outp
 
                         # import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
 
+# @TODO old way is not efficient. It generates too much vertexes
                         vertex_count, old_vertex_count = writeToStlFilesOld(
                             fileVertex, fileFaces,
                             V, FVn,
