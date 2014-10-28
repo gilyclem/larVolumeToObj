@@ -103,6 +103,7 @@ class CommonTest(unittest.TestCase):
         # visualize(V, F3, explode=True)
         # VIEW(EXPLODE(1.2, 1.2, 1.2)(MKPOLS((V, F3))))
 
+    @attr('actual')
     def test_real_pklz_data(self):
         import startConversion
         import shutil
@@ -125,7 +126,6 @@ class CommonTest(unittest.TestCase):
         self.assertTrue(check_references(V, F))
         self.assertTrue(check_references(V, F3))
 
-    @attr('actual')
     @attr('interactive')
     def test_real_pklz_data_visual(self):
         import startConversion
