@@ -15,6 +15,7 @@ import numpy as np
 import laplacianSmoothing as ls
 import step_remove_boxes_iner_faces as rmbox
 import fileio
+from visualize import check_references
 # import visualize
 import startConversion as sc
 
@@ -36,6 +37,7 @@ class CommonTest(unittest.TestCase):
             [1.25, 2.75, 5.5])
         nv = ls.makeSmoothing(vertexes, faces)
         self.assertAlmostEqual(0, np.sum(nv[0] - expected_vertex))
+
 
     def test_real_data_per_partes(self):
         vertexes, faces = fileio.readFile(
@@ -62,6 +64,7 @@ class CommonTest(unittest.TestCase):
             os.path.join(path_to_script, "smallbb2.obj")
         )
         V, F = sc.makeCleaningAndSmoothing(V, F)
+        self.assertTrue(check_references(V, F))
         # visualize.visualize(V, F)
         # expected_vertex = np.array(
         #     [1, 3, 5])
@@ -74,7 +77,6 @@ class CommonTest(unittest.TestCase):
         from startConversion import convert, makeCleaningAndSmoothing
         from py.computation.fileio import readFile
         # from visualize import visualize
-        from visualize import check_references
 
         from py.computation.step_triangularmesh import triangulate_quads
         import shutil
