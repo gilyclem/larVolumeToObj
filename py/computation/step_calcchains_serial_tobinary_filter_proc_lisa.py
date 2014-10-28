@@ -88,8 +88,17 @@ def writeOffsetToFile(file, offsetCurr):
     file.write(struct.pack('>I', offsetCurr[2]))
 
 
+def writeDataToFile(fileToWrite, offsetCurr, objectBoundaryChain):
+    writeOffsetToFile(
+        fileToWrite,
+        offsetCurr    )
+
+    databytes = np.array(objectBoundaryChain.toarray().astype('b').flatten())
+    fileToWrite.write( bytearray(databytes))
+
+
 def read_pkl_by_block(datap, startImage, endImage, centroidsCalc):
-    segmentation = datap['segmentation'][startImage:endImage:,:,:]
+    segmentation = datap['segmentation'][startImage:endImage:, :, :]
     # print np.unique(segmentation)
     # segmentation = datap['segmentation'][startImage:endImage, ::5, ::5]
     # segmentation[:10,:15,:20]=2
@@ -239,30 +248,28 @@ def computeChainsThread(
                     print "ýýýýýýýýýýýýýýýýýýýý"
                     # print objectBoundaryChain
                     brd = bordo3.todense()
-                    print brd.shape
+                    print 'brd shape ', brd.shape
                     print brd[:10,:10]
-                    print "chains3D_old"
-                    print chains3D_old
+                    # print "chains3D_old"
+                    # print chains3D_old
                     print len(chains3D_old)
                     print "objectBoundaryChain s",
                     if objectBoundaryChain is not None:
-                        print objectBoundaryChain
-                        print "e ", objectBoundaryChain.todense()
+                        # print objectBoundaryChain
+                        print "e ", objectBoundaryChain.todense().shape
+                        print objectBoundaryChain.toarray().astype('b').flatten()
                     # Save
                     if (calculateout == True):
+                        print "save"
                         if (objectBoundaryChain != None):
-                            writeOffsetToFile(
+                            writeDataToFile(
                                 fileToWrite,
-                                np.array([zStart, xStart, yStart], dtype=int32)
-                            )
-                            fileToWrite.write(
-                                bytearray(
-                                    np.array(
-                                        objectBoundaryChain.toarray()
-                                        .astype('b').flatten()
-                                    )))
+                                np.array(
+                                    [zStart, xStart, yStart], dtype=int32),
+                                objectBoundaryChain)
                     else:
                         if (hasSomeOne != False):
+                            print "save jinak"
                             writeOffsetToFile(
                                 fileToWrite,
                                 np.array([zStart, xStart, yStart], dtype=int32)

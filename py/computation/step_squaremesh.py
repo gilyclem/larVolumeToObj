@@ -57,12 +57,37 @@ def invertIndex(nx,ny,nz):
     return invertIndex0
 
 
-def writeToStlFiles(fileVertex, fileFaces, b2cells, V, FV,
-                    xStart, yStart, zStart
-                    ):
-    vertex_count = 1
-    old_vertex_count = vertex_count
+def writeToStlFiles(fileVertex, fileFaces, V, FV,
+                    xStart, yStart, zStart,
+                    vertex_count, old_vertex_count,
+                    b2cells
 
+                    ):
+    old_vertex_count
+    for vtx in V:
+        fileVertex.write("v %s %s %s\n" % (
+            str(vtx[0] + xStart),
+            str(vtx[1] + yStart),
+            str(vtx[2] + zStart),
+        ))
+        vertex_count = vertex_count + 1
+
+    for face in FV:
+        fileFaces.write("f %i %i %i %i\n" % (
+            old_vertex_count + face[0],
+            old_vertex_count + face[1],
+            old_vertex_count + face[3],
+            old_vertex_count + face[2]
+        ))
+
+    return vertex_count, old_vertex_count
+
+
+def writeToStlFilesOld(fileVertex, fileFaces, V, FV,
+                       xStart, yStart, zStart,
+                       vertex_count, old_vertex_count,
+                       b2cells
+                       ):
     for f in b2cells:
         old_vertex_count = vertex_count
 
@@ -98,6 +123,8 @@ def writeToStlFiles(fileVertex, fileFaces, b2cells, V, FV,
             old_vertex_count + 3,
             old_vertex_count + 2
         ))
+    return vertex_count, old_vertex_count
+
 
 def readFile(V,FV,chunksize,inputFile,OUT_DIR): # outputVtx="outputVtx.obj",outputFaces="outputFaces.obj"):
     if not os.path.isfile(inputFile):
@@ -111,6 +138,8 @@ def readFile(V,FV,chunksize,inputFile,OUT_DIR): # outputVtx="outputVtx.obj",outp
         with open(outputVtx, "w") as fileVertex:
             with open(outputFaces, "w") as fileFaces:
 
+                vertex_count = 1
+                old_vertex_count = vertex_count
                 count = 0
 
                 try:
@@ -153,30 +182,46 @@ def readFile(V,FV,chunksize,inputFile,OUT_DIR): # outputVtx="outputVtx.obj",outp
                         timer_start("csrChainToCellList " + str(i));
                         b2cells = csrChainToCellList(objectBoundaryChain)
 # mjirik code
+                        # order vertexes
+                        # FV = [[v1, v2, v4, v3] for
+                        #       [v1, v2, v3, v4] in FV]
                         FVbo = []
                         for i, orientation in enumerate(lista):
-                            face = FV[i]
+                            [v1, v2, v3, v4] = FV[i]
+                            face = [v1, v2, v4, v3]
+                            # face = FV[i]
                             if orientation > 0:
                                 FVbo.append(face)
                             if orientation < 0:
                                 FVbo.append(face[::-1])
                         from py.computation.step_triangularmesh import triangulate_quads
                         # for debug visualization i need make proper order
-                        FV4ordered = [[v1, v2, v4, v3] for
-                                      [v1, v2, v3, v4] in FVbo]
                         FVbo3 = triangulate_quads(FVbo)
                         # import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
-                        VIEW(EXPLODE(1.2, 1.2, 1.2)(MKPOLS((V, FVbo3))))
+                        # VIEW(EXPLODE(1.2, 1.2, 1.2)(MKPOLS((V, FVbo3))))
                         timer_stop();
 
                         timer_start("MKPOLS " + str(i));
+                        # orient FV
+                        FVn = []
+                        for i, face in enumerate(FV):
+                            [v1, v2, v3, v4] = FV[i]
+                            # face = [v1, v2, v4, v3]
+                            if lista[i] < 0:
+                                FVn.append([v4, v3, v2, v1])
+                            else:
+                                FVn.append([v4, v3, v2, v2])
 
-                        writeToStlFiles(
+                        # import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
+
+                        vertex_count, old_vertex_count = writeToStlFilesOld(
                             fileVertex, fileFaces,
-                            b2cells,
                             V, FV,
-                            xStart, yStart, zStart
+                            xStart, yStart, zStart,
+                            vertex_count, old_vertex_count,
+                            b2cells
                         )
+
 
 
 
