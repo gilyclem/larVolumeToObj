@@ -85,7 +85,7 @@ def main():
 
     # input parser
     parser = argparse.ArgumentParser(
-        description="Laplacian smoothing"
+        description="Obj file visualization"
     )
     parser.add_argument(
         '-i', '--inputfile',

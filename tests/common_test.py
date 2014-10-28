@@ -73,7 +73,7 @@ class CommonTest(unittest.TestCase):
         from larcc import VIEW, EXPLODE, MKPOLS
         from startConversion import convert, makeCleaningAndSmoothing
         from py.computation.fileio import readFile
-        from visualize import visualize
+        # from visualize import visualize
         from py.computation.step_triangularmesh import triangulate_quads
         import shutil
 
@@ -85,7 +85,6 @@ class CommonTest(unittest.TestCase):
         bordersize = [4, 2, 3]
         outputdir = outputdir
         outputfile = 'test_nrn4'
-        visualization = True
         borderdir = outputdir + '/border'
 
         convert(inputfile, bordersize, outputdir, borderdir=borderdir)
@@ -96,20 +95,18 @@ class CommonTest(unittest.TestCase):
         V, F = makeCleaningAndSmoothing(
             V, F,
             os.path.join(outputdir, outputfile))
-        print "Number of vertexes: %i    Number of faces %i" % (len(V), len(F))
 
         F3 = triangulate_quads(F)
         # visualize(V, F3)
-        VIEW(EXPLODE(1.2, 1.2, 1.2)(MKPOLS((V, F3))))
-        # if visualization:
-        #     visualize(V, F)
+        # VIEW(EXPLODE(1.2, 1.2, 1.2)(MKPOLS((V, F3))))
 
     @attr('actual')
     def test_real_pklz_data(self):
         import startConversion
         import shutil
         from py.computation.step_triangularmesh import triangulate_quads
-        from larcc import VIEW, EXPLODE, MKPOLS
+        from visualize import visualize
+        # from larcc import VIEW, EXPLODE, MKPOLS
         outputdir = 'tests/testpklz'
         if os.path.exists(outputdir):
             shutil.rmtree(outputdir)
@@ -123,8 +120,8 @@ class CommonTest(unittest.TestCase):
             # borderdir='tmp/border'
         )
         F3 = triangulate_quads(F)
-        # visualize(V, F3)
-        VIEW(EXPLODE(1.2, 1.2, 1.2)(MKPOLS((V, F3))))
+        visualize(V, F3, explode=True)
+        # VIEW(EXPLODE(1.2, 1.2, 1.2)(MKPOLS((V, F3))))
         pass
 
 if __name__ == "__main__":
