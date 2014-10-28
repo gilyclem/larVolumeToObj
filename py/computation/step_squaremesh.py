@@ -208,15 +208,15 @@ def readFile(V,FV,chunksize,inputFile,OUT_DIR): # outputVtx="outputVtx.obj",outp
                             [v1, v2, v3, v4] = FV[i]
                             # face = [v1, v2, v4, v3]
                             if lista[i] < 0:
-                                FVn.append([v4, v3, v2, v1])
+                                FVn.append([v1, v3, v2, v4])
                             else:
-                                FVn.append([v4, v3, v2, v2])
+                                FVn.append([v1, v2, v3, v4])
 
                         # import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
 
                         vertex_count, old_vertex_count = writeToStlFilesOld(
                             fileVertex, fileFaces,
-                            V, FV,
+                            V, FVn,
                             xStart, yStart, zStart,
                             vertex_count, old_vertex_count,
                             b2cells
