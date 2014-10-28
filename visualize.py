@@ -61,7 +61,8 @@ def visualize(V, FV):
 
 def visualize_plasm(V, FV):
     # import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
-    FV = triangulateSquares(FV)
+    if len(FV[0]) > 3:
+        FV = triangulateSquares(FV)
     logger.debug("triangulation done")
 
     FV1 = (np.asarray(FV) + 1).tolist()
