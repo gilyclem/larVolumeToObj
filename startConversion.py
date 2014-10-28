@@ -125,7 +125,8 @@ def makeAll(
         save_triangulated(V, Vint, F, outputdir, outputfile)
 
     if visualization:
-        visualize.visualize(V, F)
+        Ftr = triangulate_quads(F)
+        visualize.visualize(V, Ftr)
 
     return V, F
 
@@ -141,6 +142,7 @@ def save_triangulated(V, Vint, F, outputdir, outputfile):
         writeFile(
             outputfile + "_sm_tr.obj",
             V, Ftr)
+
 
 def makeCleaningAndSmoothing(V, F, outputfile=None):
     logger.debug("outputfile " + str(outputfile))
