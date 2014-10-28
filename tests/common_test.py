@@ -70,14 +70,16 @@ class CommonTest(unittest.TestCase):
         #     0, np.sum(V[32] - expected_vertex))
 
     def makeAll_test(self):
-        from larcc import VIEW, EXPLODE, MKPOLS
+        # from larcc import VIEW, EXPLODE, MKPOLS
         from startConversion import convert, makeCleaningAndSmoothing
         from py.computation.fileio import readFile
         # from visualize import visualize
+        from visualize import check_references
+
         from py.computation.step_triangularmesh import triangulate_quads
         import shutil
 
-        outputdir = 'tests/testpklz'
+        outputdir = 'tests/tmptestmakeall'
         if os.path.exists(outputdir):
             shutil.rmtree(outputdir)
 
@@ -91,13 +93,14 @@ class CommonTest(unittest.TestCase):
         V, F = readFile(os.path.join(outputdir, 'stl/model-2.obj'))
         F3 = triangulate_quads(F)
         # visualize(V, F3)
-        VIEW(EXPLODE(1.2, 1.2, 1.2)(MKPOLS((V, F3))))
+        # VIEW(EXPLODE(1.2, 1.2, 1.2)(MKPOLS((V, F3))))
         V, F = makeCleaningAndSmoothing(
             V, F,
             os.path.join(outputdir, outputfile))
 
         F3 = triangulate_quads(F)
-        # visualize(V, F3)
+        self.assertTrue(check_references(V, F3))
+        # visualize(V, F3, explode=True)
         # VIEW(EXPLODE(1.2, 1.2, 1.2)(MKPOLS((V, F3))))
 
     def test_real_pklz_data(self):
