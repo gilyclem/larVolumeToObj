@@ -100,14 +100,13 @@ class CommonTest(unittest.TestCase):
         # visualize(V, F3)
         # VIEW(EXPLODE(1.2, 1.2, 1.2)(MKPOLS((V, F3))))
 
-    @attr('actual')
     def test_real_pklz_data(self):
         import startConversion
         import shutil
         from py.computation.step_triangularmesh import triangulate_quads
-        from visualize import visualize
+        from visualize import check_references
         # from larcc import VIEW, EXPLODE, MKPOLS
-        outputdir = 'tests/testpklz'
+        outputdir = 'tests/tmptestpklz'
         if os.path.exists(outputdir):
             shutil.rmtree(outputdir)
         V, F = startConversion.makeAll(
@@ -115,14 +114,38 @@ class CommonTest(unittest.TestCase):
             bordersize=[4, 2, 3],
             outputdir=outputdir,
             outputfile='test_nrn4',
-            visualization=True,
+            visualization=False,
+            borderdir=outputdir + '/border'
+            # borderdir='tmp/border'
+        )
+        F3 = triangulate_quads(F)
+        self.assertTrue(check_references(V, F))
+        self.assertTrue(check_references(V, F3))
+
+    @attr('actual')
+    @attr('interactive')
+    def test_real_pklz_data_visual(self):
+        import startConversion
+        import shutil
+        from py.computation.step_triangularmesh import triangulate_quads
+        from visualize import visualize, check_references
+        # from larcc import VIEW, EXPLODE, MKPOLS
+        outputdir = 'tests/tmptestpklz'
+        if os.path.exists(outputdir):
+            shutil.rmtree(outputdir)
+        V, F = startConversion.makeAll(
+            inputfile='tests/nrn4.pklz',
+            bordersize=[4, 2, 3],
+            outputdir=outputdir,
+            outputfile='test_nrn4',
+            visualization=False,
             borderdir=outputdir + '/border'
             # borderdir='tmp/border'
         )
         F3 = triangulate_quads(F)
         visualize(V, F3, explode=True)
+        self.assertTrue(check_references(V, F))
         # VIEW(EXPLODE(1.2, 1.2, 1.2)(MKPOLS((V, F3))))
-        pass
 
 if __name__ == "__main__":
     unittest.main()

@@ -46,6 +46,18 @@ def triangulateSquares(F,
 # Computation of Vertex-to-vertex adjacency matrix
 #
 
+def check_references(V, F):
+    """
+    Check that face is referenced to existing vertex
+    """
+    for face in F:
+        lenV = len(V)
+        for v in face:
+            if v > lenV or v < 0:
+                return False
+    return True
+
+
 def visualize(V, FV, explode=False):
     import time
     # VIEW(STRUCT(MKPOLS((V, FV))))
