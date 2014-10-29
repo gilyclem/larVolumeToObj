@@ -12,7 +12,7 @@ import pickle
 import sys
 import os
 # """ import modules from lar-cc/lib """
-sys.path.insert(0, os.path.expanduser('~/projects/lar-cc/lib/py'))
+# sys.path.insert(0, os.path.expanduser('~/projects/lar-cc/lib/py'))
 # sys.path.insert(0, '/home/mjirik/projects/lar-cc/lib/py')
 
 from larcc import * # noqa

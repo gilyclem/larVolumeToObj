@@ -14,8 +14,10 @@ import py.computation.step_generatebordermtx as gbmatrix
 from nose.plugins.attrib import attr
 import sys
 import os
+import py.packages.import_library as il
+lib_path = il.find_library_path("larcc", "larcc.py")
 path_to_script = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(os.path.join(path_to_script, "../../lar-cc/lib/py"))
+sys.path.append(lib_path)
 
 
 class TemplateTest(unittest.TestCase):

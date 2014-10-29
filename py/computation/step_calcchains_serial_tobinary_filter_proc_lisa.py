@@ -32,8 +32,8 @@ import sys
 import os.path
 
 path_to_script = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(os.path.join(path_to_script, "../../../lisa/src"))
-import datareader
+# sys.path.append(os.path.join(path_to_script, "../../../lisa/src"))
+from io3d import datareader
 # ------------------------------------------------------------
 # Logging & Timer
 # ------------------------------------------------------------
