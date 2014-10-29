@@ -16,7 +16,6 @@ import sys
 import os
 import py.packages.import_library as il
 lib_path = il.find_library_path("larcc", "larcc.py")
-path_to_script = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(lib_path)
 
 

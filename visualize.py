@@ -7,12 +7,11 @@ logger = logging.getLogger(__name__)
 import argparse
 
 import sys
-import os
-""" import modules from lar-cc/lib """
-sys.path.insert(0, os.path.expanduser('~/projects/lar-cc/lib/py'))
-path_to_script = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(os.path.join(path_to_script, "./py/computation/"))
+# """ import modules from lar-cc/lib """
 
+import py.packages.import_library as il
+lib_path = il.find_library_path("larcc", "larcc.py")
+sys.path.append(lib_path)
 from larcc import * # noqa
 from fileio import readFile
 
