@@ -124,7 +124,8 @@ class CommonTest(unittest.TestCase):
             outputdir=outputdir,
             outputfile='test_nrn4',
             visualization=False,
-            borderdir=outputdir + '/border'
+            borderdir=outputdir + '/border',
+            label=2
             # borderdir='tmp/border'
         )
         F3 = triangulate_quads(F)

@@ -94,7 +94,7 @@ def makeSmooth(
     visualization=False,
     borderdir='border',
     make_triangulation=True,
-    label=5000
+    label=2
 ):
     filepath, ext = os.path.splitext(inputfile)
     if ext == "obj":
@@ -193,6 +193,10 @@ def main():
     logger.setLevel(logging.DEBUG)
     ch = logging.StreamHandler()
     ch.setLevel(logging.ERROR)
+    formatter = logging.Formatter(
+        '%(name)s - %(levelname)s - %(message)s'
+    )
+    ch.setFormatter(formatter)
     logger.addHandler(ch)
 
     # create file handler which logs even debug messages
