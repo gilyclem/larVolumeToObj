@@ -100,6 +100,30 @@ def removeDoubleVertexesAndFaces(vertexes, faces, boxsize=None, index_base=0,
     return new_vertexes, new_faces
 
 
+def removeDoubleVertexesAlternative(V):
+    X = range(len(V))
+    # Vs = [v for (v, x) in VIsorted]
+    # Is = [x for (v, x) in VIsorted]
+    Vs = []
+    Is = [0]*len(V)
+
+    prevv = None
+    i = 0
+    for [v, x] in sorted(zip(V, X)):
+        print [v, x]
+        if v == prevv:
+# prev index was increased
+            Is[x] = i - 1
+        else:
+            Vs.append(v)
+            Is[x] = i
+            i = i + 1
+            prevv = v
+
+    return Vs, Is
+
+
+
 def removeDoubleVertexes(vertexes):
     """
     Return array of faces with remowed rows of both duplicates
