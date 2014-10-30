@@ -21,18 +21,15 @@ import os
 import errno
 import numpy as np
 import shutil
-# import larVolumeToObj
-# import larVolumeToObj.computation
-# from py.computation import step_remove_boxes_iner_faces
+
 import step_calcchains_serial_tobinary_filter_proc_lisa as s2bin
 from fileio import readFile, writeFile
-# import step_calcchains_serial_tobinary_filter_proc_lisa as s2bin
 import step_remove_boxes_iner_faces as rmbox
 import step_generatebordermtx as gbmatrix
 from step_triangularmesh import triangulate_quads
 import laplacianSmoothing as ls
 import visualization as vis
-
+#
 import step_squaremesh as sq
 
 
@@ -40,7 +37,8 @@ def convert(
     filename,
     bordersize=[2, 2, 2],
     outputdir='tmp/output',
-    borderdir='./tmp/border'
+    borderdir='./tmp/border',
+    label=2
 ):
 
     bindir = os.path.join(outputdir, 'compbin')
@@ -69,7 +67,8 @@ def convert(
         # BORDER_FILE=border_file,
         DIR_O=bindir,
         # colors=,
-        coloridx=2
+        coloridx=label,
+        label=label
         )
     logger.debug("calcchains_main finished")
 
@@ -94,14 +93,16 @@ def makeSmooth(
     outputfile='out',
     visualization=False,
     borderdir='border',
-    make_triangulation=True
+    make_triangulation=True,
+    label=5000
 ):
     filepath, ext = os.path.splitext(inputfile)
     if ext == "obj":
         obj_input = inputfile
     else:
         print 'Processing pklz data'
-        convert(inputfile, bordersize, outputdir, borderdir=borderdir)
+        convert(inputfile, bordersize, outputdir, borderdir=borderdir,
+                label=label)
         obj_input = 'stl/model-2.obj'
     # V, F = readFile(args.inputfile)
     V, F = readFile(os.path.join(outputdir, obj_input))
@@ -125,8 +126,7 @@ def makeSmooth(
             ignore_empty_vertex_warning=True)
 # make triangulation
     if make_triangulation:
-        print 'triang'
-        save_triangulated(V, Vint, F, outputdir, outputfile)
+        Ftr = save_triangulated(V, Vint, F, outputdir, outputfile)
 
     if visualization:
         Ftr = triangulate_quads(F)
@@ -146,6 +146,7 @@ def save_triangulated(V, Vint, F, outputdir, outputfile):
         writeFile(
             outputfile + "_sm_tr.obj",
             V, Ftr)
+    return Ftr
 
 
 def makeCleaningAndSmoothing(V, F, outputfile=None):
@@ -223,11 +224,6 @@ def main():
         default='tmp/output/',
         help='output file'
     )
-    parser.add_argument(
-        '-l', '--label',
-        default=2,
-        help='input file'
-    )
     # parser.add_argument(
     #     '-bf', '--borderfile',
     #     default=None,
@@ -237,6 +233,12 @@ def main():
         '-bd', '--borderdir',
         default="tmp/border",
         help='input file'
+    )
+    parser.add_argument(
+        '-l', '--label',
+        default=2,
+        help='selected label or threshold for unlabeled data',
+        type=int
     )
     parser.add_argument(
         '-b', '--bordersize',
@@ -262,7 +264,8 @@ def main():
         outputdir=args.outputdir,
         outputfile=args.outputfile,
         visualization=args.visualization,
-        borderdir=args.borderdir
+        borderdir=args.borderdir,
+        label=args.label
     )
 
 

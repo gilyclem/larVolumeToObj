@@ -11,24 +11,13 @@ import time
 import sys
 # import os
 """ import modules from lar-cc/lib """
-# sys.path.insert(0, os.path.expanduser('~/projects/lar-cc/lib/py'))
-# sys.path.insert(0, './py/computation')
-# sys.path.insert(0, '/home/mjirik/projects/lar-cc/lib/py')
 
-import larVolumeToObj.packages.import_library as il
+import import_library as il
 lib_path = il.find_library_path("larcc", "larcc.py")
 sys.path.append(lib_path)
 from larcc import *  # noqa
 
 from fileio import writeFile, readFile
-
-
-# input of test file nrn100.py (with definetion of V and FV)
-# V = vertex coordinates
-# FV = lists of vertex indices of every face (1-based, as required by pyplasm)
-#
-# sys.path.insert(1, '/Users/paoluzzi/Documents/RICERCA/pilsen/ricerca/')
-# from nrn100 import *
 
 
 def triangulateSquares(F,

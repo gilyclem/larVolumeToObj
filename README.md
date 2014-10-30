@@ -10,32 +10,32 @@ MIT License.
 
 
 Install
--------
+======
 
 Install PyPlasm
 
 Download LAR somewhere in your home directory. It will be found automatically.
 
     sudo apt-get install python-scipy python-numpy python-matplotlib\
-        python-dicom
+        python-dicom cython python-pip
 
-    pip install larVolumeToObj --user
+    pip install larVolumeToObj
     
 
 Sample data
------------
+===========
 
 https://github.com/mjirik/lar-running-demo/blob/master/tests/nrn4.pklz
 
 
 Library
--------
+=======
 
     import larVolumeToObj.computation as larobj
     larobj.pklzToSmoothObj.makeSmooth('nrn4.pklz', visualization=True)
 
 More exaples
-============
+------------
 
     V, F = larobj.pklzToSmoothObj.makeSmooth('nrn4.pklz')
     larobj.visualization.visualize(V, F, explode=True)
@@ -43,8 +43,12 @@ More exaples
 
 
 
+Commandline tools
+=================
+
+
 volumeToObj.py
--------------
+------------
 
 Extracts volume from pklz file or dicomdir
 
@@ -57,12 +61,6 @@ visualize.py
 Make visualization of objfile using Plasm
 
     python visualize.py -i outdir/out.obj
-
-
-Usefull functions
------------------
-
-
 
 visualize.sh
 -------------

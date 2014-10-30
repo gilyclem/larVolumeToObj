@@ -3,11 +3,11 @@
 from lar import *
 from scipy import *
 import json
-import scipy
+# import scipy
 import numpy as np
-import time as tm
-import gc
-from pngstack2array3d import *
+# import time as tm
+# import gc
+# from pngstack2array3d import *
 import struct
 import getopt
 import traceback
@@ -352,9 +352,9 @@ def startComputeChains(
     return returnValue
 
 
-def segmentation_from_data3d(datap):
+def segmentation_from_data3d(datap, label):
 
-    datap['segmentation'] = (datap['data3d'] > 6000).astype(np.uint8) * 2
+    datap['segmentation'] = (datap['data3d'] > label).astype(np.uint8) * 2
     # datap['segmentation'][:30,:30,:30] = 1
 
 
@@ -362,13 +362,13 @@ def segmentation_from_data3d(datap):
 
 
 def runComputation(imageDx, imageDy, imageDz, coloridx, calculateout,
-    V, FV, input_pkl_file, BORDER_FILE, DIR_O):
+    V, FV, input_pkl_file, BORDER_FILE, DIR_O, label):
 
     dr = datareader.DataReader()
     datap = dr.Get3DData(input_pkl_file, qt_app=None, dataplus_format=True,
                             gui=False)
     if 'segmentation' not in datap.keys():
-        datap = segmentation_from_data3d(datap)
+        datap = segmentation_from_data3d(datap, label)
     segmentation = datap['segmentation'].astype(np.uint8)
 
     # segmentation = datap['segmentation'][::5,::5,::5]
@@ -468,7 +468,8 @@ def main(argv):
         BORDER_FILE,
         DIR_O,
         # colors,
-        coloridx
+        coloridx,
+        threshold=5000
         )
 
     sys.exit(returnValue)
@@ -480,7 +481,8 @@ def calcchains_main(
     BORDER_FILE,
     DIR_O,
     # colors,
-    coloridx
+    coloridx,
+    label
 ):
     # if (coloridx >= colors):
     #     print 'Not all arguments where given (coloridx >= colors)'
@@ -518,7 +520,7 @@ def calcchains_main(
     # print 'diro ', DIR_O
 
     return runComputation(nx, ny, nz, coloridx, calculateout, V, FV, input_filename,
-                   BORDER_FILE, DIR_O)
+                   BORDER_FILE, DIR_O, label)
 
 if __name__ == "__main__":
     main(sys.argv[1:])

@@ -16,8 +16,8 @@ setup(
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # http://packaging.python.org/en/latest/tutorial.html#version
-    version='1.0.17',
-    url='https://github.com/mjirik/lar-running-demo',
+    version='1.0.18',
+    url='https://github.com/mjirik/larVolumeToObj',
     author='Miroslav Jirik, Francesco Furiani',
     author_email='miroslav.jirik@gmail.com',
     license='MIT',

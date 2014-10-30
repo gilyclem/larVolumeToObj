@@ -9,7 +9,7 @@ import argparse
 import sys
 # """ import modules from lar-cc/lib """
 
-import larVolumeToObj.packages.import_library as il
+import import_library as il
 lib_path = il.find_library_path("larcc", "larcc.py")
 sys.path.append(lib_path)
 from larcc import * # noqa

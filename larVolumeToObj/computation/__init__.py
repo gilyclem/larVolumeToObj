@@ -4,7 +4,7 @@ __all__ = [
     'step_calcchains_serial_tobinary_filter_proc_lisa',
     'step_generatebordermtx', 'step_loadmodel', 'step_mergemesh',
     'step_remove_boxes_iner_faces', 'step_squaremesh', 'step_triangularmesh',
-    'visualization'
+    'visualization', 'import_library'
 ]
 import fileio
 import laplacianSmoothing
@@ -21,3 +21,4 @@ import step_remove_boxes_iner_faces
 import step_squaremesh
 import step_triangularmesh
 import visualization
+import import_library
