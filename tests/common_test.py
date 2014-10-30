@@ -79,7 +79,8 @@ class CommonTest(unittest.TestCase):
         from larVolumeToObj.computation.fileio import readFile
         # from visualize import visualize
 
-        from larVolumeToObj.computation.step_triangularmesh import triangulate_quads
+        from larVolumeToObj.computation.step_triangularmesh\
+            import triangulate_quads
         import shutil
 
         outputdir = 'tests/tmptestmakeall'
@@ -110,7 +111,8 @@ class CommonTest(unittest.TestCase):
     def test_real_pklz_data(self):
         import larVolumeToObj.computation.pklzToSmoothObj as sc
         import shutil
-        from larVolumeToObj.computation.step_triangularmesh import triangulate_quads
+        from larVolumeToObj.computation.step_triangularmesh\
+            import triangulate_quads
         from larVolumeToObj.computation.visualization import check_references
         # from larcc import VIEW, EXPLODE, MKPOLS
         outputdir = 'tests/tmptestpklz'
@@ -133,8 +135,10 @@ class CommonTest(unittest.TestCase):
     def test_real_pklz_data_visual(self):
         import larVolumeToObj.computation.pklzToSmoothObj as startConversion
         import shutil
-        from larVolumeToObj.computation.step_triangularmesh import triangulate_quads
-        from larVolumeToObj.computation.visualization import visualize, check_references
+        from larVolumeToObj.computation.step_triangularmesh \
+            import triangulate_quads
+        from larVolumeToObj.computation.visualization\
+            import visualize, check_references
         # from larcc import VIEW, EXPLODE, MKPOLS
         outputdir = 'tests/tmptestpklz'
         if os.path.exists(outputdir):
