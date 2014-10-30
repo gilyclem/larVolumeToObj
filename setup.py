@@ -3,12 +3,12 @@ from os import path
 
 here = path.abspath(path.dirname(__file__))
 setup(
-    name='io3d',
-    description='3D data read and write',
+    name='larVolumeToObj',
+    description='3D data read from pklz and write to obj',
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # http://packaging.python.org/en/latest/tutorial.html#version
-    version='1.0.2',
+    version='1.0.0',
     url='https://github.com/mjirik/lar-running-demo',
     author='Miroslav Jirik, Francesco Furiani',
     author_email='miroslav.jirik@gmail.com',
