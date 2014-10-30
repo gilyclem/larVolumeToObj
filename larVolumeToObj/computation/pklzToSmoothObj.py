@@ -33,7 +33,7 @@ from step_triangularmesh import triangulate_quads
 import laplacianSmoothing as ls
 # import visualization
 
-import larVolumeToObj.computation.step_squaremesh as sq
+import step_squaremesh as sq
 
 
 def convert(
@@ -89,11 +89,11 @@ def convert(
 
 def makeSmooth(
     inputfile,
-    bordersize,
-    outputdir,
-    outputfile,
-    visualization,
-    borderdir,
+    bordersize=[2, 2, 2],
+    outputdir='output',
+    outputfile='out',
+    visualization=False,
+    borderdir='border',
     make_triangulation=True
 ):
     filepath, ext = os.path.splitext(inputfile)
