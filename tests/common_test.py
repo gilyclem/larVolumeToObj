@@ -134,7 +134,7 @@ class CommonTest(unittest.TestCase):
         import py.computation.pklzToSmoothObj as startConversion
         import shutil
         from py.computation.step_triangularmesh import triangulate_quads
-        from visualize import visualize, check_references
+        from py.computation.visualization import visualize, check_references
         # from larcc import VIEW, EXPLODE, MKPOLS
         outputdir = 'tests/tmptestpklz'
         if os.path.exists(outputdir):
