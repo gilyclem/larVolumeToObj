@@ -1,15 +1,22 @@
 # Always prefer setuptools over distutils
-from setuptools import setup, find_packages
+from setuptools import setup, find_packages, Extension
+# from Cython.Build import cythonize
+from Cython.Distutils import build_ext
 from os import path
-
 here = path.abspath(path.dirname(__file__))
+
+ext_modules = [
+    Extension("larVolumeToObj.computation.calc_chains_helper",
+              ["larVolumeToObj/computation/calc_chains_helper.pyx"])
+]
+cmdclass = {'build_ext': build_ext}
 setup(
     name='larVolumeToObj',
     description='3D data read from pklz and write to obj',
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # http://packaging.python.org/en/latest/tutorial.html#version
-    version='1.0.9',
+    version='1.0.13',
     url='https://github.com/mjirik/lar-running-demo',
     author='Miroslav Jirik, Francesco Furiani',
     author_email='miroslav.jirik@gmail.com',
@@ -55,6 +62,8 @@ setup(
     install_requires=['numpy', 'scipy', 'io3d'],
     dependency_links=[],
 
+    ext_modules=ext_modules,
+    cmdclass=cmdclass,
     # If there are data files included in your packages that need to be
     # installed, specify them here.  If using Python 2.6 or less, then these
     # have to be included in MANIFEST.in as well.

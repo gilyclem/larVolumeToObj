@@ -31,7 +31,7 @@ import step_remove_boxes_iner_faces as rmbox
 import step_generatebordermtx as gbmatrix
 from step_triangularmesh import triangulate_quads
 import laplacianSmoothing as ls
-# import visualization
+import visualization as vis
 
 import step_squaremesh as sq
 
@@ -130,7 +130,7 @@ def makeSmooth(
 
     if visualization:
         Ftr = triangulate_quads(F)
-        visualization.visualize(V, Ftr)
+        vis.visualize(V, Ftr)
 
     return V, F
 
