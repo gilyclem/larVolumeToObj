@@ -1,5 +1,5 @@
 __all__ = [
-    'fileio', 'laplacianSmooting', 'lar', 'matrixutil_accel',
+    'fileio', 'laplacianSmoothing', 'lar', 'matrixutil_accel',
     'matrixutil_no_accel', 'pklzToSmoothObj', 'smooth',
     'step_calcchains_serial_tobinary_filter_proc_lisa',
     'step_generatebordermtx', 'step_loadmodel', 'step_mergemesh',
@@ -7,7 +7,7 @@ __all__ = [
     'visualization'
 ]
 import fileio
-import laplacianSmooting
+import laplacianSmoothing
 import lar
 import matrixutil_accel
 import matrixutil_no_accel

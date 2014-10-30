@@ -24,14 +24,14 @@ import shutil
 # import larVolumeToObj
 # import larVolumeToObj.computation
 # from py.computation import step_remove_boxes_iner_faces
-import larVolumeToObj.computation.step_calcchains_serial_tobinary_filter_proc_lisa as s2bin
-from larVolumeToObj.computation.fileio import readFile, writeFile
+import step_calcchains_serial_tobinary_filter_proc_lisa as s2bin
+from fileio import readFile, writeFile
 # import step_calcchains_serial_tobinary_filter_proc_lisa as s2bin
-import larVolumeToObj.computation.step_remove_boxes_iner_faces as rmbox
-import larVolumeToObj.computation.step_generatebordermtx as gbmatrix
-from larVolumeToObj.computation.step_triangularmesh import triangulate_quads
+import step_remove_boxes_iner_faces as rmbox
+import step_generatebordermtx as gbmatrix
+from step_triangularmesh import triangulate_quads
 import laplacianSmoothing as ls
-import visualization
+# import visualization
 
 import larVolumeToObj.computation.step_squaremesh as sq
 
