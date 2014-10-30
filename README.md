@@ -31,16 +31,15 @@ https://github.com/mjirik/lar-running-demo/blob/master/tests/nrn4.pklz
 Library
 -------
 
-    import larVolumeToObj
-    V, F = larVolumeToObj.computation.pklzToSmoothObj.makeSmooth('nrn4.pklz')
-    larVolumeToObj.computation.visualization.visualize(V,F, explode=True)
+    import larVolumeToObj.computation as larobj
+    V, F = larobj.pklzToSmoothObj.makeSmooth('nrn4.pklz')
+    larobj.visualization.visualize(V,F, explode=True)
 
 More exaples
 ============
 
-    from larVolumeToObj.computation import *
-    pklzToSmoothObj.makeSmooth('nrn4.pklz', visualization=True)
-    visualization.visualizeObj('output/out_sm_i_tr.obj', explode=True)
+    larobj.pklzToSmoothObj.makeSmooth('nrn4.pklz', visualization=True)
+    larobj.visualization.visualizeObj('output/out_sm_i_tr.obj', explode=True)
 
 
 
