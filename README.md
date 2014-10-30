@@ -32,13 +32,13 @@ Library
 -------
 
     import larVolumeToObj.computation as larobj
-    V, F = larobj.pklzToSmoothObj.makeSmooth('nrn4.pklz')
-    larobj.visualization.visualize(V,F, explode=True)
+    larobj.pklzToSmoothObj.makeSmooth('nrn4.pklz', visualization=True)
 
 More exaples
 ============
 
-    larobj.pklzToSmoothObj.makeSmooth('nrn4.pklz', visualization=True)
+    V, F = larobj.pklzToSmoothObj.makeSmooth('nrn4.pklz')
+    larobj.visualization.visualize(V, F, explode=True)
     larobj.visualization.visualizeObj('output/out_sm_i_tr.obj', explode=True)
 
 
