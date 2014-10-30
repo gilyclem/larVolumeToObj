@@ -21,19 +21,19 @@ import os
 import errno
 import numpy as np
 import shutil
-# import py
-# import py.computation
+# import larVolumeToObj
+# import larVolumeToObj.computation
 # from py.computation import step_remove_boxes_iner_faces
-import py.computation.step_calcchains_serial_tobinary_filter_proc_lisa as s2bin
+import larVolumeToObj.computation.step_calcchains_serial_tobinary_filter_proc_lisa as s2bin
 from py.computation.fileio import readFile, writeFile
 # import step_calcchains_serial_tobinary_filter_proc_lisa as s2bin
-import py.computation.step_remove_boxes_iner_faces as rmbox
-import py.computation.step_generatebordermtx as gbmatrix
+import larVolumeToObj.computation.step_remove_boxes_iner_faces as rmbox
+import larVolumeToObj.computation.step_generatebordermtx as gbmatrix
 from py.computation.step_triangularmesh import triangulate_quads
 import laplacianSmoothing as ls
 import visualize
 
-import py.computation.step_squaremesh as sq
+import larVolumeToObj.computation.step_squaremesh as sq
 
 
 def convert(

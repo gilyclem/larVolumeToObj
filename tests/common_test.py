@@ -12,13 +12,13 @@ import unittest
 
 from nose.plugins.attrib import attr
 import numpy as np
-import py.computation.laplacianSmoothing as ls
-import py.computation.step_remove_boxes_iner_faces as rmbox
-import py.computation.fileio as fileio
+import larVolumeToObj.computation.laplacianSmoothing as ls
+import larVolumeToObj.computation.step_remove_boxes_iner_faces as rmbox
+import larVolumeToObj.computation.fileio as fileio
 
 from visualize import check_references
 # import visualize
-import py.computation.pklzToSmoothObj as sc
+import larVolumeToObj.computation.pklzToSmoothObj as sc
 
 
 class CommonTest(unittest.TestCase):
@@ -108,7 +108,7 @@ class CommonTest(unittest.TestCase):
 
     @attr('actual')
     def test_real_pklz_data(self):
-        import py.computation.pklzToSmoothObj as sc
+        import larVolumeToObj.computation.pklzToSmoothObj as sc
         import shutil
         from py.computation.step_triangularmesh import triangulate_quads
         from visualize import check_references
@@ -131,7 +131,7 @@ class CommonTest(unittest.TestCase):
 
     @attr('interactive')
     def test_real_pklz_data_visual(self):
-        import py.computation.pklzToSmoothObj as startConversion
+        import larVolumeToObj.computation.pklzToSmoothObj as startConversion
         import shutil
         from py.computation.step_triangularmesh import triangulate_quads
         from py.computation.visualization import visualize, check_references

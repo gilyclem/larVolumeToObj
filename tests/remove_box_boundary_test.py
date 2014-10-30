@@ -10,7 +10,7 @@ path_to_script = os.path.dirname(os.path.abspath(__file__))
 import unittest
 from nose.plugins.attrib import attr
 
-import py.computation.step_remove_boxes_iner_faces as rmbox
+import larVolumeToObj.computation.step_remove_boxes_iner_faces as rmbox
 import numpy as np
 import copy
 

@@ -9,13 +9,13 @@ import argparse
 import time
 
 import sys
-import os
+# import os
 """ import modules from lar-cc/lib """
 # sys.path.insert(0, os.path.expanduser('~/projects/lar-cc/lib/py'))
 # sys.path.insert(0, './py/computation')
 # sys.path.insert(0, '/home/mjirik/projects/lar-cc/lib/py')
 
-import py.packages.import_library as il
+import larVolumeToObj.packages.import_library as il
 lib_path = il.find_library_path("larcc", "larcc.py")
 sys.path.append(lib_path)
 from larcc import *  # noqa

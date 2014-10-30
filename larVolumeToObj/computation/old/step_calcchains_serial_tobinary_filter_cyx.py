@@ -14,7 +14,7 @@ import traceback
 #
 import matplotlib.pyplot as plt
 #cython
-import pyximport; pyximport.install()
+import larVolumeToObjximport; pyximport.install()
 import calc_chains_helper as cch
 
 # ------------------------------------------------------------
