@@ -2,8 +2,9 @@ lar-running-demo
 =============
 
 A demo beta software (set of scripts) to extract models from medical images.
+First step is image segmentation by Lisa software.
 
-Spftware has been tested on Ubuntu 12.04 LTS (x64).
+Spftware has been tested on Ubuntu 14.04 LTS (x64).
 
 MIT License.
 
@@ -15,10 +16,15 @@ A list of them are:
 * *NIX like OS (untested on Windows)
 * Bash
 * Python (*PyPlasm, SciPy, NumPy, Cython, pypng, simplejson or json, requests, termcolor, matplotlib*)
-* Java
-* OpenCL
-* Imagemagik
-* dcm2pnm
+
+
+Install 
+-------
+
+    sudo apt-get install python-scipy python-numpy python-matplotlib\
+        python-dicom
+
+    pip install io3d --user
 
 startConversion.sh
 -------------
