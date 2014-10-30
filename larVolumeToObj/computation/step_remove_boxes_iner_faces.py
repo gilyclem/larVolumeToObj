@@ -114,7 +114,6 @@ def removeDoubleVertexesAlternative(V):
     prevv = None
     i = 0
     for [v, x] in sorted(zip(V, X)):
-        print [v, x]
         if v == prevv:
             # prev index was increased
             Is[x] = i - 1
