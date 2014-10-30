@@ -86,7 +86,7 @@ def visualize_plasm(V, FV):
 
 
 def visualizeObj(objfile, explode=False):
-    V, FV = readFile(args.inputfile, ftype=args.filetype)
+    V, FV = readFile(objfile, ftype='obj')
     visualize(V, F, explode)
 
 

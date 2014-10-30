@@ -8,29 +8,40 @@ Spftware has been tested on Ubuntu 14.04 LTS (x64).
 
 MIT License.
 
-Prerequisites
--------------
-Every script check for its own prerequisites at the right time.
-A list of them are:
 
-* *NIX like OS (untested on Windows)
-* Bash
-* Python (*PyPlasm, SciPy, NumPy, Cython, pypng, simplejson or json, requests, termcolor, matplotlib*)
-
-
-Install 
+Install
 -------
+
+Install PyPlasm
+
+Download LAR somewhere in your home directory. It will be found automatically.
 
     sudo apt-get install python-scipy python-numpy python-matplotlib\
         python-dicom
 
-    pip install io3d --user
+    pip install larVolumeToObj --user
+    
+
+Sample data
+-----------
+
+https://github.com/mjirik/lar-running-demo/blob/master/tests/nrn4.pklz
+
 
 Library
 -------
 
     import larVolumeToObj
-    larVolumeToObj.computation.pklzToSmoothObj.makeSmooth('nrn4.pklz')
+    V, F = larVolumeToObj.computation.pklzToSmoothObj.makeSmooth('nrn4.pklz')
+    larVolumeToObj.computation.visualization.visualize(V,F, explode=True)
+
+More exaples
+============
+
+    from larVolumeToObj.computation import *
+    pklzToSmoothObj.makeSmooth('nrn4.pklz', visualization=True)
+    visualization.visualizeObj('output/out_sm_i_tr.obj', explode=True)
+
 
 
 volumeToObj.py
@@ -47,6 +58,12 @@ visualize.py
 Make visualization of objfile using Plasm
 
     python visualize.py -i outdir/out.obj
+
+
+Usefull functions
+-----------------
+
+
 
 visualize.sh
 -------------
