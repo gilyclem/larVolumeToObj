@@ -26,28 +26,27 @@ Install
 
     pip install io3d --user
 
-startConversion.sh
+Library
+-------
+
+    import larVolumeToObj
+    larVolumeToObj.computation.pklzToSmoothObj.makeSmooth('nrn4.pklz')
+
+
+volumeToObj.py
 -------------
-It will extract all the possible models (the number depends of the quantized colors) automatically. Might take a while.
 
-Input images allowed: *png, jpg, dcm*
+Extracts volume from pklz file or dicomdir
 
-Two type of executions:
+    python volumeToObj -i nrn4.pklz -od outdir -v
 
-* Interactive
-* Command Line (use -h to know the exact paramaters)
 
-startConversion-singleColor.sh
--------------
-It will extract one of the possible model (the number depends of the quantized colors) automatically: it'll be choosen by selecting the index of the quantized color at runtime (mind that the quantized colors are always ordered in ascending order).
+visualize.py
+------------
 
-Input images allowed: *png, jpg, dcm*
+Make visualization of objfile using Plasm
 
-Two type of executions:
-
-* Interactive
-* Command Line (use -h to know the exact paramaters)
-
+    python visualize.py -i outdir/out.obj
 
 visualize.sh
 -------------
