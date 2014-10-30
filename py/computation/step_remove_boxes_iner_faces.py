@@ -75,7 +75,8 @@ def removeDoubleVertexesAndFaces(vertexes, faces, boxsize=None, index_base=0,
     """
 
     t0 = time.time()
-    new_vertexes, inv_vertexes = removeDoubleVertexes(vertexes)
+    # new_vertexes, inv_vertexes = removeDoubleVertexes(vertexes)
+    new_vertexes, inv_vertexes = removeDoubleVertexesAlternative(vertexes)
     t1 = time.time()
     logger.info("Doubled vertex removed          " + str(t1 - t0))
     logger.info("Number of vertexes: %i " % (len(new_vertexes)))
@@ -101,6 +102,9 @@ def removeDoubleVertexesAndFaces(vertexes, faces, boxsize=None, index_base=0,
 
 
 def removeDoubleVertexesAlternative(V):
+    """
+    alternativte removing of doublefaces. Hopefully more memory efficient
+    """
     X = range(len(V))
     # Vs = [v for (v, x) in VIsorted]
     # Is = [x for (v, x) in VIsorted]
@@ -112,7 +116,7 @@ def removeDoubleVertexesAlternative(V):
     for [v, x] in sorted(zip(V, X)):
         print [v, x]
         if v == prevv:
-# prev index was increased
+            # prev index was increased
             Is[x] = i - 1
         else:
             Vs.append(v)
@@ -121,7 +125,6 @@ def removeDoubleVertexesAlternative(V):
             prevv = v
 
     return Vs, Is
-
 
 
 def removeDoubleVertexes(vertexes):
