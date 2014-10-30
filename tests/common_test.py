@@ -12,12 +12,13 @@ import unittest
 
 from nose.plugins.attrib import attr
 import numpy as np
-import laplacianSmoothing as ls
-import step_remove_boxes_iner_faces as rmbox
-import fileio
+import py.computation.laplacianSmoothing as ls
+import py.computation.step_remove_boxes_iner_faces as rmbox
+import py.computation.fileio as fileio
+
 from visualize import check_references
 # import visualize
-import startConversion as sc
+import py.computation.pklzToSmoothObj as sc
 
 
 class CommonTest(unittest.TestCase):
@@ -37,7 +38,6 @@ class CommonTest(unittest.TestCase):
             [1.25, 2.75, 5.5])
         nv = ls.makeSmoothing(vertexes, faces)
         self.assertAlmostEqual(0, np.sum(nv[0] - expected_vertex))
-
 
     def test_real_data_per_partes(self):
         vertexes, faces = fileio.readFile(
@@ -74,7 +74,8 @@ class CommonTest(unittest.TestCase):
 
     def makeAll_test(self):
         # from larcc import VIEW, EXPLODE, MKPOLS
-        from startConversion import convert, makeCleaningAndSmoothing
+        from py.computation.pklzToSmoothObj import convert,\
+            makeCleaningAndSmoothing
         from py.computation.fileio import readFile
         # from visualize import visualize
 
@@ -107,7 +108,7 @@ class CommonTest(unittest.TestCase):
 
     @attr('actual')
     def test_real_pklz_data(self):
-        import startConversion
+        import py.computation.pklzToSmoothObj as sc
         import shutil
         from py.computation.step_triangularmesh import triangulate_quads
         from visualize import check_references
@@ -115,7 +116,7 @@ class CommonTest(unittest.TestCase):
         outputdir = 'tests/tmptestpklz'
         if os.path.exists(outputdir):
             shutil.rmtree(outputdir)
-        V, F = startConversion.makeAll(
+        V, F = sc.makeSmooth(
             inputfile='tests/nrn4.pklz',
             bordersize=[4, 2, 3],
             outputdir=outputdir,
@@ -130,7 +131,7 @@ class CommonTest(unittest.TestCase):
 
     @attr('interactive')
     def test_real_pklz_data_visual(self):
-        import startConversion
+        import py.computation.pklzToSmoothObj as startConversion
         import shutil
         from py.computation.step_triangularmesh import triangulate_quads
         from visualize import visualize, check_references
@@ -138,7 +139,7 @@ class CommonTest(unittest.TestCase):
         outputdir = 'tests/tmptestpklz'
         if os.path.exists(outputdir):
             shutil.rmtree(outputdir)
-        V, F = startConversion.makeAll(
+        V, F = startConversion.makeSmooth(
             inputfile='tests/nrn4.pklz',
             bordersize=[4, 2, 3],
             outputdir=outputdir,

@@ -87,7 +87,7 @@ def convert(
     concatenate_files(stldir + '/output-*-*.stl', stlfile)
 
 
-def makeAll(
+def makeSmooth(
     inputfile,
     bordersize,
     outputdir,
@@ -96,11 +96,15 @@ def makeAll(
     borderdir,
     make_triangulation=True
 ):
-    print 'before pklz read'
-    convert(inputfile, bordersize, outputdir, borderdir=borderdir)
-    print 'after pklz read'
+    filepath, ext = os.path.splitext(inputfile)
+    if ext == "obj":
+        obj_input = inputfile
+    else:
+        print 'Processing pklz data'
+        convert(inputfile, bordersize, outputdir, borderdir=borderdir)
+        obj_input = 'stl/model-2.obj'
     # V, F = readFile(args.inputfile)
-    V, F = readFile(os.path.join(outputdir, 'stl/model-2.obj'))
+    V, F = readFile(os.path.join(outputdir, obj_input))
     print "Before"
     print "Number of vertexes: %i    Number of faces %i" % (len(V), len(F))
     # F = rmbox.shiftFaces(F, -1)
@@ -252,7 +256,7 @@ def main():
     if args.debug:
         ch.setLevel(logging.DEBUG)
 
-    makeAll(
+    makeSmooth(
         inputfile=args.inputfile,
         bordersize=args.bordersize,
         outputdir=args.outputdir,

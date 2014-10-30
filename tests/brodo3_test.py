@@ -22,7 +22,7 @@ sys.path.append(lib_path)
 class TemplateTest(unittest.TestCase):
 
     def test_make_oriented_boundary_real_data(self):
-        from startConversion import convert
+        from py.computation.pklzToSmoothObj import convert
         from py.computation.fileio import readFile
         from visualize import check_references
         # from py.computation.step_triangularmesh import triangulate_quads
