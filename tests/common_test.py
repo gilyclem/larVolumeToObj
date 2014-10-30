@@ -16,7 +16,7 @@ import larVolumeToObj.computation.laplacianSmoothing as ls
 import larVolumeToObj.computation.step_remove_boxes_iner_faces as rmbox
 import larVolumeToObj.computation.fileio as fileio
 
-from visualize import check_references
+from larVolumeToObj.computation.visualization import check_references
 # import visualize
 import larVolumeToObj.computation.pklzToSmoothObj as sc
 
@@ -74,12 +74,12 @@ class CommonTest(unittest.TestCase):
 
     def makeAll_test(self):
         # from larcc import VIEW, EXPLODE, MKPOLS
-        from py.computation.pklzToSmoothObj import convert,\
+        from larVolumeToObj.computation.pklzToSmoothObj import convert,\
             makeCleaningAndSmoothing
-        from py.computation.fileio import readFile
+        from larVolumeToObj.computation.fileio import readFile
         # from visualize import visualize
 
-        from py.computation.step_triangularmesh import triangulate_quads
+        from larVolumeToObj.computation.step_triangularmesh import triangulate_quads
         import shutil
 
         outputdir = 'tests/tmptestmakeall'
@@ -110,8 +110,8 @@ class CommonTest(unittest.TestCase):
     def test_real_pklz_data(self):
         import larVolumeToObj.computation.pklzToSmoothObj as sc
         import shutil
-        from py.computation.step_triangularmesh import triangulate_quads
-        from visualize import check_references
+        from larVolumeToObj.computation.step_triangularmesh import triangulate_quads
+        from larVolumeToObj.computation.visualization import check_references
         # from larcc import VIEW, EXPLODE, MKPOLS
         outputdir = 'tests/tmptestpklz'
         if os.path.exists(outputdir):
@@ -133,8 +133,8 @@ class CommonTest(unittest.TestCase):
     def test_real_pklz_data_visual(self):
         import larVolumeToObj.computation.pklzToSmoothObj as startConversion
         import shutil
-        from py.computation.step_triangularmesh import triangulate_quads
-        from py.computation.visualization import visualize, check_references
+        from larVolumeToObj.computation.step_triangularmesh import triangulate_quads
+        from larVolumeToObj.computation.visualization import visualize, check_references
         # from larcc import VIEW, EXPLODE, MKPOLS
         outputdir = 'tests/tmptestpklz'
         if os.path.exists(outputdir):

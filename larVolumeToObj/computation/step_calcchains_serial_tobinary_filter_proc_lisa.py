@@ -18,8 +18,7 @@ import multiprocessing
 from multiprocessing import Process, Value, Lock
 from Queue import Queue
 # cython stuf. not used now
-import larVolumeToObjximport
-pyximport.install()
+import pyximport; pyximport.install()
 import calc_chains_helper as cch
 
 

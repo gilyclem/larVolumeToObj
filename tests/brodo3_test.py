@@ -22,10 +22,10 @@ sys.path.append(lib_path)
 class TemplateTest(unittest.TestCase):
 
     def test_make_oriented_boundary_real_data(self):
-        from py.computation.pklzToSmoothObj import convert
-        from py.computation.fileio import readFile
-        from py.computation.visualization import check_references
-        # from py.computation.step_triangularmesh import triangulate_quads
+        from larVolumeToObj.computation.pklzToSmoothObj import convert
+        from larVolumeToObj.computation.fileio import readFile
+        from larVolumeToObj.computation.visualization import check_references
+        # from larVolumeToObj.computation.step_triangularmesh import triangulate_quads
         inputfile = 'tests/nrn4.pklz'
         bordersize = [4, 2, 3]
         outputdir = 'tests/tmptestpklz'
@@ -40,7 +40,7 @@ class TemplateTest(unittest.TestCase):
     @attr('interactive')
     def test_make_boundary_from_boundary_matrix(self):
         from larcc import VIEW, EXPLODE, MKPOLS
-        from py.computation.step_triangularmesh import triangulate_quads
+        from larVolumeToObj.computation.step_triangularmesh import triangulate_quads
         from visualize import visualize
 
         nx, ny, nz = [1, 2, 1]
@@ -76,7 +76,7 @@ class TemplateTest(unittest.TestCase):
         VIEW(EXPLODE(1.2, 1.2, 1.2)(MKPOLS((V, FV3))))
 
     def test_compare_two_brodo3(self):
-        from py.computation.lar import larBoundary
+        from larVolumeToObj.computation.lar import larBoundary
         import numpy as np
 
         nx, ny, nz = [1, 2, 1]

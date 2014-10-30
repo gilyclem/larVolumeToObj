@@ -25,13 +25,13 @@ import shutil
 # import larVolumeToObj.computation
 # from py.computation import step_remove_boxes_iner_faces
 import larVolumeToObj.computation.step_calcchains_serial_tobinary_filter_proc_lisa as s2bin
-from py.computation.fileio import readFile, writeFile
+from larVolumeToObj.computation.fileio import readFile, writeFile
 # import step_calcchains_serial_tobinary_filter_proc_lisa as s2bin
 import larVolumeToObj.computation.step_remove_boxes_iner_faces as rmbox
 import larVolumeToObj.computation.step_generatebordermtx as gbmatrix
-from py.computation.step_triangularmesh import triangulate_quads
+from larVolumeToObj.computation.step_triangularmesh import triangulate_quads
 import laplacianSmoothing as ls
-import visualize
+import visualization
 
 import larVolumeToObj.computation.step_squaremesh as sq
 
@@ -130,7 +130,7 @@ def makeSmooth(
 
     if visualization:
         Ftr = triangulate_quads(F)
-        visualize.visualize(V, Ftr)
+        visualization.visualize(V, Ftr)
 
     return V, F
 

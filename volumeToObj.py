@@ -13,7 +13,7 @@
 import logging
 logger = logging.getLogger(__name__)
 import argparse
-import py.computation.pklzToSmoothObj as tosmooth
+import larVolumeToObj.computation.pklzToSmoothObj as tosmooth
 
 
 def main():
