@@ -20,6 +20,7 @@ class RemoveBoundaryBoxTest(unittest.TestCase):
 
     @attr('actual')
     def test_remove_double_vertexes_alternatives(self):
+        # import time
         V = [
             [4, 3, 1],
             [1, 3, 6],
@@ -32,8 +33,14 @@ class RemoveBoundaryBoxTest(unittest.TestCase):
             [1, 3, 6]]
 
         # inv1 is not list. It is nparray
+        # t0 = time.time()
         Vun1, inv1 = rmbox.removeDoubleVertexes(V)
+
+        # t1 = time.time()
         Vun2, inv2 = rmbox.removeDoubleVertexesAlternative(V)
+        # t2 = time.time()
+        # print t1 - t0
+        # print t2 - t1
         self.assertEqual(Vun1, Vun2)
         self.assertEqual(inv1.tolist(), inv2)
 
