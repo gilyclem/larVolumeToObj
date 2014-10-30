@@ -85,6 +85,11 @@ def visualize_plasm(V, FV):
     # VIEW(MKPOL([V, AA(AA(lambda k:k + 1))(FV), []]))
 
 
+def visualizeObj(objfile, explode=False):
+    V, FV = readFile(args.inputfile, ftype=args.filetype)
+    visualize(V, F, explode)
+
+
 def main():
 
     logger = logging.getLogger()
