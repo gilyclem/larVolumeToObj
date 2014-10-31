@@ -58,6 +58,14 @@ def check_references(V, F):
 
 
 def visualize(V, FV, explode=False):
+    if explode:
+        visualize_lar(V, FV, explode)
+    else:
+        # if you dont need explode, this is faster
+        visualize_plasm(V, FV)
+
+
+def visualize_lar(V, FV, explode=False):
     import time
     # VIEW(STRUCT(MKPOLS((V, FV))))
     t0 = time.time()
@@ -86,8 +94,23 @@ def visualize_plasm(V, FV):
 
 
 def visualizeObj(objfile, explode=False):
-    V, FV = readFile(objfile, ftype='obj')
-    visualize(V, FV, explode)
+    """
+    Try use Batch.openObj it is fast. But cannot read quadrilaterals and
+    floating point number.
+    If it fail there is backup version.
+    If explode fucntionality is wanted, it is always using LAR visualization
+    wich is slow.
+    """
+    import step_loadmodel
+    if explode:
+        try:
+            step_loadmodel(objfile)
+        except:
+            V, FV = readFile(objfile, ftype='obj')
+            visualize(V, FV, explode)
+    else:
+        V, FV = readFile(objfile, ftype='obj')
+        visualize(V, FV, explode)
 
 
 def main():
@@ -118,6 +141,9 @@ def main():
         '-v', '--visualization', action='store_true',
         help='Use visualization')
     parser.add_argument(
+        '-e', '--explode', action='store_true',
+        help='Explode mode. Slower.')
+    parser.add_argument(
         '-d', '--debug', action='store_true',
         help='Debug mode')
 
@@ -125,10 +151,10 @@ def main():
     if args.debug:
         logger.setLevel(logging.DEBUG)
 
-    V, FV = readFile(args.inputfile, ftype=args.filetype)
+    # V, FV = readFile(args.inputfile, ftype=args.filetype)
 
-    logger.info("Data readed from ' %s" % (args.inputfile))
-    visualize_plasm(V, FV)
+    # logger.info("Data readed from ' %s" % (args.inputfile))
+    visualizeObj(args.inputfile, explode=args.explode)
 
 if __name__ == "__main__":
     main()
