@@ -74,7 +74,7 @@ fi
 
 case "$VIS_SELECT" in
 "1")
-    python ./py/computation/step_loadmodel.py -i $MODELINPUT
+    python ./larVolumeToObj/computation/step_loadmodel.py -i $MODELINPUT
     ;;
 "2")
     $MESHLAB $MODELINPUT
