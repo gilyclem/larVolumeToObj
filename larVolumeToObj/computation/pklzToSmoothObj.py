@@ -157,6 +157,7 @@ def makeCleaningAndSmoothing(V, F, outputfile=None):
     if outputfile is not None:
         writeFile(outputfile + "_cl.obj", V, F)
     V = ls.makeSmoothing(V, F)
+    V, F = rmbox.removeDoubleVertexesAndFaces(V, F, use_dict_algorithm=False)
     if outputfile is not None:
         writeFile(outputfile + "_sm.obj", V, F,
                   ignore_empty_vertex_warning=True)

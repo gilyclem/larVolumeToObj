@@ -10,11 +10,11 @@
 
 """
 import unittest
-import larVolumeToObj.computation.step_generatebordermtx as gbmatrix
 from nose.plugins.attrib import attr
 import sys
 import os
 import larVolumeToObj.packages.import_library as il
+import larVolumeToObj.computation.step_generatebordermtx as gbmatrix
 lib_path = il.find_library_path("larcc", "larcc.py")
 sys.path.append(lib_path)
 

@@ -72,7 +72,7 @@ class CommonTest(unittest.TestCase):
         # self.assertAlmostEqual(
         #     0, np.sum(V[32] - expected_vertex))
 
-    def makeAll_test(self):
+    def make_all_by_steps_test(self):
         # from larcc import VIEW, EXPLODE, MKPOLS
         from larVolumeToObj.computation.pklzToSmoothObj import convert,\
             makeCleaningAndSmoothing
