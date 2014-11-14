@@ -85,7 +85,7 @@ def removeDoubleVertexesAndFaces(vertexes, faces, boxsize=None, index_base=0,
     t2 = time.time()
     logger.info("Vertexes in faces reindexed     " + str(t2 - t1))
     if use_dict_algorithm:
-        logger.debug("Using Alberto")
+        logger.debug("Using dict algotithm by Alberto")
         new_faces = removeDoubleFacesByAlberto(new_faces)
     else:
         if boxsize is None:

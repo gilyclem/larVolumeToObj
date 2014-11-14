@@ -149,15 +149,26 @@ def save_triangulated(V, Vint, F, outputdir, outputfile):
     return Ftr
 
 
+def __remove_first_vertex(V, F):
+    V = V[1:]
+    F = (np.asarray(F) - 1).tolist()
+    return V, F
+
+
 def makeCleaningAndSmoothing(V, F, outputfile=None):
     logger.debug("outputfile " + str(outputfile))
     # findBoxVertexesForAxis(v, 2, 0)
     # v, f = findBoundaryFaces(v, f, 2)
+
+# @TODO debug dict algorithm
     V, F = rmbox.removeDoubleVertexesAndFaces(V, F, use_dict_algorithm=False)
     if outputfile is not None:
         writeFile(outputfile + "_cl.obj", V, F)
     V = ls.makeSmoothing(V, F)
+# @TODO remove unused vertexes is too general and slow
     V, F = rmbox.removeDoubleVertexesAndFaces(V, F, use_dict_algorithm=False)
+    V, F = __remove_first_vertex(V, F)
+
     if outputfile is not None:
         writeFile(outputfile + "_sm.obj", V, F,
                   ignore_empty_vertex_warning=True)
