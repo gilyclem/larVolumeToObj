@@ -274,16 +274,20 @@ def main():
     if args.debug:
         ch.setLevel(logging.DEBUG)
 
-    makeSmooth(
-        inputfile=args.inputfile,
-        bordersize=args.bordersize,
-        outputdir=args.outputdir,
-        outputfile=args.outputfile,
-        visualization=args.visualization,
-        borderdir=args.borderdir,
-        label=args.label
-    )
-
+    try:
+        makeSmooth(
+            inputfile=args.inputfile,
+            bordersize=args.bordersize,
+            outputdir=args.outputdir,
+            outputfile=args.outputfile,
+            visualization=args.visualization,
+            borderdir=args.borderdir,
+            label=args.label
+        )
+    except:
+        import traceback
+        logger.error(traceback.format_exc())
+        raise
 
 if __name__ == "__main__":
     main()
