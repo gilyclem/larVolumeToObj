@@ -201,8 +201,8 @@ def concatenate_files(input_filemasc, output_filename):
 
 def main():
     logger = logging.getLogger()
-
     logger.setLevel(logging.DEBUG)
+
     ch = logging.StreamHandler()
     ch.setLevel(logging.ERROR)
     formatter = logging.Formatter(

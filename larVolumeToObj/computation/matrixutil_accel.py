@@ -2,7 +2,7 @@
 """
 The MIT License
 ===============
-    
+
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
 'Software'), to deal in the Software without restriction, including
@@ -21,8 +21,11 @@ IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
 CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-    
+
 """
+
+import logging
+logger = logging.getLogger(__name__)
 
 import collections
 import scipy.sparse
@@ -40,7 +43,7 @@ import requests
 from numpy import *
 from termcolor import colored
 
-logging.basicConfig(format='%(levelname)s [%(filename)s, %(funcName)s] >> %(message)s', level=logging.INFO)
+# logging.basicConfig(format='%(levelname)s [%(filename)s, %(funcName)s] >> %(message)s', level=logging.INFO)
 
 url = "http://cvd01.dia.uniroma3.it:3000/multiply";
 
@@ -83,13 +86,13 @@ def jsonToCSR(JSONm):
     logging.info('ROW: ' + str(ROW));
     logging.info('COL: ' + str(COL));
     logging.info('DATA: ' + str(DATA));
-    
+
     return CSRm;
 
 def csrTranspose(CSRm):
     CSRm = CSRm.T
     return CSRm
-    
+
 def matrixProduct(A,B):
 
 # Input parameters check
@@ -105,13 +108,13 @@ def matrixProduct(A,B):
 
     logging.info('Matrix A');
     Ajson = csrToJSON(A.tocsr());
-    
+
     logging.info('Matrix B');
-    Bjson = csrToJSON(B.tocsr()); 
+    Bjson = csrToJSON(B.tocsr());
 
 # Send A and B, Receive A*B
 
-    payload = {"matrixa": Ajson, "matrixb": Bjson};   
+    payload = {"matrixa": Ajson, "matrixb": Bjson};
 
     req = requests.post(url, data=payload);
     logging.info('Matrix A and matrix B sent');
