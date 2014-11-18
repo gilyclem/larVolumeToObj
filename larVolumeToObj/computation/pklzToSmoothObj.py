@@ -274,6 +274,8 @@ def main():
     if args.debug:
         ch.setLevel(logging.DEBUG)
 
+    logger.debug('input parser')
+    logger.debug(str(args))
     try:
         makeSmooth(
             inputfile=args.inputfile,

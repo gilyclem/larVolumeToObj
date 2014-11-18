@@ -172,11 +172,10 @@ def computeChainsThread(
     returnProcess = 0
 
     try:
-        print "fileToWrite", DIR_O + '/' + fileName +\
-            str(saveTheColors[colorIdx]) + BIN_EXTENSION
-        fileToWrite = open(
-            DIR_O + '/' +
-            fileName + str(saveTheColors[colorIdx]) + BIN_EXTENSION, "wb")
+        fullfilename = DIR_O + '/' +\
+            fileName + str(saveTheColors[colorIdx]) + BIN_EXTENSION
+        logger.debug("file to write " + fullfilename)
+        fileToWrite = open(fullfilename, "wb")
         try:
             log(2, ["Working task: " +
                     str(startImage) + "-" +
