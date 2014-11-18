@@ -290,6 +290,7 @@ def main():
         import traceback
         logger.error(traceback.format_exc())
         raise
+    logger.debug('Smoothing done')
 
 if __name__ == "__main__":
     main()
