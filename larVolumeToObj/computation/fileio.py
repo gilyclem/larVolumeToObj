@@ -81,15 +81,45 @@ def readFile(filename, ftype='auto', shift_obj=True):
     if ftype == 'auto':
         _, ext = os.path.splitext(filename)
         ftype = ext[1:]
+        logger.info('file type autodetect: ' + ftype)
 
     if ftype in ('pkl', 'pickle', 'p'):
         fdata = pickle.load(open(filename, "rb"))
         vertexes, faces = fdata
+    elif ftype in ('rawc'):
+        with open(filename, "r") as f:
+            vertexes, faces = __readRawcStream(f)
     elif ftype == 'obj':
         with open(filename, "r") as f:
             vertexes, faces = __readObjStream(f)
         if shift_obj:
             faces = (np.asarray(faces) - 1).tolist()
+
+    return vertexes, faces
+
+def __readRawcStream(f):
+    vertexes = []
+    faces = []
+    for line in f.readlines():
+        lnarr = line.strip().split(' ')
+        lenlarr = len(lnarr)
+        if lenlarr == 2:
+# number of vertexes and number of faces
+            pass
+        elif lenlarr == 6:
+            vertex = [
+                float(lnarr[0]),
+                float(lnarr[1]),
+                float(lnarr[2])
+            ]
+            vertexes.append(vertex)
+        elif lenlarr == 3:
+            face = [
+                int(lnarr[0]),
+                int(lnarr[1]),
+                int(lnarr[2])
+            ]
+            faces.append(face)
 
     return vertexes, faces
 

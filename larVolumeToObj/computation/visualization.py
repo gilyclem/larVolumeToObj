@@ -106,10 +106,10 @@ def visualizeObj(objfile, explode=False):
         try:
             step_loadmodel(objfile)
         except:
-            V, FV = readFile(objfile, ftype='obj')
+            V, FV = readFile(objfile)  # , ftype='obj')
             visualize(V, FV, explode)
     else:
-        V, FV = readFile(objfile, ftype='obj')
+        V, FV = readFile(objfile)  # , ftype='obj')
         visualize(V, FV, explode)
 
 
