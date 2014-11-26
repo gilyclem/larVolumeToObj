@@ -116,8 +116,8 @@ def __readRawcStream(f):
         elif lenlarr == 3:
             face = [
                 int(lnarr[0]),
-                int(lnarr[1]),
-                int(lnarr[2])
+                int(lnarr[2]),
+                int(lnarr[1])
             ]
             faces.append(face)
 
