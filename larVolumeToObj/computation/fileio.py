@@ -11,6 +11,7 @@ import pickle
 
 import sys
 import os
+import glob
 # """ import modules from lar-cc/lib """
 # sys.path.insert(0, os.path.expanduser('~/projects/lar-cc/lib/py'))
 # sys.path.insert(0, '/home/mjirik/projects/lar-cc/lib/py')
@@ -75,6 +76,35 @@ def __writeVertexLineToObjFile(f, vertex, ignore_empty_vertex_warning):
 
 
 def readFile(filename, ftype='auto', shift_obj=True):
+# is maskk
+    if filename.find('*') == -1 and \
+        filename.find('?') == -1 and \
+        filename.find('[') == -1:
+
+
+        V, F = readOneFile(filename, ftype=ftype, shift_obj=shift_obj)
+        
+    else:
+        V = []
+        F = []
+        filelist = glob.glob(filename)
+        for fl in filelist:
+            V1, F1 = readOneFile(fl, ftype=ftype, shift_obj=shift_obj)
+            lenV = len(V)
+            V = V + V1
+            # add  len of prev V to indexes
+            F1 = (np.array(F1) + lenV).tolist()
+            F = F + F1
+            # import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
+
+
+    return V, F
+
+
+def readOneFile(filename, ftype='auto', shift_obj=True):
+    """
+    File open one file. It can autodetect type.
+    """
     if not os.path.isfile(filename):
         logger.error('File "%s" not found' % (filename))
         exit(2)
