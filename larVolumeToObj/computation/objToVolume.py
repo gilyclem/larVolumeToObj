@@ -28,13 +28,12 @@ def points_to_volume_3D(data3d, points):
 
 
     hull = Delaunay(points)
-    X, Y, Z = np.mgrid[:size[0],:size[1], :size[2]]
+    X, Y, Z = np.mgrid[:data3d.shape[0],:data3d.shape[1], :data3d.shape[2]]
     grid = np.vstack([X.ravel(), Y.ravel(), Z.ravel()]).T
     simplex = hull.find_simplex(grid)
     fill = grid[simplex >=0,:]
     fill = (fill[:,0], fill[:,1], fill[:,2])
-    contours = np.zeros(data.shape, np.int8)
-    contours[fill] = 1
+    data3d[fill] = 1
 
 def points_to_volume_slice(data3d, points):
     """
@@ -50,34 +49,46 @@ def points_to_volume_slice(data3d, points):
     simplex = hull.find_simplex(grid)
     fill = grid[simplex >=0,:]
     fill = (fill[:,0], fill[:,1])
-    contours = np.zeros(data3d.shape, np.int8)
-    contours[fill] = 1
+    # contours = np.zeros(data3d.shape, np.int8)
+    # contours[fill] = 1
+    data_slice = data3d[z, :, :]
+    data_slice[fill] = 1
 
-    import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
 
 
 
 def read_files_and_make_labeled_image(filesmask):
-    int_multiplicator = 1000
-    data_offset = [5600,6900,100]
+    int_multiplicator = 70
+    data_offset = [5600, 6900, 100]
     size = [300, 300, 300]
     data3d = np.zeros(size)
 
     Vraw, Fraw = readFile(filesmask)
     
-    V = np.asarray(Vraw)
+    V = np.asarray(Vraw) 
+    data_offset = np.min(V, axis=0)
+    V = V - data_offset
+
 # TODO rozpracovat do obecnější formy
     #low number of unique numbers in axix - axis of slices
     # slice_axis = argmin  pro kazdou osu z:   len(np.unique(VVV[:,1]))
     slice_axis = 2
 
 # TODO use this instead of fallowing fasthack - to be sure not loosing information
-    #unV, invV = np.unique(V[:, 2], return_inverse=True)
+    unV2, invV2 = np.unique(V[:, 2], return_inverse=True)
+    V[:,2] = invV2
+    # for i in range(0, V.shape[0]):
+    #     V[i, 2] = unV2[invV2[i]]
+
+        # V[V[:, 2] == index] = 
+
+
+
     
     # ugly hack
-    unV2 = np.unique(V[:, slice_axis])
-    difV2 = unV2[1] - unV2[0]
-    V[:, 2] = V[:, 2] / difV2
+    # unV2 = np.unique(V[:, slice_axis])
+    # difV2 = unV2[1] - unV2[0]
+    # V[:, 2] = V[:, 2] / difV2
 
 
     # not nice discretization
@@ -85,8 +96,9 @@ def read_files_and_make_labeled_image(filesmask):
     V[:, 1] = V [:, 1] * int_multiplicator 
 
 
-    Vint = V.astype(np.int) - data_offset
+    Vint = V.astype(np.int) # - data_offset
 
+    
 
     for slicelevel in np.unique(Vint[:, 2]):
         points = Vint[Vint[:, 2] == slicelevel, :]
@@ -94,11 +106,18 @@ def read_files_and_make_labeled_image(filesmask):
 
         if points.shape[0] > 2:
             points_to_volume_slice(data3d, points)
+            # points_to_volume_3D(data3d, points)
+        else:
+            print "low number of points" , points.shape[0],\
+                    " z-level ", points[0, 2]
 
-            import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
+
         
 
 
+    import sed3
+    ed = sed3.sed3(data3d)
+    ed.show()
 
 
     import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
