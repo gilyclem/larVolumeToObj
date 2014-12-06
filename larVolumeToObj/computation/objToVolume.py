@@ -16,6 +16,8 @@ import argparse
 from fileio import readFile, writeFile
 from scipy.spatial import Delaunay
 import numpy as np
+import glob
+import re
 
 
 def points_to_volume_3D(data3d, points):
@@ -35,7 +37,7 @@ def points_to_volume_3D(data3d, points):
     fill = (fill[:,0], fill[:,1], fill[:,2])
     data3d[fill] = 1
 
-def points_to_volume_slice(data3d, points):
+def points_to_volume_slice(data3d, points, label):
     """
     Only planar points can be used
     """
@@ -52,21 +54,61 @@ def points_to_volume_slice(data3d, points):
     # contours = np.zeros(data3d.shape, np.int8)
     # contours[fill] = 1
     data_slice = data3d[z, :, :]
-    data_slice[fill] = 1
+    data_slice[fill] = label
 
 
 
 
-def read_files_and_make_labeled_image(filesmask):
+def read_files_and_make_labeled_image(filesmask, data_offset=None, data_size=None):
     int_multiplicator = 70
-    data_offset = [5600, 6900, 100]
+
+    filenames = glob.glob(filesmask)
+    if data_offset is None or data_size is None:
+        data_offset, sz = find_bbox(filenames)
+
+    # data_offset = [5600, 6900, 100]
+# size cannot be estimated easily
     size = [300, 300, 300]
     data3d = np.zeros(size)
+    for filename in filenames:
+        try:
+            read_one_file_add_to_labeled_image(filename, data3d, data_offset, int_multiplicator)
+        except:
+            import traceback
+            logger.warning(traceback.format_exc())
 
-    Vraw, Fraw = readFile(filesmask)
+
+    import sed3
+    ed = sed3.sed3(data3d)
+    ed.show()
+
+def find_bbox(filenames):
+    data_min=[]
+    data_max = []
+    for filename in filenames:
+        Vraw, Fraw = readFile(filename)
+        V = np.asarray(Vraw) 
+        data_min.append(np.min(V, axis=0))
+        data_max.append(np.max(V, axis=0))
+
+    mx = np.max(V, axis=0)
+    mi = np.min(V, axis=0)
+
+    return mi, mx
+
+
+def read_one_file_add_to_labeled_image(filename, data3d, data_offset, int_multiplicator):
+    Vraw, Fraw = readFile(filename)
+
+    # parse filename
+    nums = re.findall(r'\d+', filename)
+    label = int(nums[0])
+
+    
+
     
     V = np.asarray(Vraw) 
-    data_offset = np.min(V, axis=0)
+    # data_offset = np.min(V, axis=0)
     V = V - data_offset
 
 # TODO rozpracovat do obecnější formy
@@ -77,35 +119,19 @@ def read_files_and_make_labeled_image(filesmask):
 # TODO use this instead of fallowing fasthack - to be sure not loosing information
     unV2, invV2 = np.unique(V[:, 2], return_inverse=True)
     V[:,2] = invV2
-    # for i in range(0, V.shape[0]):
-    #     V[i, 2] = unV2[invV2[i]]
-
-        # V[V[:, 2] == index] = 
-
-
-
-    
-    # ugly hack
-    # unV2 = np.unique(V[:, slice_axis])
-    # difV2 = unV2[1] - unV2[0]
-    # V[:, 2] = V[:, 2] / difV2
-
 
     # not nice discretization
     V[:, 0] = V [:, 0] * int_multiplicator
     V[:, 1] = V [:, 1] * int_multiplicator 
 
-
     Vint = V.astype(np.int) # - data_offset
-
-    
 
     for slicelevel in np.unique(Vint[:, 2]):
         points = Vint[Vint[:, 2] == slicelevel, :]
         t = False 
 
         if points.shape[0] > 2:
-            points_to_volume_slice(data3d, points)
+            points_to_volume_slice(data3d, points, label)
             # points_to_volume_3D(data3d, points)
         else:
             print "low number of points" , points.shape[0],\
@@ -115,12 +141,8 @@ def read_files_and_make_labeled_image(filesmask):
         
 
 
-    import sed3
-    ed = sed3.sed3(data3d)
-    ed.show()
 
 
-    import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
 
 
 def main():
