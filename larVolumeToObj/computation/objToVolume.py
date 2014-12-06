@@ -13,7 +13,7 @@ Module generate volumetric data from obj file
 import logging
 logger = logging.getLogger(__name__)
 import argparse
-from fileio import readFile, writeFile
+from fileio import readFile
 from scipy.spatial import Delaunay
 import numpy as np
 import glob
@@ -28,14 +28,14 @@ def points_to_volume_3D(data3d, points):
     points[0, 2] += 1
     points[-1, 2] += -1
 
-
     hull = Delaunay(points)
     X, Y, Z = np.mgrid[:data3d.shape[0], :data3d.shape[1], :data3d.shape[2]]
     grid = np.vstack([X.ravel(), Y.ravel(), Z.ravel()]).T
     simplex = hull.find_simplex(grid)
-    fill = grid[simplex >= 0,:]
+    fill = grid[simplex >= 0, :]
     fill = (fill[:, 0], fill[:, 1], fill[:, 2])
     data3d[fill] = 1
+
 
 def points_to_volume_slice(data3d, points, label):
     """
@@ -49,17 +49,17 @@ def points_to_volume_slice(data3d, points, label):
     X, Y = np.mgrid[:data3d.shape[0], :data3d.shape[1]]
     grid = np.vstack([X.ravel(), Y.ravel()]).T
     simplex = hull.find_simplex(grid)
-    fill = grid[simplex >= 0,:]
+    fill = grid[simplex >= 0, :]
     fill = (fill[:, 0], fill[:, 1])
     # contours = np.zeros(data3d.shape, np.int8)
     # contours[fill] = 1
-    data_slice = data3d[z,:,:]
+    data_slice = data3d[z, :, :]
     data_slice[fill] = label
 
 
+def read_files_and_make_labeled_image(filesmask, data_offset=None,
+                                      data_size=None):
 
-
-def read_files_and_make_labeled_image(filesmask, data_offset=None, data_size=None):
     int_multiplicator = 70
 
     filenames = glob.glob(filesmask)
@@ -72,22 +72,23 @@ def read_files_and_make_labeled_image(filesmask, data_offset=None, data_size=Non
     data3d = np.zeros(size)
     for filename in filenames:
         try:
-            read_one_file_add_to_labeled_image(filename, data3d, data_offset, int_multiplicator)
+            read_one_file_add_to_labeled_image(filename, data3d, data_offset,
+                                               int_multiplicator)
         except:
             import traceback
             logger.warning(traceback.format_exc())
 
-
     import sed3
     ed = sed3.sed3(data3d)
     ed.show()
+
 
 def find_bbox(filenames):
     data_min = []
     data_max = []
     for filename in filenames:
         Vraw, Fraw = readFile(filename)
-        V = np.asarray(Vraw) 
+        V = np.asarray(Vraw)
         data_min.append(np.min(V, axis=0))
         data_max.append(np.max(V, axis=0))
 
@@ -97,17 +98,16 @@ def find_bbox(filenames):
     return mi, mx
 
 
-def read_one_file_add_to_labeled_image(filename, data3d, data_offset, int_multiplicator):
+def read_one_file_add_to_labeled_image(filename, data3d, data_offset,
+                                       int_multiplicator):
+
     Vraw, Fraw = readFile(filename)
 
     # parse filename
     nums = re.findall(r'\d+', filename)
     label = int(nums[0])
 
-    
-
-    
-    V = np.asarray(Vraw) 
+    V = np.asarray(Vraw)
     # data_offset = np.min(V, axis=0)
     V = V - data_offset
 
@@ -116,33 +116,26 @@ def read_one_file_add_to_labeled_image(filename, data3d, data_offset, int_multip
     # slice_axis = argmin  pro kazdou osu z:   len(np.unique(VVV[:,1]))
     slice_axis = 2
 
-# TODO use this instead of fallowing fasthack - to be sure not loosing information
+# TODO use this instead of fallowing fasthack-
+# to be sure not loosing information
     unV2, invV2 = np.unique(V[:, 2], return_inverse=True)
     V[:, 2] = invV2
 
     # not nice discretization
-    V[:, 0] = V [:, 0] * int_multiplicator
-    V[:, 1] = V [:, 1] * int_multiplicator 
+    V[:, 0] = V[:, 0] * int_multiplicator
+    V[:, 1] = V[:, 1] * int_multiplicator
 
-    Vint = V.astype(np.int) # - data_offset
+    Vint = V.astype(np.int)  # - data_offset
 
-    for slicelevel in np.unique(Vint[:, 2]):
-        points = Vint[Vint[:, 2] == slicelevel,:]
-        t = False 
+    for slicelevel in np.unique(Vint[:, slice_axis]):
+        points = Vint[Vint[:, slice_axis] == slicelevel, :]
 
         if points.shape[0] > 2:
             points_to_volume_slice(data3d, points, label)
             # points_to_volume_3D(data3d, points)
         else:
-            print "low number of points", points.shape[0],\
-                    " z-level ", points[0, 2]
-
-
-        
-
-
-
-
+            print "low number of points", points.shape[0], \
+                " z-level ", points[0, slice_axis]
 
 
 def main():
