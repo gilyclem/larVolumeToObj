@@ -133,7 +133,8 @@ def read_one_file_add_to_labeled_image(filename, data3d, data_offset,
     logger.debug( 'first_slice_offset ' + str(unV2[:3]) + ' =    ' +\
                  str(first_slice_offset))
 
-    V[:, 2] = invV2 + np.int(first_slice_offset)
+    # only every second slice is counted. This is why is there /2
+    V[:, 2] = invV2 + np.int(first_slice_offset / 2 )
 
     V = squeeze_slices(V)
 
