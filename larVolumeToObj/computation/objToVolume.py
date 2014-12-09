@@ -43,9 +43,9 @@ def points_to_volume_slice(data3d, points, label):
     """
     # hack move one point in next slice to make non planar object
     z = points[0, 2]
-    points = points[:, :2]
+    points_sl = points[:, :2]
 
-    hull = Delaunay(points)
+    hull = Delaunay(points_sl)
     X, Y = np.mgrid[:data3d.shape[0], :data3d.shape[1]]
     grid = np.vstack([X.ravel(), Y.ravel()]).T
     simplex = hull.find_simplex(grid)
@@ -60,7 +60,8 @@ def points_to_volume_slice(data3d, points, label):
 def read_files_and_make_labeled_image(filesmask, data_offset=None,
                                       data_size=None):
 
-    int_multiplicator = 70
+    vs = 0.01
+    int_multiplicator = 1/vs
 
     filenames = glob.glob(filesmask)
     if data_offset is None or data_size is None:
@@ -68,7 +69,7 @@ def read_files_and_make_labeled_image(filesmask, data_offset=None,
 
     # data_offset = [5600, 6900, 100]
 # size cannot be estimated easily
-    size = [300, 300, 300]
+    size = [400, 400, 300]
     data3d = np.zeros(size)
     for filename in filenames:
         try:
@@ -92,10 +93,19 @@ def find_bbox(filenames):
         data_min.append(np.min(V, axis=0))
         data_max.append(np.max(V, axis=0))
 
-    mx = np.max(V, axis=0)
-    mi = np.min(V, axis=0)
+    mx = np.max(data_max, axis=0)
+    mi = np.min(data_min, axis=0)
 
     return mi, mx
+
+def squeeze_slices(V):
+    """
+    Every two slices are squeezed to one
+    """
+    # V[V[:, 2] % 2 == 1, 2] += 1
+    # import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
+    V[:,2] = (V[:,2] / 2).astype(np.int)
+    return V
 
 
 def read_one_file_add_to_labeled_image(filename, data3d, data_offset,
@@ -119,7 +129,13 @@ def read_one_file_add_to_labeled_image(filename, data3d, data_offset,
 # TODO use this instead of fallowing fasthack-
 # to be sure not loosing information
     unV2, invV2 = np.unique(V[:, 2], return_inverse=True)
-    V[:, 2] = invV2
+    first_slice_offset = unV2[0] / (unV2[1] - unV2[0])
+    logger.debug( 'first_slice_offset ' + str(unV2[:3]) + ' =    ' +\
+                 str(first_slice_offset))
+
+    V[:, 2] = invV2 + np.int(first_slice_offset)
+
+    V = squeeze_slices(V)
 
     # not nice discretization
     V[:, 0] = V[:, 0] * int_multiplicator
@@ -175,5 +191,3 @@ def main():
     read_files_and_make_labeled_image(args.inputfile)
 
 
-if __name__ == "__main__":
-    main()
