@@ -50,10 +50,10 @@ def points_to_volume_slice(data3d, points, label):
     grid = np.vstack([X.ravel(), Y.ravel()]).T
     simplex = hull.find_simplex(grid)
     fill = grid[simplex >= 0, :]
-    fill = (fill[:, 0], fill[:, 1])
+    fill = (fill[:, 1], fill[:, 0])
     # contours = np.zeros(data3d.shape, np.int8)
     # contours[fill] = 1
-    data_slice = data3d[z, :, :]
+    data_slice = data3d[:, :, z]
     data_slice[fill] = label
 
 
@@ -65,38 +65,55 @@ def read_files_and_make_labeled_image(filesmask, data_offset=None,
 
     filenames = glob.glob(filesmask)
     if data_offset is None or data_size is None:
-        data_offset, sz = find_bbox(filenames)
+        data_offset, sz, slice_ticks = find_bbox(filenames,
+                                                 return_slice_ticks=True)
 
     # data_offset = [5600, 6900, 100]
 # size cannot be estimated easily
-    size = [400, 400, 300]
+    # size = [400, 400, 300]
+    siz = ((np.asarray(sz) / vs).astype(np.int) + 1).tolist()
+    size = [siz[0], siz[1], len(slice_ticks)]
     data3d = np.zeros(size)
     for filename in filenames:
         try:
             read_one_file_add_to_labeled_image(filename, data3d, data_offset,
-                                               int_multiplicator)
+                                               int_multiplicator, slice_ticks)
         except:
             import traceback
             logger.warning(traceback.format_exc())
 
     import sed3
-    ed = sed3.sed3(data3d)
+
+    ed = sed3.sed3(np.transpose(data3d, axes=[2, 0, 1]))
     ed.show()
 
 
-def find_bbox(filenames):
+def find_bbox(filenames, return_slice_ticks=False, slice_axis=2):
+    """
+    It can be used for slice ticks localization.
+
+    """
     data_min = []
     data_max = []
+    slice_ticks = []
+
     for filename in filenames:
         Vraw, Fraw = readFile(filename)
         V = np.asarray(Vraw)
         data_min.append(np.min(V, axis=0))
         data_max.append(np.max(V, axis=0))
+        if return_slice_ticks:
+            slice_ticks_one = np.unique(V[:, slice_axis])
+            slice_ticks = slice_ticks + slice_ticks_one.tolist()
 
     mx = np.max(data_max, axis=0)
     mi = np.min(data_min, axis=0)
 
-    return mi, mx
+    if return_slice_ticks:
+        return mi, mx, np.unique(slice_ticks).tolist()
+    else:
+        return mi, mx
+
 
 def squeeze_slices(V):
     """
@@ -104,12 +121,18 @@ def squeeze_slices(V):
     """
     # V[V[:, 2] % 2 == 1, 2] += 1
     # import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
-    V[:,2] = (V[:,2] / 2).astype(np.int)
+    V[:, 2] = (V[:, 2] / 2).astype(np.int)
     return V
 
 
 def read_one_file_add_to_labeled_image(filename, data3d, data_offset,
-                                       int_multiplicator):
+                                       int_multiplicator, slice_ticks=None,
+                                       slice_axis=2,
+                                       sqeeze_number=2
+                                       ):
+    """
+    squeeze_number
+    """
 
     Vraw, Fraw = readFile(filename)
 
@@ -124,17 +147,50 @@ def read_one_file_add_to_labeled_image(filename, data3d, data_offset,
 # TODO rozpracovat do obecnější formy
     # low number of unique numbers in axix - axis of slices
     # slice_axis = argmin  pro kazdou osu z:   len(np.unique(VVV[:,1]))
-    slice_axis = 2
+    # slice_axis = 2
 
-# TODO use this instead of fallowing fasthack-
-# to be sure not loosing information
-    unV2, invV2 = np.unique(V[:, 2], return_inverse=True)
-    first_slice_offset = unV2[0] / (unV2[1] - unV2[0])
-    logger.debug( 'first_slice_offset ' + str(unV2[:3]) + ' =    ' +\
-                 str(first_slice_offset))
+    # import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
+    # first_slice_offset = slice_ticks.index(
+    #     np.min(unV2) + data_offset[slice_axis])
+
+    # not nice discretization
+    V[:, 0] = V[:, 0] * int_multiplicator
+    V[:, 1] = V[:, 1] * int_multiplicator
+
+    slice_ticks_0 = np.asarray(slice_ticks) - data_offset[slice_axis]
+
+    slice_indexes = range(0, len(slice_ticks))
+    for i in slice_indexes[:-1:2]:
+
+        in_slice_idx =  \
+            (V[:, slice_axis] >= slice_ticks_0[i]) & \
+            (V[:, slice_axis] <= slice_ticks_0[i + 1])
+        if np.sum(in_slice_idx) > 0:
+        # import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
+            points = V[in_slice_idx, :]
+            points[:, 2] = i / 2
+            points = points.astype(np.int)
+
+            if points.shape[0] > 2:
+                points_to_volume_slice(data3d, points, label)
+                # points_to_volume_3D(data3d, points)
+            else:
+                print "low number of points", points.shape[0], \
+                    " z-level ", points[0, slice_axis]
+
+
+def reconstruction_old(data3d, V, slice_axis, int_multiplicator, label):
+    # TODO use this instead of fallowing fasthack-
+    # to be sure not loosing information
+    unV2, invV2 = np.unique(V[:, slice_axis], return_inverse=True)
+
+    first_slice_offset_old = unV2[0] / (unV2[1] - unV2[0])
+    logger.debug('first_slice_offset ' + str(unV2[:3]) + ' =    ' +
+                 str(first_slice_offset_old)
+                 )
 
     # only every second slice is counted. This is why is there /2
-    V[:, 2] = invV2 + np.int(first_slice_offset / 2 )
+    V[:, 2] = invV2 + np.int(first_slice_offset_old / 2)
 
     V = squeeze_slices(V)
 
@@ -190,5 +246,3 @@ def main():
         ch.setLevel(logging.DEBUG)
 
     read_files_and_make_labeled_image(args.inputfile)
-
-
