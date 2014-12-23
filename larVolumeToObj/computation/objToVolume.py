@@ -57,17 +57,29 @@ def points_to_volume_slice(data3d, points, label):
     data_slice[fill] = label
 
 
+def slice_ticks_analysis(slice_ticks):
+    from collections import Counter
+    slti = np.asarray(slice_ticks)
+    slice_ticks_dif = slti[1:] - slti[:-1]
+    b = Counter(slice_ticks_dif)
+    mc = b.most_common(1)
+    import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
+    new_slice_ticks = slice_ticks
+    return new_slice_ticks
+
+
 def read_files_and_make_labeled_image(filesmask, data_offset=None,
                                       data_size=None):
 
     vs = 0.01
-    int_multiplicator = 1/vs
+    int_multiplicator = 1 / vs
 
     filenames = glob.glob(filesmask)
     if data_offset is None or data_size is None:
         data_offset, sz, slice_ticks = find_bbox(filenames,
                                                  return_slice_ticks=True)
 
+    slice_ticks = slice_ticks_analysis(slice_ticks)
     # data_offset = [5600, 6900, 100]
 # size cannot be estimated easily
     # size = [400, 400, 300]
@@ -128,7 +140,7 @@ def squeeze_slices(V):
 def read_one_file_add_to_labeled_image(filename, data3d, data_offset,
                                        int_multiplicator, slice_ticks=None,
                                        slice_axis=2,
-                                       sqeeze_number=2
+                                       squeeze_number=2
                                        ):
     """
     squeeze_number
@@ -160,15 +172,15 @@ def read_one_file_add_to_labeled_image(filename, data3d, data_offset,
     slice_ticks_0 = np.asarray(slice_ticks) - data_offset[slice_axis]
 
     slice_indexes = range(0, len(slice_ticks))
-    for i in slice_indexes[:-1:2]:
+    for i in slice_indexes[:-squeeze_number:squeeze_number]:
 
         in_slice_idx =  \
             (V[:, slice_axis] >= slice_ticks_0[i]) & \
-            (V[:, slice_axis] <= slice_ticks_0[i + 1])
+            (V[:, slice_axis] < slice_ticks_0[i + squeeze_number])
         if np.sum(in_slice_idx) > 0:
         # import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
             points = V[in_slice_idx, :]
-            points[:, 2] = i / 2
+            points[:, 2] = i / squeeze_number
             points = points.astype(np.int)
 
             if points.shape[0] > 2:
