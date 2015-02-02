@@ -58,12 +58,13 @@ def points_to_volume_slice(data3d, points, label):
 
 
 def slice_ticks_analysis(slice_ticks):
-    from collections import Counter
-    slti = np.asarray(slice_ticks)
-    slice_ticks_dif = slti[1:] - slti[:-1]
-    b = Counter(slice_ticks_dif)
-    mc = b.most_common(1)
-    import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
+    # TODO implement
+    # from collections import Counter
+    # slti = np.asarray(slice_ticks)
+    # slice_ticks_dif = slti[1:] - slti[:-1]
+    # b = Counter(slice_ticks_dif)
+    # mc = b.most_common(1) # noqa
+    # import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
     new_slice_ticks = slice_ticks
     return new_slice_ticks
 
@@ -94,10 +95,12 @@ def read_files_and_make_labeled_image(filesmask, data_offset=None,
             import traceback
             logger.warning(traceback.format_exc())
 
-    import sed3
+    # import sed3
+    #
+    # ed = sed3.sed3(np.transpose(data3d, axes=[2, 0, 1]))
+    # ed.show()
 
-    ed = sed3.sed3(np.transpose(data3d, axes=[2, 0, 1]))
-    ed.show()
+    return data3d, None
 
 
 def find_bbox(filenames, return_slice_ticks=False, slice_axis=2):
@@ -223,6 +226,13 @@ def reconstruction_old(data3d, V, slice_axis, int_multiplicator, label):
                 " z-level ", points[0, slice_axis]
 
 
+def write_data3d(data3d, filename):
+    import io3d
+    dw = io3d.DataWriter()
+    dw.Write3DData(data3d, filename, filetype='rawiv',
+                   metadata={'voxelsize_mm': [1, 1, 1]})
+
+
 def main():
     logger = logging.getLogger()
 
@@ -250,6 +260,12 @@ def main():
         help='input file'
     )
     parser.add_argument(
+        '-o', '--outputfile',
+        default=None,
+        required=True,
+        help='output file'
+    )
+    parser.add_argument(
         '-d', '--debug', action='store_true',
         help='Debug mode')
     args = parser.parse_args()
@@ -257,4 +273,7 @@ def main():
     if args.debug:
         ch.setLevel(logging.DEBUG)
 
-    read_files_and_make_labeled_image(args.inputfile)
+    data3d, metadata = read_files_and_make_labeled_image(args.inputfile)
+
+    if args.outputfile is not None:
+        write_data3d(data3d, args.outputfile)
