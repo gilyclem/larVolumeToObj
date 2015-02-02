@@ -39,6 +39,7 @@ install:
     # my packages
     # install skelet3d
     - "pip install pysegbase sed3 io3d"
+    - "git clone https://github.com/cvdlab/lar-cc.git"
     # - git clone https://github.com/mjirik/skelet3d.git
     # - mkdir skelet3d/build
     # - cd skelet3d/build
