@@ -41,12 +41,12 @@ install:
     - "pip install pysegbase sed3 io3d"
     - "git clone https://github.com/cvdlab/lar-cc.git"
     - "git clone https://github.com/plasm-language/pyplasm"
-    - cd plasm-language
+    - cd pyplasm
     - mkdir build
     - cd build
     - cmake ..
     - sudo make install
-    - cd ..
+    - cd ..https://github.com/plasm-language/pyplasm
     # - git clone https://github.com/mjirik/skelet3d.git
     # - mkdir skelet3d/build
     # - cd skelet3d/build
