@@ -50,6 +50,6 @@ install:
     - cd ..
     
 # command to run tests
-script: nosetests --with-coverage --cover-package=lisa
+script: nosetests --with-coverage --cover-package=larVolumeToObj
 after_success:
     - coveralls
