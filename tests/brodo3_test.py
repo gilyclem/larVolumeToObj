@@ -13,7 +13,7 @@ import unittest
 from nose.plugins.attrib import attr
 import sys
 import os
-import larVolumeToObj.packages.import_library as il
+import larVolumeToObj.computation.import_library as il
 import larVolumeToObj.computation.step_generatebordermtx as gbmatrix
 lib_path = il.find_library_path("larcc", "larcc.py")
 sys.path.append(lib_path)
@@ -25,7 +25,8 @@ class TemplateTest(unittest.TestCase):
         from larVolumeToObj.computation.pklzToSmoothObj import convert
         from larVolumeToObj.computation.fileio import readFile
         from larVolumeToObj.computation.visualization import check_references
-        # from larVolumeToObj.computation.step_triangularmesh import triangulate_quads
+        # from larVolumeToObj.computation.step_triangularmesh import \
+        # triangulate_quads
         inputfile = 'tests/nrn4.pklz'
         bordersize = [4, 2, 3]
         outputdir = 'tests/tmptestpklz'
@@ -40,7 +41,8 @@ class TemplateTest(unittest.TestCase):
     @attr('interactive')
     def test_make_boundary_from_boundary_matrix(self):
         from larcc import VIEW, EXPLODE, MKPOLS
-        from larVolumeToObj.computation.step_triangularmesh import triangulate_quads
+        from larVolumeToObj.computation.step_triangularmesh import \
+            triangulate_quads
         from visualize import visualize
 
         nx, ny, nz = [1, 2, 1]
