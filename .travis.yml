@@ -52,6 +52,9 @@ install:
     # - rm -rf pyplasm
     - ls
     - pwd
+    - nosetests --verbose tests/obj_to_volume_test.py
+    - nosetests --verbose tests/brodo3_test.py
+    - nosetests --verbose tests/import_library_test.py
     
 # command to run tests
 script: nosetests --verbose --with-coverage --cover-package=larVolumeToObj
