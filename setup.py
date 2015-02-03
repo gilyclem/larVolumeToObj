@@ -5,11 +5,13 @@ from setuptools import setup, find_packages, Extension
 # from Cython.Build import cythonize
 from Cython.Distutils import build_ext
 from os import path
+import numpy as np
 here = path.abspath(path.dirname(__file__))
 
 ext_modules = [
     Extension("larVolumeToObj.computation.calc_chains_helper",
-              ["larVolumeToObj/computation/calc_chains_helper.pyx"])
+              ["larVolumeToObj/computation/calc_chains_helper.pyx"],
+              include_dirs=[np.get_include()])
 ]
 cmdclass = {'build_ext': build_ext}
 setup(
