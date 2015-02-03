@@ -52,6 +52,7 @@ install:
     # - rm -rf pyplasm
     - ls
     - pwd
+    - python setup.py build
     - python setup.py install
     - nosetests --verbose tests/obj_to_volume_test.py
     - nosetests --verbose tests/brodo3_test.py
