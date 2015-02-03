@@ -27,7 +27,8 @@ before_install:
 install:
     - conda update --yes conda 
     # Install dependencies
-    - conda install --yes pip python=$TRAVIS_PYTHON_VERSION numpy scipy matplotlib scikit-learn scikit-image cython pyqt pyyaml setuptools pip vtk
+    - conda install --yes pip python=$TRAVIS_PYTHON_VERSION numpy scipy 
+      # matplotlib scikit-learn scikit-image cython pyqt pyyaml setuptools pip vtk
     - pip install -r ci/requirements_ci.txt
     # scikit-image
     # - "pip install pyyaml"
