@@ -12,6 +12,7 @@ import pickle
 import sys
 import os
 import glob
+import numpy as np
 # """ import modules from lar-cc/lib """
 # sys.path.insert(0, os.path.expanduser('~/projects/lar-cc/lib/py'))
 # sys.path.insert(0, '/home/mjirik/projects/lar-cc/lib/py')
@@ -19,7 +20,7 @@ import glob
 import import_library as il
 lib_path = il.find_library_path("larcc", "larcc.py")
 sys.path.append(lib_path)
-from larcc import * # noqa
+# from larcc import * # noqa
 
 
 # input of test file nrn100.py (with definetion of V and FV)
@@ -71,19 +72,18 @@ def __writeVertexLineToObjFile(f, vertex, ignore_empty_vertex_warning):
         ))
     except IndexError:
         if not ignore_empty_vertex_warning:
-            logger.warning('empty vertex %i ' % (i))
+            logger.warning('empty vertex %i ' % (vertex))
         f.write("v 0 0 0\n")
 
 
 def readFile(filename, ftype='auto', shift_obj=True):
-# is maskk
+    # is maskk
     if filename.find('*') == -1 and \
         filename.find('?') == -1 and \
-        filename.find('[') == -1:
-
+            filename.find('[') == -1:
 
         V, F = readOneFile(filename, ftype=ftype, shift_obj=shift_obj)
-        
+
     else:
         V = []
         F = []
@@ -96,7 +96,6 @@ def readFile(filename, ftype='auto', shift_obj=True):
             F1 = (np.array(F1) + lenV).tolist()
             F = F + F1
             # import ipdb; ipdb.set_trace() #  noqa BREAKPOINT
-
 
     return V, F
 
@@ -127,6 +126,7 @@ def readOneFile(filename, ftype='auto', shift_obj=True):
 
     return vertexes, faces
 
+
 def __readRawcStream(f):
     vertexes = []
     faces = []
@@ -134,7 +134,7 @@ def __readRawcStream(f):
         lnarr = line.strip().split(' ')
         lenlarr = len(lnarr)
         if lenlarr == 2:
-# number of vertexes and number of faces
+            # number of vertexes and number of faces
             pass
         elif lenlarr == 6:
             vertex = [
