@@ -48,7 +48,8 @@ install:
     - cmake ..
     - sudo make install
     - cd ..
-    - rm -rf pyplasm
+    - cd ..
+    # - rm -rf pyplasm
     - ls
     - pwd
     
