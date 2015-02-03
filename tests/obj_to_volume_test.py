@@ -11,16 +11,19 @@
 """
 import unittest
 from nose.plugins.attrib import attr
-import larVolumeToObj.computation.objToVolume as ov
+
 
 class TemplateTest(unittest.TestCase):
 
     @attr('interactive')
-    def test_(self):
+    def test_simple(self):
+        import larVolumeToObj.computation.objToVolume as ov
         inputfile = "a008.rawc"
 
         ov.read_files_and_make_labeled_image(inputfile)
-        pass
+
+    def test_1_plus_1(self):
+        self.assertEquals(1 + 1, 2)
 
 if __name__ == "__main__":
     unittest.main()
