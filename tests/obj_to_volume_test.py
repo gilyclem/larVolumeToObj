@@ -21,7 +21,7 @@ class TemplateTest(unittest.TestCase):
     # @attr('interactive')
     def test_simple(self):
         import larVolumeToObj.computation.objToVolume as ov
-        inputfile = "a008.rawc"
+        inputfile = "tests/a008.rawc"
 
         ov.read_files_and_make_labeled_image(inputfile)
 
