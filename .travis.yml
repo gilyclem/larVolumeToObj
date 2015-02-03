@@ -48,6 +48,7 @@ install:
     - cmake ..
     - sudo make install
     - cd ..
+    - rm -rf pyplasm
     
 # command to run tests
 script: nosetests --verbose --with-coverage --cover-package=larVolumeToObj
