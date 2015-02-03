@@ -15,15 +15,16 @@ from nose.plugins.attrib import attr
 
 class TemplateTest(unittest.TestCase):
 
-    @attr('interactive')
+    def test_1_plus_1(self):
+        self.assertEquals(1 + 1, 2)
+
+    # @attr('interactive')
     def test_simple(self):
         import larVolumeToObj.computation.objToVolume as ov
         inputfile = "a008.rawc"
 
         ov.read_files_and_make_labeled_image(inputfile)
 
-    def test_1_plus_1(self):
-        self.assertEquals(1 + 1, 2)
 
 if __name__ == "__main__":
     unittest.main()
