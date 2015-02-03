@@ -44,7 +44,7 @@ install:
     - cd build
     - cmake ..
     - sudo make install
-    - cd ..https://github.com/plasm-language/pyplasm
+    - cd ..
     
 # command to run tests
 script: nosetests --with-coverage --cover-package=lisa
