@@ -29,7 +29,7 @@ before_install:
 install:
     - conda update --yes conda 
     # Install dependencies
-    - conda install --yes pip python=$TRAVIS_PYTHON_VERSION numpy scipy swig cython setuptools
+    - conda install --yes pip python=$TRAVIS_PYTHON_VERSION numpy scipy swig cython setuptools matplotlib
       # matplotlib scikit-learn scikit-image cython pyqt pyyaml setuptools pip vtk
     - pip install -r ci/requirements_ci.txt
     # scikit-image
@@ -37,7 +37,7 @@ install:
     - "easy_install SimpleITK PyOpenGL PyOpenGL-accelerate"
     # my packages
     # install skelet3d
-    - "pip install pysegbase sed3 io3d"
+    - "pip install sed3 io3d"
     - "git clone https://github.com/cvdlab/lar-cc.git"
     # - "git clone https://github.com/plasm-language/pyplasm"
     - "git clone https://github.com/mjirik/pyplasm"
@@ -54,7 +54,7 @@ install:
     - python setup.py build
     - python setup.py install
     - nosetests --verbose tests/obj_to_volume_test.py
-    # - python tests/brodo3_test.py
+    - python tests/brodo3_test.py
     - nosetests --verbose tests/brodo3_test.py
     - nosetests --verbose tests/import_library_test.py
     
