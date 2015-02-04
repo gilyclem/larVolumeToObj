@@ -61,6 +61,6 @@ install:
     - nosetests --verbose tests/import_library_test.py
     
 # command to run tests
-script: nosetests --verbose --with-coverage --cover-package=larVolumeToObj
+script: nosetests tests/obj_to_volume_test.py --verbose --with-coverage --cover-package=larVolumeToObj
 after_success:
     - coveralls
