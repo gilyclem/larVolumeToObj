@@ -32,6 +32,7 @@ install:
     - conda install --yes pip python=$TRAVIS_PYTHON_VERSION numpy scipy swig cython setuptools matplotlib
       # matplotlib scikit-learn scikit-image cython pyqt pyyaml setuptools pip vtk
     - pip install -r ci/requirements_ci.txt
+    - pip install nose sh coveralls coverage
     # scikit-image
     # - "pip install pyyaml"
     - "easy_install SimpleITK PyOpenGL PyOpenGL-accelerate"
