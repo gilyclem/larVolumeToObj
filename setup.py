@@ -67,6 +67,7 @@ setup(
     dependency_links=[],
 
     ext_modules=ext_modules,
+    include_dirs=[np.get_include()],
     cmdclass=cmdclass,
     # If there are data files included in your packages that need to be
     # installed, specify them here.  If using Python 2.6 or less, then these

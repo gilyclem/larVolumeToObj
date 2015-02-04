@@ -17,7 +17,7 @@ class TemplateTest(unittest.TestCase):
     def test_import_lar(self):
         import sys
 
-        import larVolumeToObj.packages.import_library as il
+        import larVolumeToObj.computation.import_library as il
         lib_path = il.find_library_path("larcc", "larcc.py")
         sys.path.append(lib_path)
         from larcc import MKPOLS
