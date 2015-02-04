@@ -18,13 +18,16 @@ import larVolumeToObj.computation.step_generatebordermtx as gbmatrix
 lib_path = il.find_library_path("larcc", "larcc.py")
 sys.path.append(lib_path)
 
-
 class TemplateTest(unittest.TestCase):
 
     def test_make_oriented_boundary_real_data(self):
+        print '1'
         from larVolumeToObj.computation.pklzToSmoothObj import convert
+        print '2'
         from larVolumeToObj.computation.fileio import readFile
+        print '3'
         from larVolumeToObj.computation.visualization import check_references
+        print '4'
         # from larVolumeToObj.computation.step_triangularmesh import \
         # triangulate_quads
         inputfile = 'tests/nrn4.pklz'
