@@ -9,12 +9,12 @@ virtualenv:
     system_site_packages: true
 before_install:
     - sudo apt-get install ppa-purge 
+    - sudo add-apt-repository 'deb http://us.archive.ubuntu.com/ubuntu/ utopic main restricted universe multiverse'
+    - sudo add-apt-repository 'deb http://us.archive.ubuntu.com/ubuntu/ utopic-updates main restricted universe multiverse'
     - sudo apt-get update -qq
     - sudo apt-get install -qq python git python-dev g++ sox make  curl cmake
     - sudo apt-get install -qq cmake libinsighttoolkit3-dev libpng12-dev libgdcm2-dev
     - sudo apt-get install -qq libfreetype6 libfreetype6-dev libasound2 libasound2-dev alsa-base alsa-utils python python-dev python-setuptools libxinerama-dev libxrender-dev libxcomposite-dev libxcursor-dev libglu1-mesa-dev libfreeimage3  libpng12-0 libpng12-dev libjpeg-dev libxxf86vm1 libxxf86vm-dev libxi6 libxi-dev libxrandr-dev mesa-common-dev mesa-utils-extra libgl1-mesa-dev libglapi-mesa
-    - sudo add-apt-repository 'deb http://us.archive.ubuntu.com/ubuntu/ utopic main restricted universe multiverse'
-    - sudo add-apt-repository 'deb http://us.archive.ubuntu.com/ubuntu/ utopic-updates main restricted universe multiverse'
     - sudo apt-get install -qq libglew1.10 cython
     - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
     - chmod +x miniconda.sh
