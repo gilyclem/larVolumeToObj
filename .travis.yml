@@ -29,7 +29,7 @@ before_install:
 install:
     - conda update --yes conda 
     # Install dependencies
-    - conda install --yes python=$TRAVIS_PYTHON_VERSION cython numpy scipy swig setuptools matplotlib
+    - conda install --yes pip python=$TRAVIS_PYTHON_VERSION cython numpy scipy swig setuptools matplotlib
       # matplotlib scikit-learn scikit-image cython pyqt pyyaml setuptools pip vtk
     # - conda install --yes -n env_name cython
     - pip install -r ci/requirements_ci.txt
