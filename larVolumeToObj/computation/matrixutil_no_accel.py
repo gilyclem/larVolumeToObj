@@ -2,7 +2,7 @@
 """
 The MIT License
 ===============
-    
+
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
 'Software'), to deal in the Software without restriction, including
@@ -21,7 +21,7 @@ IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
 CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-    
+
 """
 import collections
 import scipy.sparse
@@ -29,11 +29,13 @@ from scipy import zeros,arange,mat
 from scipy.sparse import vstack,hstack,csr_matrix,lil_matrix,triu
 from scipy.spatial import Delaunay
 from scipy.linalg import *
-from pyplasm import *
+# from pyplasm import *
+
 
 def matrixProduct(CSRm1,CSRm2):
     CSRm = CSRm1 * CSRm2
     return CSRm
+
 
 def csrTranspose(CSRm):
     CSRm = CSRm.T
