@@ -53,7 +53,7 @@ install:
     - ls
     - pwd
     - python setup.py build
-    - sudo python setup.py install
+    - python setup.py install
     - nosetests --verbose tests/obj_to_volume_test.py
     # - python tests/brodo3_test.py
     - nosetests --verbose tests/brodo3_test.py
