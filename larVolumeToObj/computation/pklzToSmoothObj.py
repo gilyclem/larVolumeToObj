@@ -40,6 +40,15 @@ def convert(
     borderdir='./tmp/border',
     label=2
 ):
+    """
+
+    :param filename:
+    :param bordersize:
+    :param outputdir:
+    :param borderdir:
+    :param label: used as threshold if there is no segmentation in pklz datap
+    :return:
+    """
 
     bindir = os.path.join(outputdir, 'compbin')
     stldir = os.path.join(outputdir, 'stl')

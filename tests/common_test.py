@@ -50,7 +50,7 @@ class CommonTest(unittest.TestCase):
         # visualize.visualize(vertexes, faces)
 
         # rmbox.writeFile(
-        #     os.path.join(path_to_script, 'test_smallbb2_cleaned.obj'),
+        # os.path.join(path_to_script, 'test_smallbb2_cleaned.obj'),
         #     vertexes, faces)
         smooth_vertexes = ls.iterativeLaplacianSmoothing(vertexes, faces)
         expected_vertex = np.array(
@@ -67,19 +67,19 @@ class CommonTest(unittest.TestCase):
         self.assertTrue(check_references(V, F))
         # visualize.visualize(V, F)
         # expected_vertex = np.array(
-        #     [1, 3, 5])
+        # [1, 3, 5])
         # print V[32]
         # self.assertAlmostEqual(
         #     0, np.sum(V[32] - expected_vertex))
 
     def make_all_by_steps_test(self):
         # from larcc import VIEW, EXPLODE, MKPOLS
-        from larVolumeToObj.computation.pklzToSmoothObj import convert,\
+        from larVolumeToObj.computation.pklzToSmoothObj import convert, \
             makeCleaningAndSmoothing
         from larVolumeToObj.computation.fileio import readFile
         # from visualize import visualize
 
-        from larVolumeToObj.computation.step_triangularmesh\
+        from larVolumeToObj.computation.step_triangularmesh \
             import triangulate_quads
         import shutil
 
@@ -111,7 +111,7 @@ class CommonTest(unittest.TestCase):
     def test_real_pklz_data(self):
         import larVolumeToObj.computation.pklzToSmoothObj as sc
         import shutil
-        from larVolumeToObj.computation.step_triangularmesh\
+        from larVolumeToObj.computation.step_triangularmesh \
             import triangulate_quads
         from larVolumeToObj.computation.visualization import check_references
         # from larcc import VIEW, EXPLODE, MKPOLS
@@ -138,14 +138,16 @@ class CommonTest(unittest.TestCase):
         import shutil
         from larVolumeToObj.computation.step_triangularmesh \
             import triangulate_quads
-        from larVolumeToObj.computation.visualization\
+        from larVolumeToObj.computation.visualization \
             import visualize, check_references
         # from larcc import VIEW, EXPLODE, MKPOLS
         outputdir = 'tests/tmptestpklz'
         if os.path.exists(outputdir):
             shutil.rmtree(outputdir)
         V, F = startConversion.makeSmooth(
-            inputfile='tests/nrn4.pklz',
+            # inputfile='tests/nrn4.pklz',
+            inputfile='biodur_055.pklz',
+            # inputfile='/home/mjirik/Stažené/nrn4.pklz',
             bordersize=[4, 2, 3],
             outputdir=outputdir,
             outputfile='test_nrn4',
@@ -157,6 +159,16 @@ class CommonTest(unittest.TestCase):
         visualize(V, F3, explode=True)
         self.assertTrue(check_references(V, F))
         # VIEW(EXPLODE(1.2, 1.2, 1.2)(MKPOLS((V, F3))))
+
+    def test_preparedata(self):
+        import io3d.datareader
+        import larVolumeToObj
+        import larVolumeToObj.computation.data_preparation as dp
+
+        # larobj.datapreparation.preparedata('biodur_055.pklz')
+        dp.preparedata('tests/nrn4.pklz', 'nrn4_crop.pklz', crop=[[1, 6], [1, 6], [1, 6]], threshold=4400)
+
+
 
 if __name__ == "__main__":
     unittest.main()

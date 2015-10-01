@@ -33,6 +33,8 @@ https://github.com/mjirik/larVolumeToObj/blob/master/tests/nrn4.pklz?raw=true
 Library
 =======
 
+    import larVolumeToObj
+    import larVolumeToObj.computation
     import larVolumeToObj.computation as larobj
     larobj.pklzToSmoothObj.makeSmooth('nrn4.pklz', visualization=True)
 
