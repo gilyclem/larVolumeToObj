@@ -27,7 +27,7 @@ Download LAR somewhere in your home directory. It will be found automatically.
 Sample data
 ===========
 
-https://github.com/mjirik/lar-running-demo/blob/master/tests/nrn4.pklz
+https://github.com/mjirik/larVolumeToObj/blob/master/tests/nrn4.pklz?raw=true
 
 
 Library
