@@ -10,9 +10,13 @@ import sys
 # """ import modules from lar-cc/lib """
 
 import import_library as il
-lib_path = il.find_library_path("larcc", "larcc.py")
-sys.path.append(lib_path)
-from larcc import * # noqa
+try:
+    import larlib
+    from larlib import larcc
+except:
+    lib_path = il.find_library_path("larcc", "larcc.py")
+    sys.path.append(lib_path)
+    import larcc
 from fileio import readFile
 
 
