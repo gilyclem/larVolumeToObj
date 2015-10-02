@@ -161,12 +161,13 @@ class CommonTest(unittest.TestCase):
         # VIEW(EXPLODE(1.2, 1.2, 1.2)(MKPOLS((V, F3))))
 
     def test_preparedata(self):
-        import io3d.datareader
         import larVolumeToObj
         import larVolumeToObj.computation.data_preparation as dp
-
+        # inputfile = "/home/mjirik/projects/lisa/sample_data/biodur_sample/"
+        inputfile = 'tests/nrn4.pklz'
         # larobj.datapreparation.preparedata('biodur_055.pklz')
-        dp.preparedata('tests/nrn4.pklz', 'nrn4_crop.pklz', crop=[[1, 6], [1, 6], [1, 6]], threshold=4400)
+        dp.preparedata(inputfile, 'nrn4_crop.pklz', crop=[[1, 6], [1, 6], [1, 6]], threshold=4400, visualization=False)
+        # dp.preparedata(inputfile, 'nrn4_crop.pklz', crop=[[1, 40], [200, 250], [200, 250]], threshold=1400)
 
 
 

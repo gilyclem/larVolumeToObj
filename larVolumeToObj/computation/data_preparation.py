@@ -8,20 +8,25 @@ import argparse
 
 import sys
 
+import numpy as np
 import io3d
 import io3d.datareader
 import io3d.datawriter
 import sed3
 
-def preparedata(inputfile, outputfile, crop=None, threshold=None):
+def preparedata(inputfile, outputfile='prepared.pklz', crop=None, threshold=None, visualization=False):
     datap = io3d.datareader.read(inputfile, dataplus_format=True)
     if crop is not None:
         datap['data3d'] = datap['data3d'][crop[0][0]:crop[0][1], crop[1][0]:crop[1][1], crop[2][0]:crop[2][1]]
+        if 'segmentation' in datap.keys():
+            datap['segmentation'] = datap['segmentation'][crop[0][0]:crop[0][1], crop[1][0]:crop[1][1], crop[2][0]:crop[2][1]]
+
     if threshold is not None:
         datap['segmentation'] = datap['data3d'] > threshold
-    ed = sed3.sed3(datap['data3d'], contour=datap['segmentation'])
-    ed.show()
-    # io3d.datawriter.write(datap, outputfile)
+    if visualization:
+        ed = sed3.sed3(datap['data3d'], contour=datap['segmentation'])
+        ed.show()
+    io3d.datawriter.write(datap, outputfile)
 #
 
 
@@ -68,18 +73,18 @@ def main():
     #     help='input file'
     # )
     parser.add_argument(
-        '-l', '--label',
-        default=2,
-        help='selected label or threshold for unlabeled data',
+        '-t', '--threshold',
+        default=None,
+        help='selected threshold for unlabeled data',
         type=int
     )
     parser.add_argument(
-        '-b', '--bordersize',
-        default=[2, 2, 2],
+        '-c', '--crop',
+        default=None, # [2, 2, 2],
         type=int,
         metavar='N',
         nargs='+',
-        help='Size of box'
+        help='Crop parameters. Six integers expected: minX maxX minY maxY minZ maxZ'
     )
     parser.add_argument(
         '-v', '--visualization', action='store_true',
@@ -91,7 +96,12 @@ def main():
     if args.debug:
         ch.setLevel(logging.DEBUG)
 
-    preparedata(args.inputfile, args.outputfile)
+    crop=None
+    if args.crop is not None:
+        crop = np.asarray(args.crop).reshape([3, 2])
+
+    preparedata(args.inputfile, args.outputfile, crop=crop,
+                threshold=args.threshold, visualization=args.visualization)
 
 
 if __name__ == "__main__":

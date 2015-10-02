@@ -29,6 +29,7 @@ Sample data
 
 https://github.com/mjirik/larVolumeToObj/blob/master/tests/nrn4.pklz?raw=true
 
+http://147.228.240.61/queetech/sample-data/biodur_sample.zip
 
 Library
 =======
@@ -45,10 +46,28 @@ More exaples
     larobj.visualization.visualize(V, F, explode=True)
     larobj.visualization.visualizeObj('output/out_sm_i_tr.obj', explode=True)
 
+Read DICOM data
+---------------
+
+
+
 
 
 Commandline tools
 =================
+
+
+data_preparation.py
+----------
+
+Simple data preprocessing tool. Allows cropping and thresholding.
+
+    python data_preparation.py -i "tests/nrn4.pklz" -o prepared.pklz -threshold 4000 --visualization
+
+    python data_preparation.py -i "biodur_sample/" -o prepared_biodur.pklz -c 1 40 200 250 200 250 -t 1400
+    
+    python data_preparation.py --help
+    
 
 
 volumeToObj.py
@@ -68,6 +87,7 @@ Make visualization of objfile using Plasm
 
 visualize.sh
 -------------
+
 Given a Wavefront STL model (*obj*) it will show it using available on system visualizers.
 
 Supported visualizers: *PyPlasm, MeshLab, Manta*
