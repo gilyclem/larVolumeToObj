@@ -46,10 +46,14 @@ More exaples
     larobj.visualization.visualize(V, F, explode=True)
     larobj.visualization.visualizeObj('output/out_sm_i_tr.obj', explode=True)
 
-Read DICOM data
+Prepare DICOM or pklz data
 ---------------
 
+    import larVolumeToObj
+    import larVolumeToObj.computation.data_preparation as dp
+    dp.preparedata('tests/nrn4.pklz', 'nrn4_crop.pklz', crop=[[1, 6], [1, 6], [1, 6]], threshold=4400, visualization=True)
 
+    dp.preparedata('./biodur_sample/', 'biodur_crop.pklz', crop=[[1, 40], [200, 250], [200, 250]], threshold=1400)
 
 
 
