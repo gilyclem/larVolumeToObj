@@ -167,6 +167,7 @@ class CommonTest(unittest.TestCase):
         inputfile = 'tests/nrn4.pklz'
         # larobj.datapreparation.preparedata('biodur_055.pklz')
         dp.preparedata(inputfile, 'nrn4_crop.pklz', crop=[[1, 6], [1, 6], [1, 6]], threshold=4400, visualization=False)
+        V, F = larVolumeToObj.computation.pklzToSmoothObj.makeSmooth('nrn4_crop.pklz')
         # dp.preparedata(inputfile, 'nrn4_crop.pklz', crop=[[1, 40], [200, 250], [200, 250]], threshold=1400)
 
     @unittest.skip("test requires biodu_sample data")
