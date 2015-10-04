@@ -47,7 +47,8 @@ install:
     - mkdir build
     - cd build
     - cmake -DTRAVIS=ON ..
-    - sudo make install
+#    - sudo make install
+    - make install
     - cd ..
     - cd ..
     # - rm -rf pyplasm
