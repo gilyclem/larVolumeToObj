@@ -1,9 +1,6 @@
 __all__ = [
     'fileio', 'laplacianSmoothing', 'lar', 'matrixutil_accel',
-    'matrixutil_no_accel', 'pklzToSmoothObj', 'smooth',
-    'step_calcchains_serial_tobinary_filter_proc_lisa',
-    'step_generatebordermtx', 'step_loadmodel', 'step_mergemesh',
-    'step_remove_boxes_iner_faces', 'step_squaremesh', 'step_triangularmesh',
+    'pklzToSmoothObj', 'smooth',
     'visualization', 'import_library'
 ]
 import data_preparation
