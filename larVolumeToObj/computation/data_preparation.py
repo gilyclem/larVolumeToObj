@@ -14,7 +14,19 @@ import io3d.datareader
 import io3d.datawriter
 import sed3
 
-def preparedata(inputfile, outputfile='prepared.pklz', crop=None, threshold=None, visualization=False):
+def preparedata(inputfile, outputfile='prepared.pklz', crop=None, threshold=None,
+                visualization=False, zero_border=0, label=2):
+    """
+
+    :param inputfile: path to input file or directory, See io3d library for available file formats.
+    :param outputfile: path to output file
+    :param crop: crop parameters with fallowing format [[minX, maxX], [minY, maxY], [minZ. maxZ]]
+    :param threshold:  set threshold for data
+    :param visualization: set true to show visualization
+    :param zero_border: data border can be set to zero. zero_border. Default is 0
+    :param label: set segmentation output label. Default is 2
+    :return:
+    """
     datap = io3d.datareader.read(inputfile, dataplus_format=True)
     if crop is not None:
         datap['data3d'] = datap['data3d'][crop[0][0]:crop[0][1], crop[1][0]:crop[1][1], crop[2][0]:crop[2][1]]
@@ -22,10 +34,18 @@ def preparedata(inputfile, outputfile='prepared.pklz', crop=None, threshold=None
             datap['segmentation'] = datap['segmentation'][crop[0][0]:crop[0][1], crop[1][0]:crop[1][1], crop[2][0]:crop[2][1]]
 
     if threshold is not None:
-        datap['segmentation'] = datap['data3d'] > threshold
+        datap['segmentation'] = (datap['data3d'] > threshold).astype(np.uint8) * label
     if visualization:
         ed = sed3.sed3(datap['data3d'], contour=datap['segmentation'])
         ed.show()
+    if zero_border > 0:
+        datap['segmentation'][:zero_border, :, :] = 0
+        datap['segmentation'][:, :zero_border, :] = 0
+        datap['segmentation'][:, :, :zero_border] = 0
+        datap['segmentation'][-zero_border:, :, :] = 0
+        datap['segmentation'][:, -zero_border:, :] = 0
+        datap['segmentation'][:, :, -zero_border:] = 0
+    # datap['segmentation'][datap['segmentation'] > 0] = label
     io3d.datawriter.write(datap, outputfile)
 #
 

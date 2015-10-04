@@ -35,16 +35,14 @@ Library
 =======
 
     import larVolumeToObj
-    import larVolumeToObj.computation
-    import larVolumeToObj.computation as larobj
-    larobj.pklzToSmoothObj.makeSmooth('nrn4.pklz', visualization=True)
+    larVolumeToObj.computation.pklzToSmoothObj.makeSmooth('nrn4.pklz', visualization=True)
 
-More exaples
+Another exaples
 ------------
 
-    V, F = larobj.pklzToSmoothObj.makeSmooth('nrn4.pklz')
-    larobj.visualization.visualize(V, F, explode=True)
-    larobj.visualization.visualizeObj('output/out_sm_i_tr.obj', explode=True)
+    V, F = larVolumeToObj.computation.pklzToSmoothObj.makeSmooth('nrn4.pklz')
+    larVolumeToObj.computation.visualization.visualize(V, F, explode=True)
+    larVolumeToObj.computation.visualization.visualizeObj('output/out_sm_i_tr.obj', explode=True)
 
 Prepare DICOM or pklz data
 ---------------
@@ -53,9 +51,21 @@ Prepare DICOM or pklz data
     import larVolumeToObj.computation.data_preparation as dp
     dp.preparedata('tests/nrn4.pklz', 'nrn4_crop.pklz', crop=[[1, 6], [1, 6], [1, 6]], threshold=4400, visualization=True)
 
-    dp.preparedata('./biodur_sample/', 'biodur_crop.pklz', crop=[[1, 40], [200, 250], [200, 250]], threshold=1400)
 
 
+More complex example - prepare, smooth and show
+-----------------------------------------------
+
+    import larVolumeToObj
+    larVolumeToObj.computation.data_preparation.preparedata(
+        "./biodur_sample/",
+        'biodur_crop.pklz',
+        crop=[[1, 25], [200, 225], [200, 225]],
+        threshold=1400)
+    V, F = larVolumeToObj.computation.pklzToSmoothObj.makeSmooth(
+        'biodur_crop.pklz',
+        bordersize=[5, 5, 5])
+    larVolumeToObj.computation.visualization.visualize(V, F, explode=False)
 
 Commandline tools
 =================

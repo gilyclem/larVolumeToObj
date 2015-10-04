@@ -83,6 +83,8 @@ def removeDoubleVertexesAndFaces(vertexes, faces, boxsize=None, index_base=0,
     new_faces = reindexVertexesInFaces(faces, inv_vertexes,
                                        index_base=index_base)
     t2 = time.time()
+    # import ipdb
+    # ipdb.set_trace()
     logger.info("Vertexes in faces reindexed     " + str(t2 - t1))
     if use_dict_algorithm:
         logger.debug("Using dict algotithm by Alberto")

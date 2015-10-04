@@ -169,6 +169,12 @@ class CommonTest(unittest.TestCase):
         dp.preparedata(inputfile, 'nrn4_crop.pklz', crop=[[1, 6], [1, 6], [1, 6]], threshold=4400, visualization=False)
         # dp.preparedata(inputfile, 'nrn4_crop.pklz', crop=[[1, 40], [200, 250], [200, 250]], threshold=1400)
 
+    def test_prepare_biodur_sample(self):
+        import larVolumeToObj
+        inputfile = "/home/mjirik/projects/lisa/sample_data/biodur_sample/"
+        larVolumeToObj.computation.data_preparation.preparedata(inputfile, 'biodur_crop.pklz', crop=[[1, 25], [200, 225], [200, 225]], threshold=1400)
+        V, F = larVolumeToObj.computation.pklzToSmoothObj.makeSmooth('biodur_crop.pklz', bordersize=[5,5,5])
+        larVolumeToObj.computation.visualization.visualize(V, F, explode=False)
 
 
 if __name__ == "__main__":

@@ -17,6 +17,7 @@ except:
     lib_path = il.find_library_path("larcc", "larcc.py")
     sys.path.append(lib_path)
     import larcc
+from larcc import *
 from fileio import readFile
 
 

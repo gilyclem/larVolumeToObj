@@ -6,6 +6,9 @@ __all__ = [
     'step_remove_boxes_iner_faces', 'step_squaremesh', 'step_triangularmesh',
     'visualization', 'import_library'
 ]
+import data_preparation
+import pklzToSmoothObj
+import objToVolume
 # import fileio
 # import laplacianSmoothing
 # import lar

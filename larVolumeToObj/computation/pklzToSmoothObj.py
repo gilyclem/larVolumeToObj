@@ -105,6 +105,20 @@ def makeSmooth(
     make_triangulation=True,
     label=2
 ):
+    """
+
+    :param inputfile: path to input data. It can be tiff, pklz, dicom or other 3d file or
+     directory with dicom files or jpegs
+    :param bordersize: Data are processed per partes. bordersize specify size of one part
+    :param outputdir: directory with output stl files and temporary files. Acronyms in file names are:
+    sm - smoothing, i - converted to integer, tr - triangulation, cl - cleaning done, do double faces.
+    :param outputfile: name of outpu file
+    :param visualization: output can be visualized by setting this parametr True
+    :param borderdir: temporary directory with bordermatrix computation
+    :param make_triangulation:
+    :param label: expected value in object pixels of input data
+    :return:
+    """
     filepath, ext = os.path.splitext(inputfile)
     if ext == "obj":
         obj_input = inputfile
