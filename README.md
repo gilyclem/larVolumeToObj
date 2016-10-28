@@ -7,7 +7,7 @@ New features:
     3. Unoriented boundary operator to improve performances;
     4. Solved bugs concerning double vertices and faces removal;
     5. Performance improvement:
-    6. Added the doc folder.
+    6. Added the docs2 folder.
     
 Results:
 
