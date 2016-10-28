@@ -1,7 +1,6 @@
 For previous versions see https://github.com/mjirik/larVolumeToObj
 
 New features:
-
     * IDX format reader - visus query;
     * Data preparation - morphology operations: binary closing and opening - noise removal;
     * Unoriented boundary operator to improve performances;
