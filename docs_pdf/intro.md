@@ -1,0 +1,1 @@
+#### Here you can find articles and presentations about the LAR and Visus projects generally speaking and about the package larVolumeToObj, including an overall summary and a detailed description of the code.
