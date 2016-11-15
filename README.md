@@ -1,6 +1,17 @@
 For previous versions see https://github.com/mjirik/larVolumeToObj
 
-New features:
+### Dependencies:
+* pyplasm
+* larlib
+* Cython
+* swig
+* nvisusio, to read data in idx format
+* sed3
+* python-tk
+* python-qt4
+* SimpleITK
+
+###New features:
 
     1. IDX format reader - visus query;
     2. Data preparation - morphology operations: binary closing and opening - noise removal;
@@ -9,7 +20,7 @@ New features:
     5. Performance improvement:
     6. Added the docs2 folder.
     
-Results:
+###Results:
 
 See http://www.dia.uniroma3.it/~paoluzzi/web/pao/doc/CAD16_Presentation.pdf
 and http://www.dia.uniroma3.it/~paoluzzi/web/pao/doc/CAD16_Abstract_paoluzzi.pdf
